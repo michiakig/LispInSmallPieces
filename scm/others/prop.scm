@@ -1,9 +1,9 @@
 ;
 ; a trivial implementation of property list routines
 ; get, put, remprop	oz/91
-; 
+;
 
-(define *namelist* '())      ; top-level name/plst chain 
+(define *namelist* '())      ; top-level name/plst chain
 (define *lastlook* '(() ())) ; look-aside cache
 
 ; locate the name/plst pair
@@ -41,7 +41,7 @@
 	  (set! plst (cons item '()))     ; create a new property list
 	  (set! *namelist* (cons (cons name plst) *namelist*)))))
   valu)
-  
+
 (define (remq prop plst)
   (if (null? plst)
       '()

@@ -22,7 +22,7 @@
 (begin (set! x (lambda () y))
        (set! y (x)) )
    *** ; y uninitialized
-((lambda (x) 
+((lambda (x)
    (set! y x)
    y )
  33 )

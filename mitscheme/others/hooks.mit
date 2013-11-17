@@ -8,7 +8,7 @@
 (define (eval-hook e)
   (eval e user-initial-environment) )
 
-(define expand-install-hook 
+(define expand-install-hook
   (lambda (expand)
     (error-hook 'expand-install-hook "Not yet implemented" 34) ) )
 

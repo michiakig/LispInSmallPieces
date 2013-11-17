@@ -35,7 +35,7 @@
   (let ((get-next-method (gensym)))
     `((define (,get-next-method)
         (if (Class-superclass ,c)
-            (vector-ref (Generic-dispatch-table ,g) 
+            (vector-ref (Generic-dispatch-table ,g)
                         (Class-number (Class-superclass ,c)) )
             (Generic-default ,g) ) )
       (define (call-next-method)

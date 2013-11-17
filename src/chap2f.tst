@@ -11,7 +11,7 @@
 
 33
    33
-xyy 
+xyy
    *** ; unexistant
 'foo
    foo
@@ -28,7 +28,7 @@ xyy
 ((lambda (x y) (cons x y))
  1 2 )
    (1 . 2)
-cons 
+cons
    --- ; cons now is a variable
 ((lambda (f) (f 1 2))
  cons )
@@ -41,22 +41,22 @@ cons
 (bind/de 'x (* 2 3) (lambda () 44))
    44
 (bind/de 'x (* 2 3)
-    (lambda () 
+    (lambda ()
       (assoc/de 'x (lambda (tag) 'no-tag)) ) )
    6
 (bind/de 'x (* 2 3)
-    (lambda () 
+    (lambda ()
       (assoc/de 'yyy (lambda (tag) 'no-tag)) ) )
    no-tag
 
 ;(bind/de 'x 2
-;  (lambda () (+ (assoc/de 'x error) 
-;                (let ((x (+ 
+;  (lambda () (+ (assoc/de 'x error)
+;                (let ((x (+
 ;                            (assoc/de 'x error) (assoc/de 'x error) )))
 ;                  (+ x (assoc/de 'x error)) ) )) )
 ;  6
 (bind/de 'x 2
-  (lambda () (+ (assoc/de 'x error) 
+  (lambda () (+ (assoc/de 'x error)
                 ((lambda (x) (+ x (assoc/de 'x error)))
                  (+ (assoc/de 'x error) (assoc/de 'x error)) ) ) ) )
   8
@@ -92,7 +92,7 @@ cons
 ;;; same test with a closure instead of a primitive comparator
 (bind/de '(x) (* 2 3)
          (lambda ()
-           (new-assoc/de '(x) (lambda (tag) 'no-tag) 
+           (new-assoc/de '(x) (lambda (tag) 'no-tag)
                          (lambda (x y) (equal? x y)) ) ) )
    6
 

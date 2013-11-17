@@ -9,7 +9,7 @@
 ;;; Check the README file before using this file.
 ;;;(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 
-;;; Add the import special form 
+;;; Add the import special form
 
 (define (meaning e r tail?)
   (if (atom? e)
@@ -39,13 +39,13 @@
   (let* ((m (meaning e r #f))
          (r2 (shadow-extend* r n*))
          (m+ (meaning-sequence e+ r2 #f)) )
-    (append (CONSTANT n*) (PUSH-VALUE) m (CREATE-PSEUDO-ENV) 
+    (append (CONSTANT n*) (PUSH-VALUE) m (CREATE-PSEUDO-ENV)
             (if tail? m+ (append m+ (UNLINK-ENV))) ) ) )
-      
+
 
 (define (CREATE-PSEUDO-ENV)   (list 252))
 (define (SHADOWABLE-REF i j)  (list 231 i j))
-(define (SHADOWABLE-SET! i j m) 
+(define (SHADOWABLE-SET! i j m)
   (append m (list 232 i j)) )
 
 (define-class pseudo-activation-frame environment
@@ -76,7 +76,7 @@
          (let ((name (car d))
                (type (car (cadr d))) )
            (case type
-             ((local checked-local shadowable) 
+             ((local checked-local shadowable)
               (let* ((addr (cadr d))
                      (i (cadr addr))
                      (j (cddr addr)) )
@@ -112,7 +112,7 @@
              (PREDEFINED i) ) ) )
         (static-wrong "No such variable" n) ) ) )
 
-(define (meaning-assignment n e r tail?) 
+(define (meaning-assignment n e r tail?)
   (let ((m (meaning e r #f))
         (kind (compute-kind r n)) )
     (if kind
@@ -144,7 +144,7 @@
         (set-pseudo-activation-frame-address!
          frame i (compute-kind (reified-environment-r env) (car n*)) )
         (setup (cdr n*) (+ i 1)) ) )
-    (set-pseudo-activation-frame-sr! frame 
+    (set-pseudo-activation-frame-sr! frame
                                      (reified-environment-sr env) )
     (set-pseudo-activation-frame-next! frame sr)
     (set! *env* frame) ) )

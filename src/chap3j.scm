@@ -29,7 +29,7 @@
           (evaluate (car e*) r (make-no-more-argument-cont k)) )
       (resume k no-more-arguments) ) )
 
-(define-method (resume (k no-more-argument-cont) v) 
+(define-method (resume (k no-more-argument-cont) v)
   (resume (no-more-argument-cont-k k) (list v)) )
 
 (definitial throw
@@ -37,7 +37,7 @@
     'throw
     (lambda (v* r k)
       (if (= 2 (length v*))
-          (catch-lookup k (car v*) 
+          (catch-lookup k (car v*)
                         (make-throw-cont k `(quote ,(cadr v*)) r) )
           (wrong "Incorrect arity" 'throw v*) ) ) ) )
 
@@ -49,7 +49,7 @@
   (make-primitive 'call/cc
                   (lambda (v* r k)
                     (if (= 1 (length v*))
-                        (invoke (car v*) 
+                        (invoke (car v*)
                                 (list (make-reified-continuation k))
                                 r
                                 k )
@@ -71,7 +71,7 @@
                              (function-variables f)
                              v* )))
          (evaluate-begin (function-body f) env k) )
-      (wrong "Incorrect arity" (function-variables f) v*) ) ) 
+      (wrong "Incorrect arity" (function-variables f) v*) ) )
 
 (define-class function-nadic function (arity))
 
@@ -85,7 +85,7 @@
 (define-method (invoke (f function-nadic) v* r k)
   (define (extend-env env names values)
     (if (pair? names)
-         (make-variable-env  
+         (make-variable-env
           (extend-env env (cdr names) (cdr values))
           (car names)
           (car values) )
@@ -98,7 +98,7 @@
       (wrong "Incorrect arity" (function-variables f) v*) ) )
 
 (define (chap3j-interpreter)
-  (letrec ((k.init (make-bottom-cont 
+  (letrec ((k.init (make-bottom-cont
                     'void (lambda (v) (display v)
                                       (toplevel) ) ))
            (toplevel (lambda () (evaluate (read) r.init k.init))) )

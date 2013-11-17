@@ -23,7 +23,7 @@
    (lambda (discriminant variables)
      (let ((g (gensym))(c (gensym)))    ; make g and c hygienic
        `(begin
-          (unless (->Generic ',(car call)) 
+          (unless (->Generic ',(car call))
             (define-generic ,call) )        ; new
           (register-method
            ',(car call)
@@ -31,8 +31,8 @@
              (lambda ,(flat-variables variables)
                (define (call-next-method)
                  ((if (Class-superclass ,c)
-                      (vector-ref (Generic-dispatch-table ,g) 
-                                  (Class-number 
+                      (vector-ref (Generic-dispatch-table ,g)
+                                  (Class-number
                                    (Class-superclass ,c) ) )
                       (Generic-default ,g) )
                   . ,(flat-variables variables) ) )

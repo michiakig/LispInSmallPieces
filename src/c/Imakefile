@@ -9,11 +9,11 @@
 ### Check the README file before using this file.
 ###(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 
-work : scheme.o schemelib.o schemeklib.o 
+work : scheme.o schemelib.o schemeklib.o
 clean :: cleanMakefile
 
 CC	= gcc
-CFLAGS	= -ansi -pedantic -gg 
+CFLAGS	= -ansi -pedantic -gg
 
 # scheme.[hc] is the minimal runtime library used for chap10e.scm.
 # schemelib.c is the definition of the predefined global variables.
@@ -26,8 +26,8 @@ schemelib.o : scheme.h
 schemeklib.o : scheme.h
 rt.o     : rt.h
 
-LIB	= scheme.o schemelib.o 
-#LIB	= scheme.o schemeklib.o 
+LIB	= scheme.o schemelib.o
+#LIB	= scheme.o schemeklib.o
 
 chap10e : chap10e.c ${LIB}
 	${CC} ${CFLAGS} -o chap10e chap10e.c ${LIB}

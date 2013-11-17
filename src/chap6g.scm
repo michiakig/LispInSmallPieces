@@ -67,7 +67,7 @@
 
 (define (meaning-define n e r)
   (let ((b (memq n *defined*)))
-    (if (pair? b) 
+    (if (pair? b)
         (static-wrong "Already defined variable" n)
         (set! *defined* (cons n *defined*)) ) )
   (meaning-assignment n e r) )
@@ -82,13 +82,13 @@
     (set! *defined* originally-defined)
     (let* ((m (meaning e r.init))
            (size (length g.current))
-           (anormals (set-difference (map car g.current) 
+           (anormals (set-difference (map car g.current)
                                      *defined* )) )
       (if (null? anormals)
           (lambda (sr k)
             (set! sg.current (make-vector size undefined-value))
             (m sr k) )
-          (static-wrong "Not explicitely defined variables" 
+          (static-wrong "Not explicitely defined variables"
                         anormals ) ) ) ) )
 
 (define (set-difference set1 set2)

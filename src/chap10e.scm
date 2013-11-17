@@ -71,14 +71,14 @@
 ;;; inserted in the following map so they can be uniformly named. The
 ;;; map is an Alist ( (symbol . "Cname") ... ).
 
-(define Scheme->C-names-mapping 
+(define Scheme->C-names-mapping
   '( (*        . "TIMES")
      (<        . "LESSP")
      (pair?    . "CONSP")
      (set-cdr! . "RPLACD")
      ) )
 
-(set! Scheme->C-names-mapping 
+(set! Scheme->C-names-mapping
   '( (*        . "TIMES")
      (+        . "PLUS")
      (-        . "DIFFERENCE")
@@ -103,7 +103,7 @@
             (if (Cname-clash? Cname Scheme->C-names-mapping)
                 (retry (compute-another-Cname str))
                 (begin (set! Scheme->C-names-mapping
-                             (cons (cons name Cname) 
+                             (cons (cons name Cname)
                                    Scheme->C-names-mapping ) )
                        Cname ) ) ) ) ) ) )
 
@@ -117,7 +117,7 @@
 ;;; cannot be transleted into a name containing an isolated underscore
 ;;; so all these names will be used for C generation purposes.
 
-(define compute-another-Cname 
+(define compute-another-Cname
   (let ((counter 1))
     (lambda (str)
       (set! counter (+ 1 counter))
@@ -149,7 +149,7 @@
 ;         (if (pair? result)
 ;             (list->string (reverse result))
 ;             "_weird_" ) )
-;      (set! result 
+;      (set! result
 ;            (append
 ;             (let ((char (string-ref str i)))
 ;               (case char
@@ -188,10 +188,10 @@
     (let* ((qv       (car qv*))
            (value    (Quotation-Variable-value qv))
            (other-qv (already-seen-value? value results)) )
-      (cond (other-qv 
+      (cond (other-qv
              (generate-quotation-alias out qv other-qv)
              (scan-quotations out (cdr qv*) i (cons qv results)) )
-            ((C-value? value) 
+            ((C-value? value)
              (generate-C-value out qv)
              (scan-quotations out (cdr qv*) i (cons qv results)) )
             ((symbol? value)
@@ -208,25 +208,25 @@
         (let* ((a   (car value))
                (aqv (already-seen-value? a results)) )
           (if aqv
-              (begin 
+              (begin
                 (generate-pair out qv aqv dqv)
                 (scan-quotations out (cdr qv*) i (cons qv results)) )
               (let ((newaqv (make-Quotation-Variable i a)))
                 (scan-quotations out (cons newaqv qv*)
                                  (+ i 1) results ) ) ) )
         (let ((newdqv (make-Quotation-Variable i d)))
-          (scan-quotations 
+          (scan-quotations
            out (cons newdqv qv*) (+ i 1) results ) ) ) ) )
 
 (define (generate-pair out qv aqv dqv)
-  (format out 
+  (format out
    "SCM_DefinePair(thing~A_object,thing~A,thing~A); /* ~S */~%"
    (Quotation-Variable-name qv)
    (Quotation-Variable-name aqv)
    (Quotation-Variable-name dqv)
    (Quotation-Variable-value qv) )
   (format out "#define thing~A SCM_Wrap(&thing~A_object)~%"
-          (Quotation-Variable-name qv) 
+          (Quotation-Variable-name qv)
           (Quotation-Variable-name qv) ) )
 
 (define (scan-symbol out value qv* i results)
@@ -236,9 +236,9 @@
     (cond (strqv (generate-symbol out qv strqv)
                  (scan-quotations out (cdr qv*) i (cons qv results)) )
           (else
-           (let ((newqv (make-Quotation-Variable 
+           (let ((newqv (make-Quotation-Variable
                          i (symbol->string value) )))
-             (scan-quotations out (cons newqv qv*) 
+             (scan-quotations out (cons newqv qv*)
                               (+ i 1) results ) ) ) ) ) )
 
 (define (generate-symbol out qv strqv)
@@ -247,7 +247,7 @@
           (Quotation-Variable-name strqv)
           (Quotation-Variable-value qv) )
   (format out "#define thing~A SCM_Wrap(&thing~A_object)~%"
-          (Quotation-Variable-name qv) 
+          (Quotation-Variable-name qv)
           (Quotation-Variable-name qv) ) )
 
 (define (generate-quotation-alias out qv1 qv2)
@@ -263,7 +263,7 @@
        (if (equal? value (Quotation-Variable-value (car qv*)))
            (car qv*)
            (already-seen-value? value (cdr qv*)) ) ) )
-  
+
 ;;; should be tailored to the C compiler. This does say that we use
 ;;; complement to 1.
 
@@ -299,7 +299,7 @@
 ;;;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; To ease writing printing expressions.
 
-(define-syntax between-parentheses 
+(define-syntax between-parentheses
   (syntax-rules ()
     ((between-parentheses out . body)
      (let ((out out))
@@ -321,7 +321,7 @@
   (format out (IdScheme->IdC (Variable-name variable))) )
 
 (define-method (variable->C (variable Renamed-Local-Variable) out)
-  (format out "~A_~A" 
+  (format out "~A_~A"
           (IdScheme->IdC (Variable-name variable))
           (Renamed-Local-Variable-index variable) ) )
 
@@ -354,7 +354,7 @@
   (between-parentheses out
     (variable->C (Global-Assignment-variable e) out)
     (format out "=")
-    (->C (Global-Assignment-form e) out) ) ) 
+    (->C (Global-Assignment-form e) out) ) )
 
 (define-method (->C (e Box-Read) out)
   (format out "SCM_Content")
@@ -389,7 +389,7 @@
   (between-parentheses out
     (->C e out)
     (format out " != SCM_false") ) )
-    
+
 (define-method (->C (e Sequence) out)
   (between-parentheses out
     (->C (Sequence-first e) out)
@@ -405,7 +405,7 @@
            (between-parentheses out
              (->C (Regular-Application-function e) out)
              (->C (Regular-Application-arguments e) out) ) )
-          (else 
+          (else
            (format out "SCM_invoke")
            (between-parentheses out
              (->C (Regular-Application-function e) out)
@@ -462,7 +462,7 @@
 (define-method (->C (e Closure-Creation) out)
   (format out "SCM_close")
   (between-parentheses out
-    (format out "SCM_CfunctionAddress(function_~A),~A,~A" 
+    (format out "SCM_CfunctionAddress(function_~A),~A,~A"
             (Closure-Creation-index e)
             (generate-arity (Closure-Creation-variables e))
             (number-of (Closure-Creation-free e)) )
@@ -497,7 +497,7 @@
 
 (define (generate-functions out definitions)
   (format out "~%/* Functions: */~%")
-  (for-each (lambda (def) 
+  (for-each (lambda (def)
               (generate-closure-structure out def)
               (generate-possibly-dotted-definition out def) )
             (reverse definitions) ) )
@@ -509,7 +509,7 @@
 ;  (format out "struct function_~A {~%"
 ;          (Function-Definition-index definition) )
 ;  (format out " SCM (*behavior)();~% int arity;")
-;  (for-each (lambda (v) 
+;  (for-each (lambda (v)
 ;              (format out "~% SCM ")
 ;              (variable->C v out)
 ;              (format out ";") )
@@ -519,7 +519,7 @@
 (define (generate-closure-structure out definition)
   (format out "SCM_DefineClosure(function_~A, "
           (Function-Definition-index definition) )
-  (generate-local-temporaries (Function-Definition-free definition) 
+  (generate-local-temporaries (Function-Definition-free definition)
                               out )
   (format out ");~%") )
 
@@ -528,7 +528,7 @@
           (Function-Definition-index definition) )
   (let ((vars (Function-Definition-variables definition))
         (rank -1) )
-    (for-each 
+    (for-each
      (lambda (v)
        (set! rank (+ rank 1))
        (cond ((Local-Variable-dotted? v)
@@ -538,9 +538,9 @@
        (variable->C v out)
        (format out ",~A);~%" rank) )
      vars )
-    (let ((temps (With-Temp-Function-Definition-temporaries 
+    (let ((temps (With-Temp-Function-Definition-temporaries
                   definition )))
-      (when (pair? temps) 
+      (when (pair? temps)
         (generate-local-temporaries temps out)
         (format out "~%") ) )
     (format out "return ")

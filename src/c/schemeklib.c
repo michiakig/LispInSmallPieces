@@ -19,7 +19,7 @@
 /* Identify this library.
  */
 
-static char *rcsid = 
+static char *rcsid =
   "@(#)$Id: schemeklib.c,v 4.0 1995/07/10 06:52:31 queinnec Exp $";
 
 /* Global constants
@@ -156,13 +156,13 @@ SCM_DefinePredefinedFunctionVariable(LIST,"LIST",-2,SCMq_list);
    continuation. It may raise a warning.
  */
 
-SCM 
+SCM
 SCM_invoke_continuation (SCM self, unsigned long number, va_list arguments) {
   SCM current_k = va_arg(arguments,SCM);
   SCM value     = va_arg(arguments,SCM);
   return SCM_invoke1(SCM_Unwrap(self)->closure.environment[0],value);
 }
-  
+
 SCM SCM_callcc (SCM k, SCM f) {
   SCM reified_k = SCM_close(SCM_CfunctionAddress(SCM_invoke_continuation),2,1,k);
   return SCM_invoke2(f,k,reified_k);

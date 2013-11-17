@@ -13,7 +13,7 @@
 
 (set! K (lambda (a b) a))
    ---
-(K 1 2)  
+(K 1 2)
    1
 
 ;;; end of chap1.tst

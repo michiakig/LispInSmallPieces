@@ -18,12 +18,12 @@
       (case (car e)
         ((quote)  (meaning-quotation (cadr e) r tail?))
         ((lambda) (meaning-abstraction (cadr e) (cddr e) r tail?))
-        ((if)     (meaning-alternative (cadr e) (caddr e) (cadddr e) 
+        ((if)     (meaning-alternative (cadr e) (caddr e) (cadddr e)
                                        r tail? ))
         ((begin)  (meaning-sequence (cdr e) r tail?))
         ((set!)   (meaning-assignment (cadr e) (caddr e) r tail?))
         ((eval)   (meaning-eval (cadr e) r tail?))        ; \modified
-        (else     (meaning-application (car e) (cdr e) 
+        (else     (meaning-application (car e) (cdr e)
                                        r tail? )) ) ) )
 
 (define (meaning-eval e r tail?)

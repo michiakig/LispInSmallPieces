@@ -36,8 +36,8 @@
 ;;; With compiled-chap5a on blaye: 20. seconds
 ;;; With compiled-chap5d on blaye: 12. seconds
 ;;; With interpreted-chap6a on blaye: 2. seconds
-;;; Compiled to C on blaye: 0.02 seconds 
-;;;               size: 
+;;; Compiled to C on blaye: 0.02 seconds
+;;;               size:
 ;;; text    data    bss     dec     hex
 ;;; 28672   4096    96      32864   8060
 

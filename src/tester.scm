@@ -11,19 +11,19 @@
 
 ;;;                         *********************************************
 ;;;                          An engine to test interpreters or compilers
-;;;                                    Christian Queinnec 
+;;;                                    Christian Queinnec
 ;;;                          \'Ecole Polytechnique  & INRIA-Rocquencourt
 ;;;                         *********************************************
 
 ;;; This file contains the basic facility to easily run an interpreter
-;;; defining a language. It can ask the user for expressions to be 
+;;; defining a language. It can ask the user for expressions to be
 ;;; evaluated and print their results or take expressions from a file,
-;;; evaluate them and compare their value to the expected value. If an 
-;;; error occurs then the test suite is aborted. 
+;;; evaluate them and compare their value to the expected value. If an
+;;; error occurs then the test suite is aborted.
 
 ;;; A validation suite is a sequence of expressions followed by their
 ;;; expected results. The expression is evaluated in the language being
-;;; tested then its result is compared to the expected result. 
+;;; tested then its result is compared to the expected result.
 ;;; An example of a test suite is:
 ;;; /------------------------
 ;;; | (car '(a b))
@@ -41,7 +41,7 @@
 ;;; missing an expecting result or a (toplevel) form returning an
 ;;; unprinted value. Other errors are caught within engine-tester.
 
-;;; The testing engine can be parameterized in various ways. 
+;;; The testing engine can be parameterized in various ways.
 ;;; Apart the engine itself, two functions are offered that ease its use.
 ;;; These are the `interpreter' and `suite-test' functions:
 
@@ -71,17 +71,17 @@
 (define tester-call/cc call/cc)
 
 ;;; The interpreter function takes four arguments:
-;;;  -- an input prompt. This string will be printed whenever the 
+;;;  -- an input prompt. This string will be printed whenever the
 ;;;     interpreter wants to read an expression to evaluate.
 ;;;  -- an output prompt. Values are printed preceded by this string.
 ;;;  -- an error handler which is called whenever an error is detected.
 ;;;  -- a make-toplevel function that will return a thunk implementing
 ;;;     one interpreting step (read-eval-print).
 ;;;     make-toplevel may be roughly defined as
-;;;       (lambda (read-exression display-value error-catcher) 
+;;;       (lambda (read-exression display-value error-catcher)
 ;;;         (lambda () (display-value (tested-eval (read-expression)))) )
-;;;     The toplevel function will be repeatedly invoked from the 
-;;;     interpreter. make-toplevel is invoked only once 
+;;;     The toplevel function will be repeatedly invoked from the
+;;;     interpreter. make-toplevel is invoked only once
 ;;;     by the testing-engine with
 ;;;   == (read-expression): a function that reads an expression and echoes it
 ;;;      after printing the input-prompt. It returns the read expression.
@@ -132,9 +132,9 @@
       make-toplevel ) ) ) )
 
 ;;; suite-test is similar to the preceding one except that tests are taken
-;;; from a file, possibly echoed on the console and checked to be correct. 
+;;; from a file, possibly echoed on the console and checked to be correct.
 ;;; The suite contains expressions followed by their expected result.
-;;; The result of the evaluation is compared to this result, the 
+;;; The result of the evaluation is compared to this result, the
 ;;; suite is aborted if an error occurs.
 
 ;;; suite-test takes six arguments:
@@ -146,9 +146,9 @@
 ;;;     echoed on the console.
 ;;;  -- a make-toplevel function that will return the toplevel function
 ;;;     make-toplevel may be roughly defined as
-;;;       (lambda (test-read test-checker wrong) 
+;;;       (lambda (test-read test-checker wrong)
 ;;;         (lambda () (test-checker (tested-eval (test-read)))) )
-;;;     The toplevel function will be repeatedly invoked from the 
+;;;     The toplevel function will be repeatedly invoked from the
 ;;;     interpreter. The arguments of make-toplevel are
 ;;;   == (test-read): the function that reads an expression, echoing it
 ;;;      after printing the input-prompt.
@@ -227,7 +227,7 @@
               #f ) ) )                  ; stop iteration
     (tester-call/cc
      (lambda (exit)                     ; exit when test suite is finished
-       (engine-tester 
+       (engine-tester
         (lambda ()                      ; read test
           (let ((e (tester-read in)))
             (if (eof-object? e)
@@ -239,7 +239,7 @@
         (lambda ()                      ; read result
           (let ((expected (tester-read in)))
             (if (eof-object? expected)
-                (tester-error "Missing expected result" expected) 
+                (tester-error "Missing expected result" expected)
                 expected ) ) )
         compare
         display-status
@@ -249,20 +249,20 @@
 ;;;  (read-test)    reads an expression to evaluate
 ;;;  (read-result)  reads the expected result
 ;;;  (compare expected obtained)  compares what was obtained from what
-;;;                 was expected. The value of `expected' can also 
+;;;                 was expected. The value of `expected' can also
 ;;;                 be *** or ---
 ;;;  (display-status message expected obtained) displays the result of the
 ;;;                 test. It usually prints the result and a comment like `OK'.
 ;;;                 Testing is abandoned if display-status returns #f.
 ;;;  (make-toplevel read print error) returns a thunk implementing one step
-;;;                 of the intepreter. 
+;;;                 of the intepreter.
 
 (define (engine-tester read-test        ; read a test
                        read-result      ; read the expected result
                        compare          ; compare the two
                        display-status   ; display the comparison
                        make-toplevel )  ; make a toplevel
-  (tester-call/cc 
+  (tester-call/cc
    (lambda (abort)                      ; exit all tests
      (let ((resume #f))                 ; will be initialized below.
        ;; compare the result V with what was expected. If that
@@ -276,7 +276,7 @@
                       (display-status 'expected-error expected v) )
                      ((eq? expected '---)
                       (display-status 'uninteresting-result expected v) )
-                     (else 
+                     (else
                       (display-status 'incorrect-result expected v) ) )
                (resume #t)
                (abort #f) ) ) )
@@ -287,18 +287,18 @@
                (v        (cons msg culprits)) )
            (if (cond ((eq? expected '***)
                       (display-status 'error-occurred expected v) )
-                     (else 
+                     (else
                       (display-status 'unexpected-error expected v) ) )
                (resume #t)
                (abort #f) ) ) )
-       (let ((toplevel (make-toplevel read-test 
-                                      check-result 
+       (let ((toplevel (make-toplevel read-test
+                                      check-result
                                       handle-exception )))
          ;; The goal is to call (toplevel) ever and ever but to ensure
          ;; that the continuation is correctly reset.
          (let loop ()
-           (tester-call/cc 
-            (lambda (k) 
+           (tester-call/cc
+            (lambda (k)
               (if (and tester-take-only-one-continuation resume)
                   'nothing
                   (set! resume k) )
@@ -308,7 +308,7 @@
            (loop) ) ) ) ) ) )
 
 ;;; Examples:
-;;; Suppose you have written an interpreter called `evaluate', then the 
+;;; Suppose you have written an interpreter called `evaluate', then the
 ;;; following will start a toplevel loop. Errors detected in evaluate
 ;;; are supposed to call the `wrong' function.
 ;;;(define (scheme)
@@ -318,7 +318,7 @@
 ;;;      (lambda () (print (evaluate (read)))) ) ) )
 ;;; The problem is that errors in the underlying system are not caught.
 ;;; Suppose at that time to have something to trap errors, say catch-error
-;;; as in Mac-Lisp (it returns the result in a pair or the string that names 
+;;; as in Mac-Lisp (it returns the result in a pair or the string that names
 ;;; the error if any), then you can write:
 ;;;(define (scheme)
 ;;;  (interpreter "?? " " == " #t
@@ -336,8 +336,8 @@
 ;;; an invocation of tester-error). [The reason lies with toplevel
 ;;; returning more than once in some concurrent interpreter I wrote].
 
-;;; If you have a file containing a test suite, say suite.tst, then you 
-;;; can try it with: 
+;;; If you have a file containing a test suite, say suite.tst, then you
+;;; can try it with:
 ;;;(define (test-scheme)
 ;;;  (suite-test "suite.tst"
 ;;;    "?? " "== " #t
@@ -369,7 +369,7 @@
            (set-equal? (cdr x) (remove-one (car x) y)) )
       (null? y) ) )
 
-;;; Compares if the expression fits the pattern. Two special patterns exist: 
+;;; Compares if the expression fits the pattern. Two special patterns exist:
 ;;;     ?-   which accepts anything
 ;;;     ??-  which accepts a (possibly empty) sequence of anything.
 ;;; Otherwise comparisons are performed with equal?.

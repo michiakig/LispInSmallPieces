@@ -71,7 +71,7 @@
        (eval-in-abbreviation-world
          (list 'quote foo) ) )
    34
-; create a variable in macro macro world 
+; create a variable in macro macro world
 (begin (eval-in-abbreviation-world
          (eval-in-abbreviation-world
            (set! bar 56)
@@ -84,7 +84,7 @@
 
 ;;; define-abbreviation
 (begin
-  (define-abbreviation (foo x) 
+  (define-abbreviation (foo x)
     (list 'list x x) )
   (foo 33) )
    (33 33)
@@ -179,7 +179,7 @@
 ;;; availability of eval
 (eval '(* 2 3))
    6
-; eval is at toplevel 
+; eval is at toplevel
 (let ((cons 3))
   ((eval 'cons) 4 5) )
    (4 . 5)
@@ -251,7 +251,7 @@
 ;     (list (expand '(hux (+ 5 6) (+ 7 8)))) )
 ;   (hux (+ 5 6) (+ 7 8))
 
-;;; Hygien and with-aliases 
+;;; Hygien and with-aliases
 ; on a predefined global variable
 (with-aliases ((x car))
   (eval-in-abbreviation-world
@@ -377,7 +377,7 @@
       (compose cons) )
   (with-aliases ((s set!) (results results) (compose compose))
     (let-abbreviation
-     ( ( (push e) `(,s ,results (,compose ,e ,results)) ) 
+     ( ( (push e) `(,s ,results (,compose ,e ,results)) )
        ( (done)   results ) )
      (let ((data '(1 (2 3 ((4)) . 5) (((6) 7) 8 . 9)))
            (foo  'wait) )
@@ -445,16 +445,16 @@
     (define-abbreviation (tick) c) )
   (tick) )
    0
-(let ((count 1)(c 2)) 
+(let ((count 1)(c 2))
   (tick) )
    ***
 
 ; a macro generating a macro within the scope of an alias
 (let ((x 11))
   (with-aliases ((xx x))
-    (let-abbreviation 
+    (let-abbreviation
        (( (mac11 call definition . body)
-          `(let-abbreviation 
+          `(let-abbreviation
                 ((,call ,definition))
                . ,body ) ))
        (let ((x 22)(xx 33))
@@ -468,7 +468,7 @@
           (q    (list-ref parms 3))
           (body (list-tail parms 5))
           (loop (gensym)) )
-      `(,+let ,loop () 
+      `(,+let ,loop ()
             (,+when ,p (,+begin (,+when (,+not ,q) . ,body)
                                 (,loop) )) ) ) ) )
    ---

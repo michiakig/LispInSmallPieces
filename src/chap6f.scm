@@ -31,7 +31,7 @@
     (and (pair? sr)
          (let scan ((names (car sr))
                     (j 1) )
-           (cond ((pair? names) 
+           (cond ((pair? names)
                   (if (eq? n (car names))
                       `(local ,i . ,j)
                       (scan (cdr names) (+ 1 j)) ) )
@@ -57,7 +57,7 @@
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; SR is the static representation of the runtime local environment.
 ;;; It is represented by a list of list of variables (the classical
-;;; rib cage). 
+;;; rib cage).
 
 (define (sr-extend* sr n*)
   (cons n* sr) )
@@ -69,7 +69,7 @@
 ;;; initially completely empty and can be extended by the user.
 ;;; It actually tolerates only 100 new global variables.
 
-;;; SG.CURRENT represents the `static' user-defined global environment. 
+;;; SG.CURRENT represents the `static' user-defined global environment.
 ;;; It is represented by the list of the symbols naming these global
 ;;; variables. Their values are held in the G.CURRENT vector.
 
@@ -79,7 +79,7 @@
 
 (define (sg.current-extend! n)
   (let ((level (length sg.current)))
-    (set! sg.current 
+    (set! sg.current
           (cons (cons n `(global . ,level)) sg.current) )
     level ) )
 
@@ -122,7 +122,7 @@
 (define desc.init '())
 
 (define (description-extend! name description)
-  (set! desc.init 
+  (set! desc.init
         (cons (cons name description) desc.init) )
   name )
 
@@ -131,9 +131,9 @@
 (define (get-description name)
   (let ((p (assq name desc.init)))
     (and (pair? p) (cdr p)) ) )
-        
+
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooNEW
-;;; Compilation 
+;;; Compilation
 
 ;;; All met quotations are gathered here since they will be handled at
 ;;; toplevel at the beginning of the generated file.
@@ -159,7 +159,7 @@
     (for-each (lambda (d)
                 (let ((name (car d)))
                   (format out "
-SCM SCM_~A = (SCM) &(SCM_undef_object) ;" 
+SCM SCM_~A = (SCM) &(SCM_undef_object) ;"
                           (convert-string-uppercase
                            (symbol->string name) ) ) ) )
               sg.current ) )
@@ -168,7 +168,7 @@ SCM SCM_~A = (SCM) &(SCM_undef_object) ;"
 (define (generate-local-temporaries out mvars)
   (when (pair? mvars)
     (format out "~%~A" (local-temporaries mvars)) ) )
-    
+
 (define (generate-closure-bodies out closures)
   (when (pair? closures)
     (format out "
@@ -184,13 +184,13 @@ SCM SCM_~A = (SCM) &(SCM_undef_object) ;"
   (let ((mcode (car m))
         (mvars (cdr m)) )
     (format out "
-static SCM 
+static SCM
 expression () { " )
   (generate-local-temporaries out mvars)
   (format out "
 ~A;
 }
-" mcode ) ) )    
+" mcode ) ) )
 
 (define (generate-main out)
   ;; generate header
@@ -238,9 +238,9 @@ exit(0);
         ((null? q*))
       (let* ((d (car q*))
              (value (car d))
-             (names (cdr d)) 
+             (names (cdr d))
              (reference (generate-quotation-value out value i)) )
-        (for-each (lambda (name) 
+        (for-each (lambda (name)
                     (format out  "
 static SCM ~A = (SCM) &(~A) ;" name reference ) )
                   names ) ) )
@@ -259,13 +259,13 @@ static SCM ~A = (SCM) &(~A) ;" name reference ) )
         (static-wrong "Lost quotation" value) ) ) )
 
 (define (generate-quotation-value out value index)
-  (cond ((null? value) 
+  (cond ((null? value)
          (let ((reference "SCM_empty_object"))
            (format out "
 #define thing~A (~A)" index reference )
            reference ) )
         ((boolean? value)
-         (let ((reference 
+         (let ((reference
                 (format #f "SCM_~A_object" (if value "true" "false")) ))
            (format out "
 #define thing~A (~A)" index reference ) ) )
@@ -274,8 +274,8 @@ static SCM ~A = (SCM) &(~A) ;" name reference ) )
          (let ((reference (format #f "thing~A" index)))
            (format out "
 static struct SCM_string ~A =
-  {{SCM_STRING_TAG, (SCM) NULL}, SIZEOF(\"~A\")-1, 
-   \"~A\" } ;" 
+  {{SCM_STRING_TAG, (SCM) NULL}, SIZEOF(\"~A\")-1,
+   \"~A\" } ;"
                    reference value value )
            reference ) )
 
@@ -294,7 +294,7 @@ static struct SCM_pair ~A =
                (reference (format #f "thing~A" index)) )
            (format out "
 static struct SCM_symbol ~A =
-  {{SCM_SYMBOL_TAG, (SCM) NULL}, (SCM) &(thing~A)} ;" 
+  {{SCM_SYMBOL_TAG, (SCM) NULL}, (SCM) &(thing~A)} ;"
                    reference string-index )
            reference ) )
 
@@ -361,7 +361,7 @@ static struct SCM_fixnum ~A =
   (cons (format #f "SCM_~A" (IdScheme->IdC name))
         '() ) )
 
-(define Scheme->C-names-mapping '())  
+(define Scheme->C-names-mapping '())
 
 (define (IdScheme->IdC name)
   (let ((v (assq name Scheme->C-names-mapping)))
@@ -371,7 +371,7 @@ static struct SCM_fixnum ~A =
             (if (Cname-clash? Cname)
                 (retry (compute-another-Cname str))
                 (begin (set! Scheme->C-names-mapping
-                             (cons (cons name Cname) 
+                             (cons (cons name Cname)
                                    Scheme->C-names-mapping ) )
                        Cname ) ) ) ) ) ) )
 
@@ -385,7 +385,7 @@ static struct SCM_fixnum ~A =
             (if (Cname-clash? Cname)
                 (retry (compute-another-Cname str))
                 (begin (set! Scheme->C-names-mapping
-                             (cons (cons name Cname) 
+                             (cons (cons name Cname)
                                    Scheme->C-names-mapping ) )
                        Cname ) ) ) ) ) ) )
 
@@ -398,7 +398,7 @@ static struct SCM_fixnum ~A =
          (or (string=? Cname (cdr (car mapping)))
              (check (cdr mapping)) ) ) ) )
 
-(define compute-another-Cname 
+(define compute-another-Cname
   (let ((counter 1))
     (lambda (str)
       (set! counter (+ 1 counter))
@@ -410,7 +410,7 @@ static struct SCM_fixnum ~A =
     (do ((i 0 (+ 1 i)))
         ((= i n)
          (list->string (reverse result)) )
-      (set! result 
+      (set! result
             (append
              (let ((char (string-ref str i)))
                (case char
@@ -437,7 +437,7 @@ SCM_The_Environment->frame.value[~A])" (- j 1))
 
 (define (DEEP-ARGUMENT-REF i j)
   (cons (format #f "( /* DEEP-ARGUMENT-REF */
-SCM_The_Environment~A->frame.value[~A])" 
+SCM_The_Environment~A->frame.value[~A])"
                 (let next ((i i))
                   (if (= i 0)
                       ""
@@ -462,7 +462,7 @@ SCM_The_Environment->frame.value[~A]=~A)"
         (mvars (cdr m)) )
     (cons (format #f "( /* DEEP-ARGUMENT-SET! */
 ~A=~A,
-SCM_The_Environment~A->frame.value[~A]=~A)" 
+SCM_The_Environment~A->frame.value[~A]=~A)"
                   v mcode
                   (let next ((i i))
                     (if (= i 0)
@@ -501,7 +501,7 @@ SCM_The_Environment~A->frame.value[~A]=~A)"
          (mvars (cdr m)) )
     (cons (format #f "( /* GLOBAL-SET! */
 ~A=~A,
-~A=~A)" 
+~A=~A)"
                   v mcode
                   gcode v )
           (cons v (append gvars mvars)) ) ) )
@@ -528,7 +528,7 @@ SCM_The_Environment~A->frame.value[~A]=~A)"
     (cons (format #f "( /* IF */
 (~A != SCM_false)
 ? ~A
-: ~A)" 
+: ~A)"
                   m1code m2code m3code )
           (append m1vars m2vars m3vars) ) ) )
 
@@ -553,9 +553,9 @@ SCM_The_Environment~A->frame.value[~A]=~A)"
 ~A=~A,
 ~A->frame.next=SCM_The_Environment,
 SCM_The_Environment=~A,
-~A)" 
-                  r m*code 
-                  r 
+~A)"
+                  r m*code
+                  r
                   r
                   m+code )
           (cons r (append m*vars m+vars)) ) ) )
@@ -575,12 +575,12 @@ SCM_The_Environment=~A,
 SCM_The_Environment=~A,
 ~A=~A,
 SCM_The_Environment=~A,
-~A)" 
+~A)"
                   s
-                  r m*code 
-                  r 
+                  r m*code
                   r
-                  v m+code 
+                  r
+                  v m+code
                   s
                   v )
           (cons r (cons s (cons v (append m*vars m+vars)))) ) ) )
@@ -596,9 +596,9 @@ SCM_The_Environment=~A,
 ~A->frame.next=SCM_The_Environment,
 SCM_The_Environment=~A,
 SCM_listify(~A,~A),
-~A)" 
-                  r m*code 
-                  r 
+~A)"
+                  r m*code
+                  r
                   r
                   r arity
                   m+code )
@@ -620,13 +620,13 @@ SCM_listify(~A,~A),
 SCM_The_Environment=~A,
 ~A=~A,
 SCM_The_Environment=~A,
-~A)" 
+~A)"
                   s
-                  r m*code 
-                  r 
+                  r m*code
+                  r
                   r arity
                   r
-                  v m+code 
+                  v m+code
                   s
                   v )
           (cons r (cons s (cons v (append m*vars m+vars)))) ) ) )
@@ -685,9 +685,9 @@ SCM_The_Environment=~A,
 
 (define (local-temporaries vars)
   (if (pair? vars)
-      (format #f "SCM ~A~A ;" 
+      (format #f "SCM ~A~A ;"
               (car vars)
-              (apply string-append 
+              (apply string-append
                      (map (lambda (var) (format #f ", ~A" var))
                           (cdr vars) ) ) )
       "" ) )
@@ -697,7 +697,7 @@ SCM_The_Environment=~A,
          (fcode (car f))
          (fvars (cdr f)) )
     (cons (format #f "(SCM_make_function(~A,SCM_The_Environment))"
-                  fcode ) 
+                  fcode )
           fvars ) ) )
 
 (define (adjoin-closure arity m+ nary?)
@@ -772,7 +772,7 @@ SCM_The_Environment=~A,
                   r
                   f mcode
                   v* m*code
-                  v f v* 
+                  v f v*
                   r
                   v )
           (cons f (cons v* (cons r (cons v (append mvars m*vars))))) ) ) )
@@ -847,7 +847,7 @@ SCM_The_Environment=~A,
         (m3 (meaning e3 sr tr)) )
     (ALTERNATIVE m1 m2 m3) ) )
 
-(define (meaning-assignment n e sr tr) 
+(define (meaning-assignment n e sr tr)
   (let ((m (meaning e sr #f))
         (kind (compute-kind sr n)) )
     (if kind
@@ -872,7 +872,7 @@ SCM_The_Environment=~A,
           (meaning*-single-sequence (car e+) sr tr) )
       (static-wrong "Illegal syntax: (begin)") ) )
 
-(define (meaning*-single-sequence e sr tr) 
+(define (meaning*-single-sequence e sr tr)
   (meaning e sr tr) )
 
 (define (meaning*-multiple-sequence e e+ sr tr)
@@ -886,7 +886,7 @@ SCM_The_Environment=~A,
     (cond
      ((pair? n*) (parse (cdr n*) (cons (car n*) regular)))
      ((null? n*) (meaning-fix-abstraction nn* e+ sr tr))
-     (else       (meaning-dotted-abstraction 
+     (else       (meaning-dotted-abstraction
                   (reverse regular) n* e+ sr tr )) ) ) )
 
 (define (meaning-fix-abstraction n* e+ sr tr)
@@ -927,16 +927,16 @@ SCM_The_Environment=~A,
                 (e* ee*)
                 (regular '()) )
       (cond
-       ((pair? n*) 
+       ((pair? n*)
         (if (pair? e*)
             (parse (cdr n*) (cdr e*) (cons (car n*) regular))
             (static-wrong "Too less arguments" e ee*) ) )
        ((null? n*)
         (if (null? e*)
-            (meaning-fix-closed-application 
+            (meaning-fix-closed-application
              nn* (cddr e) ee* sr tr )
             (static-wrong "Too much arguments" e ee*) ) )
-       (else (meaning-dotted-closed-application 
+       (else (meaning-dotted-closed-application
               (reverse regular) n* (cddr e) ee* sr tr )) ) ) ) )
 
 (define (meaning-fix-closed-application n* body e* sr tr)
@@ -944,7 +944,7 @@ SCM_The_Environment=~A,
          (m* (meaning* e* sr size #f))  ; restore environment!
          (sr2 (sr-extend* sr n*))
          (m+ (meaning-sequence body sr2 tr)) )
-    (if tr (TR-FIX-LET m* m+) 
+    (if tr (TR-FIX-LET m* m+)
         (FIX-LET m* m+) ) ) )
 
 (define (meaning-dotted-closed-application n* n body e* sr tr)
@@ -954,7 +954,7 @@ SCM_The_Environment=~A,
          (m* (meaning* e* sr size #f))  ; restore environment!
          (sr2 (sr-extend* sr (append n* (list n))))
          (m+ (meaning-sequence body sr2 tr)) )
-    (if tr (TR-NARY-LET m* m+ arity size-2) 
+    (if tr (TR-NARY-LET m* m+ arity size-2)
         (NARY-LET m* m+ arity size-2) ) ) )
 
 ;;; Handles a call to a predefined primitive. The arity is already checked.
@@ -968,14 +968,14 @@ SCM_The_Environment=~A,
          (size (length e*)) )
     (case size
       ((0) (CALL0 address))
-      ((1) 
+      ((1)
        (let ((m1 (meaning (car e*) sr tr)))
          (CALL1 address m1) ) )
-      ((2) 
+      ((2)
        (let ((m1 (meaning (car e*) sr #f))
              (m2 (meaning (cadr e*) sr tr)) )
          (CALL2 address m1 m2) ) )
-      ((3) 
+      ((3)
        (let ((m1 (meaning (car e*) sr #f))
              (m2 (meaning (cadr e*) sr #f))
              (m3 (meaning (caddr e*) sr tr)) )
@@ -988,7 +988,7 @@ SCM_The_Environment=~A,
 (define (meaning-regular-application e e* sr tr)
   (let* ((m (meaning e sr #f))
          (args-number (length e*))
-         (size (+ 1 args-number 1)) 
+         (size (+ 1 args-number 1))
          (m* (meaning* e* sr size #t)) )
     (if tr (TR-REGULAR-CALL m m*) (REGULAR-CALL m m*)) ) )
 
@@ -1024,25 +1024,25 @@ SCM_The_Environment=~A,
      (begin
        (description-extend! 'name `(function ,value))
        (definitial name 'void) ) ) ) )
-  
+
 (define-syntax defprimitive1
   (syntax-rules ()
     ((defprimitive1 name value)
      (begin
        (description-extend! 'name `(function ,value a))
        (definitial name 'void) ) ) ) )
-  
+
 (define-syntax defprimitive2
   (syntax-rules ()
     ((defprimitive2 name value)
-     (begin 
+     (begin
        (description-extend! 'name `(function ,value a b))
        (definitial name 'void) ) ) ) )
 
 (define-syntax defprimitive3
   (syntax-rules ()
     ((defprimitive3 name value)
-     (begin 
+     (begin
        (description-extend! 'name `(function ,value a b c))
        (definitial name 'void) ) ) ) )
 
@@ -1120,17 +1120,17 @@ SCM_The_Environment=~A,
 (defprimitive1 call/cc (unary-call "SCM_Call_CC(" ")"))
 (definitial apply tobecodedspecially)
 
-;;; Debug 
-(defprimitive0 show-the-environment 
+;;; Debug
+(defprimitive0 show-the-environment
   (zeroadic-call "SCM_Basic_Write(SCM_The_Environment)") )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooNEW
 ;;; Testing
 
 (define (scheme)
-  (interpreter 
-   "Expression to compile? "  
-   "Compilation " 
+  (interpreter
+   "Expression to compile? "
+   "Compilation "
    #t
    (lambda (read print error)
      (set! wrong error)
@@ -1169,12 +1169,12 @@ SCM_The_Environment=~A,
                (display " OK") (newline) #t )
               ((expected-error unexpected-error incorrect-result)
                (set! *the-result* v)    ; DEBUG
-               (error 'chap6f "value expected: ~A." expected) 
+               (error 'chap6f "value expected: ~A." expected)
                #f )
               (else (error 'chap6f "No such status ~A." status)
                     #f ) ) )
           (lambda (read check error)
-            (set! wrong 
+            (set! wrong
                   (lambda args
                     (format #t "~%Fatal error, test aborted!~%")
                     (apply error args) ) )
@@ -1211,9 +1211,9 @@ SCM_The_Environment=~A,
                     (if (eq? expected-result '---)
                         ;; Don't read /tmp/chap6f.result if needless
                         (check '---)
-                        (check (call-with-input-file 
+                        (check (call-with-input-file
                                    "/tmp/chap6f.result" native-read )) )
-                    (check '***) ) ) ) ) ) ) ) ) ) ) 
+                    (check '***) ) ) ) ) ) ) ) ) ) )
 
 (define *compile-format*
   "cd /tmp ; gcc -gg -I${HOME}/DEA/book/src/c chap6f.c ${HOME}/DEA/book/o/${HOSTTYPE}/rt.o" )

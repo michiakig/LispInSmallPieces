@@ -61,7 +61,7 @@
 
 (define-class Regular-Application Application (function arguments))
 
-(define-class Predefined-Application Application 
+(define-class Predefined-Application Application
   (variable arguments) )
 
 (define-class Fix-Let Program (variables arguments body))
@@ -107,19 +107,19 @@
       (make-Constant 42) ) )
 
 (define (objectify-application ff e* r)
-  (let ((ee* (convert2arguments (map (lambda (e) (objectify e r)) 
+  (let ((ee* (convert2arguments (map (lambda (e) (objectify e r))
                                      e* ))) )
-    (cond ((Function? ff)  
+    (cond ((Function? ff)
            (process-closed-application ff ee*) )
-          ((Predefined-Reference? ff) 
+          ((Predefined-Reference? ff)
            (let* ((fvf (Predefined-Reference-variable ff))
                   (desc (Predefined-Variable-description fvf)) )
              (if (Functional-Description? desc)
                  (if ((Functional-Description-comparator desc)
-                      (length e*) 
+                      (length e*)
                       (Functional-Description-arity desc) )
                      (make-Predefined-Application fvf ee*)
-                     (objectify-error 
+                     (objectify-error
                       "Incorrect predefined arity" ff e* ) )
                  (make-Regular-Application ff ee*) ) ) )
           (else (make-Regular-Application ff ee*)) ) ) )
@@ -128,7 +128,7 @@
   (let ((v* (Function-variables f))
         (b  (Function-body f)) )
     (if (and (pair? v*) (Local-Variable-dotted? (car (last-pair v*))))
-        (process-nary-closed-application f e*) 
+        (process-nary-closed-application f e*)
         (if (= (number-of e*) (length (Function-variables f)))
             (make-Fix-Let (Function-variables f) e* (Function-body f))
             (objectify-error "Incorrect regular arity" f e*) ) ) ) )
@@ -136,7 +136,7 @@
 (define (process-nary-closed-application f e*)
    (let* ((v* (Function-variables f))
           (b  (Function-body f))
-          (o (make-Fix-Let 
+          (o (make-Fix-Let
               v*
               (let gather ((e* e*) (v* v*))
                 (if (Local-Variable-dotted? (car v*))
@@ -145,23 +145,23 @@
                        (if (Arguments? e*)
                            (make-Predefined-Application
                             (find-variable? 'cons g.predef)
-                            (make-Arguments 
-                             (Arguments-first e*) 
-                             (make-Arguments 
-                              (pack (Arguments-others e*)) 
+                            (make-Arguments
+                             (Arguments-first e*)
+                             (make-Arguments
+                              (pack (Arguments-others e*))
                               (make-No-Argument) ) ) )
                            (make-Constant '()) ) )
                      (make-No-Argument) )
                     (if (Arguments? e*)
-                        (make-Arguments (Arguments-first e*) 
-                                        (gather (Arguments-others e*) 
+                        (make-Arguments (Arguments-first e*)
+                                        (gather (Arguments-others e*)
                                                 (cdr v*) ) )
-                        (objectify-error 
+                        (objectify-error
                          "Incorrect dotted arity" f e* ) ) ) )
               b )) )
      (set-Local-Variable-dotted?! (car (last-pair v*)) #f)
      o ) )
- 
+
 (define (convert2arguments e*)
   (if (pair? e*)
       (make-Arguments (car e*) (convert2arguments (cdr e*)))
@@ -182,18 +182,18 @@
   (let ((ov (objectify variable r))
         (of (objectify e r)) )
     (cond ((Local-Reference? ov)
-           (set-Local-Variable-mutable?! 
+           (set-Local-Variable-mutable?!
             (Local-Reference-variable ov) #t )
            (make-Local-Assignment ov of) )
           ((Global-Reference? ov)
-           (make-Global-Assignment (Global-Reference-variable ov) 
+           (make-Global-Assignment (Global-Reference-variable ov)
                                    of ) )
-          (else (objectify-error 
+          (else (objectify-error
                  "Illegal mutated reference" variable )) ) ) )
 
 ;;; It is important that the body is objectified first, so mutability
 ;;; of local variables is known and they can be appropriately handled
-;;; in objectify-variables-list. 
+;;; in objectify-variables-list.
 ;;; All variables are considered immutable at the beginning.
 
 (define (objectify-function names body r)
@@ -243,20 +243,20 @@
 
 (define (insert-global! variable r)
   (let ((r (find-global-environment r)))
-    (set-Environment-next! 
+    (set-Environment-next!
      r (make-Full-Environment (Environment-next r) variable) ) ) )
 
 (define (find-global-environment r)
-  (if (Full-Environment? r) 
+  (if (Full-Environment? r)
       (find-global-environment (Full-Environment-next r))
       r ) )
 
 (define (find-variable? name r)
   (if (Full-Environment? r)
       (let ((var (Full-Environment-variable r)))
-        (if (eq? name 
+        (if (eq? name
                  (cond ((Variable? var) (Variable-name var))
-                       ((Magic-Keyword? var) 
+                       ((Magic-Keyword? var)
                         (Magic-Keyword-name var) ) ) )
             var
             (find-variable? name (Full-Environment-next r)) ) )
@@ -267,19 +267,19 @@
 ;;;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Creating the environment defining special form walkers.
 
-(define special-if 
+(define special-if
   (make-Magic-Keyword
    'if (lambda (e r)
-         (objectify-alternative (cadr e) (caddr e) (cadddr e) 
+         (objectify-alternative (cadr e) (caddr e) (cadddr e)
                                 r ) ) ) )
 
 (define special-begin
   (make-Magic-Keyword
-   'begin (lambda (e r) 
+   'begin (lambda (e r)
             (objectify-sequence (cdr e) r) ) ) )
 
 (define special-quote
-  (make-Magic-Keyword 
+  (make-Magic-Keyword
    'quote (lambda (e r)
             (objectify-quotation (cadr e) r) ) ) )
 
@@ -298,9 +298,9 @@
    'let (lambda (e r)
           (if (symbol? (cadr e))
               ;; (let name ((var val)...) form...)   Q&D
-              (objectify 
+              (objectify
                `((,special-let ((,(cadr e) #f))
-                   (,special-set! ,(cadr e) 
+                   (,special-set! ,(cadr e)
                                   (,special-lambda ,(map car (caddr e))
                                                    . ,(cdddr e) ) )
                   ,(cadr e) )
@@ -314,7 +314,7 @@
                (map cadr (cadr e))
                r ) ) ) ) )
 
-(define *special-form-keywords* 
+(define *special-form-keywords*
   (list special-quote
         special-if
         special-begin
@@ -357,7 +357,7 @@
      (define (walk-pair e)
        (if (pair? (car e))
            (if (eq? (car (car e)) 'unquote-splicing)
-               (list (make-Predefined-Reference 
+               (list (make-Predefined-Reference
                       (find-variable? 'append g.predef) )
                      (cadr (car e))
                      (walk (cdr e)) )
@@ -371,7 +371,7 @@
                  (walk (cdr e)) ) ) )
      (objectify (walk (cadr e)) r) ) ) )
 
-(set! *special-form-keywords* 
+(set! *special-form-keywords*
       (append (list special-when
                     special-quasiquote )
               *special-form-keywords* ) )
@@ -381,12 +381,12 @@
 ;;; To this environment, one must add special keywords, predefined macros etc.
 ;;; but add them only to g since they are useless to sg.
 
-(define-class Evaluator Object 
+(define-class Evaluator Object
   ( mother
     Preparation-Environment
     RunTime-Environment
     eval
-    expand 
+    expand
     ) )
 
 ;;; A fake copy for the book less the debug information
@@ -396,7 +396,7 @@
         (g     g.predef)
         (sg    sg.predef) )
     (define (expand e)
-      (let ((prg (objectify 
+      (let ((prg (objectify
                   e (Evaluator-Preparation-Environment level) )))
         (enrich-with-new-global-variables! level)
         prg ) )
@@ -408,15 +408,15 @@
     ;; Enrich environment with {\tt eval}
     (set! g (r-extend* g *special-form-keywords*))
     (set! g (r-extend* g (make-macro-environment level)))
-    (let ((eval-var (make-Predefined-Variable 
+    (let ((eval-var (make-Predefined-Variable
                      'eval (make-Functional-Description = 1 "") ))
           (eval-fn (make-RunTime-Primitive eval = 1)) )
       (set! g (r-extend g eval-var))
       (set! sg (sr-extend sg eval-var eval-fn)) )
     ;; Mark the beginning of the global environment
-    (set-Evaluator-Preparation-Environment! 
+    (set-Evaluator-Preparation-Environment!
      level (mark-global-preparation-environment g) )
-    (set-Evaluator-RunTime-Environment! 
+    (set-Evaluator-RunTime-Environment!
      level (mark-global-runtime-environment sg) )
     level ) )
 
@@ -437,15 +437,15 @@
     ;; Enrich environment with {\tt eval}
     (set! g (r-extend* g *special-form-keywords*))
     (set! g (r-extend* g (make-macro-environment level)))
-    (let ((eval-var (make-Predefined-Variable 
+    (let ((eval-var (make-Predefined-Variable
                      'eval (make-Functional-Description = 1 "") ))
           (eval-fn (make-RunTime-Primitive eval = 1)) )
       (set! g (r-extend g eval-var))
       (set! sg (sr-extend sg eval-var eval-fn)) )
     ;; Mark the beginning of the global environment
-    (set-Evaluator-Preparation-Environment! 
+    (set-Evaluator-Preparation-Environment!
      level (mark-global-preparation-environment g) )
-    (set-Evaluator-RunTime-Environment! 
+    (set-Evaluator-RunTime-Environment!
      level (mark-global-runtime-environment sg) )
     level ) )
 
@@ -469,7 +469,7 @@
   (let ((macros (let scan ((r (Evaluator-Preparation-Environment level)))
                   (if (Full-Environment? r)
                       (if (Magic-Keyword? (Full-Environment-variable r))
-                          (cons (magic-Keyword-name 
+                          (cons (magic-Keyword-name
                                  (Full-Environment-variable r) )
                                 (scan (Environment-next r)) )
                           (scan (Environment-next r)) )
@@ -480,12 +480,12 @@
 
 ;;;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Creating the environment of predefined macros. They will be seen
-;;; from every level of evaluators. 
+;;; from every level of evaluators.
 
 (define (special-eval-in-abbreviation-world level)
   (lambda (e r)
     (let ((body (cdr e)))
-      (objectify ((Evaluator-eval (force level)) 
+      (objectify ((Evaluator-eval (force level))
                   `(,special-begin . ,body) )
                  r ) ) ) )
 
@@ -549,12 +549,12 @@
                    (word     (cadr (car aliases)))
                    (var      (make-Local-Variable variable #f #f)) )
               (bind (cdr aliases)
-                    (r-extend r var) 
+                    (r-extend r var)
                     (sr-extend sr var (objectify word current-r)) ) )
             (let ((result 'wait))
               (set-Evaluator-Preparation-Environment! level r)
               (set-Evaluator-RunTime-Environment! level sr)
-              (set! result (objectify `(,special-begin . ,body) 
+              (set! result (objectify `(,special-begin . ,body)
                                       current-r ))
               (set-Evaluator-Preparation-Environment! level oldr)
               (set-Evaluator-RunTime-Environment! level oldsr)
@@ -565,13 +565,13 @@
 
 (define (make-macro-environment current-level)
   (let ((metalevel (delay (create-evaluator current-level))))
-    (list (make-Magic-Keyword 'eval-in-abbreviation-world 
+    (list (make-Magic-Keyword 'eval-in-abbreviation-world
            (special-eval-in-abbreviation-world metalevel) )
-          (make-Magic-Keyword 'define-abbreviation 
+          (make-Magic-Keyword 'define-abbreviation
            (special-define-abbreviation metalevel))
-          (make-Magic-Keyword 'let-abbreviation    
+          (make-Magic-Keyword 'let-abbreviation
            (special-let-abbreviation metalevel))
-          (make-Magic-Keyword 'with-aliases   
+          (make-Magic-Keyword 'with-aliases
            (special-with-aliases metalevel) ) ) ) )
 
 ;;; Additional global variables

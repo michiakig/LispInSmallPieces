@@ -7,15 +7,15 @@
 
 (define eval-hook eval)
 
-(define expand-install-hook 
-  (lambda (expand) 
+(define expand-install-hook
+  (lambda (expand)
     (error-hook 'expand-install-hook "Not yet implemented" expand) ) )
 
 ;;; In Chez Scheme, the following reports:
 ;;;           "Error in <who>: <why> <what>."
 ;;; "who" is a symbol, "why" is a string, and "what" is an arbitrary object.
 
-(define error-hook 
+(define error-hook
   (lambda (who why what)
     (error who " ~A: ~A.~%" why what) ) )
 

@@ -41,7 +41,7 @@
 (define book-interpreter-support 'bigloo)
 
 ;;; Include an eval so exported global variables can also appear as symbols.
-(eval ''hack) 
+(eval ''hack)
 
 ;;; Measure times.
 
@@ -103,12 +103,12 @@
     (cond ((null? o*) #t)
           ((atom? o*) (display " . " stream)
                       (display o* stream) )
-          ((pair? o*) 
+          ((pair? o*)
            (print (car o*) len (+ dep 1))
            (if (pair? (cdr o*)) (display " " stream))
            (print-list (cdr o*) (+ len 1) dep) ) ) )
   (define (print o len dep)
-    (cond ((object? o) 
+    (cond ((object? o)
            (display "#<" stream)
            (display (Class-name (object->class o)) stream)
            (display ">" stream) )

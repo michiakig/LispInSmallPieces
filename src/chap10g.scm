@@ -11,7 +11,7 @@
 
 (define-class Renamed-Local-Variable Variable (index))
 
-(define-class With-Temp-Function-Definition Function-Definition 
+(define-class With-Temp-Function-Definition Function-Definition
   (temporaries) )
 
 ;;;  Some additional code walkers before compiling to C.
@@ -22,7 +22,7 @@
 (define (closurize-main! o)
   (let ((index (length (Flattened-Program-definitions o))))
     (set-Flattened-Program-definitions!
-     o (cons (make-Function-Definition 
+     o (cons (make-Function-Definition
               '() (Flattened-Program-form o) '() index )
              (Flattened-Program-definitions o) ) )
     (set-Flattened-Program-form!
@@ -74,24 +74,24 @@
 (define-method (collect-temporaries! (o Fix-Let) flatfun r)
   (set-Fix-Let-arguments!
    o (collect-temporaries! (Fix-Let-arguments o) flatfun r) )
-  (let* ((newvars (map new-renamed-variable                        
+  (let* ((newvars (map new-renamed-variable
                        (Fix-Let-variables o) ))
          (newr (append (map cons (Fix-Let-variables o) newvars) r)) )
     (adjoin-temporary-variables! flatfun newvars)
     (set-Fix-Let-variables! o newvars)
-    (set-Fix-Let-body! 
+    (set-Fix-Let-body!
      o (collect-temporaries! (Fix-Let-body o) flatfun newr) )
     o ) )
 
 (define (adjoin-temporary-variables! flatfun newvars)
-  (let adjoin ((temps (With-Temp-Function-Definition-temporaries 
+  (let adjoin ((temps (With-Temp-Function-Definition-temporaries
                        flatfun ))
                (vars newvars) )
     (if (pair? vars)
         (if (memq (car vars) temps)
             (adjoin temps (cdr vars))
             (adjoin (cons (car vars) temps) (cdr vars)) )
-        (set-With-Temp-Function-Definition-temporaries! 
+        (set-With-Temp-Function-Definition-temporaries!
          flatfun temps ) ) ) )
 
 (define renaming-variables-counter 0)

@@ -10,7 +10,7 @@
 ;;;(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 ;;; Programs of chapter 9 on macros.
 
-;;; Endogeneous macroexpander naive (with only define-abbreviation) 
+;;; Endogeneous macroexpander naive (with only define-abbreviation)
 
 (define *macros* '())
 
@@ -27,11 +27,11 @@
                  (name      (car (cadr def)))
                  (variables (cdr (cadr def)))
                  (body      (cddr def)) )
-            (install-macro! name (macro-eval 
+            (install-macro! name (macro-eval
                                   `(lambda ,variables . ,body) ))
             (naive-endogeneous-macroexpander (cdr exps)) )
           (let ((exp (expand-expression (car exps) *macros*)))
-            (cons exp (naive-endogeneous-macroexpander 
+            (cons exp (naive-endogeneous-macroexpander
                        (cdr exps) )) ) )
       '() ) )
 
@@ -65,7 +65,7 @@
                  (name      (car (cadr def)))
                  (variables (cdr (cadr def)))
                  (body      (cddr def)) )
-            (install-macro! 
+            (install-macro!
              name (macro-eval `(lambda ,variables . ,body)) )
             (simultaneous-eval-macroexpander (cdr exps)) )
           (let ((e (expand-expression (car exps) *macros*)))
@@ -84,11 +84,11 @@
   (let* ((numbers (iota 0 n))
          (variables (map (lambda (i) (gensym)) numbers)) )
     `(case size
-       ,@(map (lambda (i) 
+       ,@(map (lambda (i)
                 (let ((vars (list-tail variables (- n i))))
                   `((,i) (lambda ,vars (vector cn . ,vars))) ) )
               numbers )
-       (else #f) ) ) )              
+       (else #f) ) ) )
 
 (define-abbreviation (ifn condition consequent . alternant)
   (ifn (memq condition '(#t #f))

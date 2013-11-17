@@ -26,7 +26,7 @@
   (lambda ()
     (let* ((v* (m*))
            (v (m)) )
-      (set-activation-frame-argument! 
+      (set-activation-frame-argument!
        v* arity (cons v (activation-frame-argument v* arity)) )
       v* ) ) )
 

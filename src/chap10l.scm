@@ -27,7 +27,7 @@
 
 (define (symbolify . names)
   (string->symbol
-   (apply string-append 
+   (apply string-append
           (map (lambda (n)
                  (cond ((symbol? n) (symbol->string n))
                        ((string? n) n)
@@ -128,7 +128,7 @@
   `(let ,(map (lambda (qv) `(,(variable->Sexp qv)
                              ',(Quotation-Variable-value qv) ) )
               (reverse (Flattened-Program-quotations e)) )
-     (let ,(map (lambda (def) 
+     (let ,(map (lambda (def)
                   `(,(symbolify 'function (Function-Definition-index def))
                     ,(->Sexp def) ) )
                 (Flattened-Program-definitions e) )

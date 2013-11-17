@@ -21,9 +21,9 @@
  *  30        : conversions
  *  40        : float arithmetic
  *  50        : arithmetic for fixnums
- *  60        : list 
- *  70        : output 
- *  80        : char 
+ *  60        : list
+ *  70        : output
+ *  80        : char
  *  90        : string
  * 100        : allocation error.
  * 200        : invokers
@@ -33,7 +33,7 @@
 /***********************************************************************
  * A simple stop and copy GC.
  * The space is made of the low one and the high one which are used
- * alternatively. Allocations are performed in the current space which 
+ * alternatively. Allocations are performed in the current space which
  * initially is the low one.
  * CAUTION: this code supposes the two spaces to be a contiguous array
  *          of bytes without holes. FUTURE.
@@ -45,14 +45,14 @@
  *         sons that are not yet in the new space.
  * zone_limit is the end of the current space.
  * zone_middle is the border between the two spaces.
- * zone_static_end refers to the lower space and 
+ * zone_static_end refers to the lower space and
  *         anything under is considered static and cannot be moved.
  * low2high specifies the way objects are copied. By the way, it also
- * 	   indicates if LOW2HIGH that the current space is the low one.	
+ * 	   indicates if LOW2HIGH that the current space is the low one.
  * gc_state forces gc_neededp to answer `yes'
  * SCM_gc_number counts the number of gc
- * max_used_space is the maximal space used.	
- * SCM_roots contains the things that must be preserved by the GC. 
+ * max_used_space is the maximal space used.
+ * SCM_roots contains the things that must be preserved by the GC.
  *           Caution: It is a real object of type ROOT.			*/
 
 static SIZE_T zones_number = 0 ;
@@ -69,10 +69,10 @@ static SIZE_T SCM_gc_number = 0 ;
 static SIZE_T max_used_space = 0 ;
 SCM SCM_roots ;
 
-/* Return a zone or fail. The size is given with respect to the 
+/* Return a zone or fail. The size is given with respect to the
  * SCM_ZONE_SIZE unit. It is only possible to extend the lower space.
- * To maintain the equality of the two spaces, two zones are allocated.	
- * This routine only updates the boundaries of the total space, it does 
+ * To maintain the equality of the two spaces, two zones are allocated.
+ * This routine only updates the boundaries of the total space, it does
  * not update zone_limit nor zone_middle. 				*/
 static void *allocate_zone (SIZE_T factor)
 { char *new_zone ;
@@ -118,7 +118,7 @@ static void initialize_allocator()
 }
 
 /* This function is called after static initializations are finished.
- * It sets the static space limit, then resets the two spaces to 
+ * It sets the static space limit, then resets the two spaces to
  * a similar size.							*/
 void staticize_allocator()
 { SIZE_T delta ;
@@ -157,14 +157,14 @@ static SIZE_T SCM_size (SCM o)
 { switch (SCM_tag_of(o)) {
  case SCM_PAIR_TAG:     return SIZEOF(struct SCM_pair) ;
  case SCM_SYMBOL_TAG:   return SIZEOF(struct SCM_symbol) ;
- case SCM_EMPTY_TAG: 
- case SCM_UNDETERMINED_TAG: 
+ case SCM_EMPTY_TAG:
+ case SCM_UNDETERMINED_TAG:
  case SCM_FALSE_TAG:
  case SCM_EOF_TAG:
- case SCM_TRUE_TAG:     return SIZEOF(struct SCM_immediate_object) ; 
+ case SCM_TRUE_TAG:     return SIZEOF(struct SCM_immediate_object) ;
  case SCM_CLOSURE_TAG: {
    SIZE_T length = (o->closure).size ;
-   return ( SIZEOF(struct SCM_closure) 
+   return ( SIZEOF(struct SCM_closure)
            + ( SIZEOF(SCM) * ((length>0)?(length-1):0) ) ) ;
  } ;
  case SCM_PRIMITIVE_TAG: return SIZEOF(struct SCM_primitive) ;
@@ -186,7 +186,7 @@ static SIZE_T SCM_size (SCM o)
  case SCM_CONTINUATION_TAG: return SIZEOF(struct SCM_continuation) ;
  case SCM_PROCESS_TAG: {
    SIZE_T length = (o->process).size ;
-   return ( SIZEOF(struct SCM_process) 
+   return ( SIZEOF(struct SCM_process)
            + ( SIZEOF(SCM) * ((length>1)?(length-2):0) ) ) ;
  } ;
  case SCM_MODULE_TAG: {
@@ -207,7 +207,7 @@ static SIZE_T SCM_size (SCM o)
  case SCM_FUNCTION_TAG:       return SIZEOF(struct SCM_function) ;
  default: SCM_error(123) ;
  } ;
-} 
+}
 
 /* Move an object referenced by o from the old space to the new space if
  * not already done and if not static. In any case return the address that
@@ -217,20 +217,20 @@ static SCM SCM_move (SCM o)
       || (way==LOW2HIGH)
          ?((o>=zone_middle)||(o<zone_static_end))
          :(o<zone_middle) )
-    /* the object is already in the new space or is a static object 
+    /* the object is already in the new space or is a static object
      CAUTION: this imposes that static objects must be immutable. */
     return o ;
-  else 
+  else
     if ( ((o->object).header.link) != (SCM) NULL )
       /* The object has already been moved to the new space */
       return ((o->object).header.link) ;
-    else 
+    else
       { SCM new = (SCM) zone_index ;
         zone_index = zone_index + SCM_size(o) ;
         /* This error can only appear if HIGH2LOW, the higher space was
            so much extended after the last GC that the amount of used
            objects is greater than the size of the lower space. */
-        if ( (way==HIGH2LOW) && (zone_index >= (char*) zone_middle) ) 
+        if ( (way==HIGH2LOW) && (zone_index >= (char*) zone_middle) )
           SCM_error(114) ;
         (o->object).header.link = new ;
         (new->object).header.link = (SCM) NULL ;
@@ -245,8 +245,8 @@ static SCM SCM_move (SCM o)
           SCM_symbol2string(new) = (SCM_symbol2string(o)) ;
           break ;
         } ;
-        case SCM_EMPTY_TAG: 
-        case SCM_UNDETERMINED_TAG: 
+        case SCM_EMPTY_TAG:
+        case SCM_UNDETERMINED_TAG:
         case SCM_FALSE_TAG:
         case SCM_EOF_TAG:
         case SCM_TRUE_TAG: {
@@ -260,7 +260,7 @@ static SCM SCM_move (SCM o)
           length = (new->closure).size = (o->closure).size ;
           for ( i=0 ; i<((length>0)?length:1) ; i++ )
             SCM_closed_value(new,i) = (SCM_closed_value(o,i)) ;
-          break ; 
+          break ;
         } ;
         case SCM_PRIMITIVE_TAG: {
           (new->primitive).behavior = (o->primitive).behavior ;
@@ -308,9 +308,9 @@ static SCM SCM_move (SCM o)
           break ;
         } ;
         case SCM_CONTINUATION_TAG: {
-          SCM_continuation2transformer(new) = 
+          SCM_continuation2transformer(new) =
             (SCM_continuation2transformer(o)) ;
-          SCM_continuation2below(new)       = 
+          SCM_continuation2below(new)       =
             (SCM_continuation2below(o)) ;
           break ;
         } ;
@@ -327,7 +327,7 @@ static SCM SCM_move (SCM o)
           length = (new->frame).size = (o->frame).size ;
           for ( i=0 ; i<((length>0)?length:1) ; i++ )
             (new->frame).value[i] = (o->frame).value[i] ;
-          break ; 
+          break ;
         } ;
         case SCM_FUNCTION_TAG: {
           (new->function).behavior = (o->function).behavior ;
@@ -352,8 +352,8 @@ static SCM SCM_move_sons (SCM o)
    SCM_symbol2string(o) = SCM_move(SCM_symbol2string(o)) ;
    break ;
  } ;
- case SCM_EMPTY_TAG: 
- case SCM_UNDETERMINED_TAG: 
+ case SCM_EMPTY_TAG:
+ case SCM_UNDETERMINED_TAG:
  case SCM_FALSE_TAG:
  case SCM_EOF_TAG:
  case SCM_TRUE_TAG: {
@@ -365,7 +365,7 @@ static SCM SCM_move_sons (SCM o)
    length = (o->closure).size ;
    for ( i=0 ; i<((length>0)?length:1) ; i++ )
      SCM_closed_value(o,i) = SCM_move(SCM_closed_value(o,i)) ;
-   break ; 
+   break ;
  } ;
  case SCM_PRIMITIVE_TAG: {
    SCM_primitive2name(o) = SCM_move(SCM_primitive2name(o)) ;
@@ -398,9 +398,9 @@ static SCM SCM_move_sons (SCM o)
    break ;
  } ;
  case SCM_CONTINUATION_TAG: {
-   SCM_continuation2transformer(o) = 
+   SCM_continuation2transformer(o) =
      SCM_move(SCM_continuation2transformer(o)) ;
-   SCM_continuation2below(o)       = 
+   SCM_continuation2below(o)       =
      SCM_move(SCM_continuation2below(o)) ;
    break ;
  } ;
@@ -431,7 +431,7 @@ static SCM SCM_move_sons (SCM o)
    break ;
  } ;
  default: SCM_error(127) ; } ;
-  return o ; 
+  return o ;
 }
 
 /* Start a GC. roots represent the state of the computation that must
@@ -440,15 +440,15 @@ static SCM SCM_move_sons (SCM o)
 void SCM_gc (unsigned int n, SCM roots[] /*in-out*/)
 { unsigned int i ;
   SIZE_T used_space, usable_space, excess ;
-  ++SCM_gc_number ; 
+  ++SCM_gc_number ;
   if ( way==LOW2HIGH )
     /* The old space is the lower space */
     {  zone_copied = zone_index = (char*) zone_middle ;
       zone_limit = Zone_End ; }
   else {  zone_copied = zone_index = (char*) zone_static_end ;
          zone_limit = (char*) zone_middle ; } ;
-  /* Move roots and adjust C global variables 
-     ie the list of processes, the current computation and the 
+  /* Move roots and adjust C global variables
+     ie the list of processes, the current computation and the
      global variables of all modules. */
   SCM_move_sons(SCM_roots) ;
   for ( i=0 ; i<n ; i++ )
@@ -457,7 +457,7 @@ void SCM_gc (unsigned int n, SCM roots[] /*in-out*/)
   while ( zone_copied < zone_index )
     { SCM o = (SCM) zone_copied ;
       SCM_move_sons(o) ;
-      zone_copied = zone_copied + SCM_size(o) ; } ;      
+      zone_copied = zone_copied + SCM_size(o) ; } ;
   if ( way==HIGH2LOW )
     { /* We just finished copying everything in the lower space.
          We try to extend the heap if the use ratio is too high. */
@@ -471,9 +471,9 @@ void SCM_gc (unsigned int n, SCM roots[] /*in-out*/)
       /* Appel said that the usable space must be at least 8 times larger
          than the used space. Extend the lower space if necessary. */
       if ( used_space*SCM_GC_EXTENSION_THRESHOLD > usable_space )
-        { factor = 1 + (used_space*SCM_GC_EXTENSION_THRESHOLD - 
+        { factor = 1 + (used_space*SCM_GC_EXTENSION_THRESHOLD -
                          usable_space)/SCM_ZONE_SIZE ;
-          allocate_zone (factor) ; 
+          allocate_zone (factor) ;
           zone_middle = (SCM) SCM_mid_address(zone_static_end,Zone_End) ;
           zone_limit = (char*) zone_middle ; } ;
     }
@@ -497,7 +497,7 @@ static char   *zone_index ;
 static char   *zone_end ;
 static SCM    zone_static_end ;
 
-/* Return a zone or fail. The size is given with respect to the 
+/* Return a zone or fail. The size is given with respect to the
  * SCM_ZONE_SIZE unit.							*/
 static void *allocate_zone (SIZE_T factor)
 { zone_index = (char*) MALLOC(factor*SCM_ZONE_SIZE) ;
@@ -528,17 +528,17 @@ void staticize_allocator() {
 
 /* Reports some statistics on the evaluation				*/
 void SCM_report_usage () {
-   fprintf(stderr,"Allocated data size= %s%u*%dK.\n", 
+   fprintf(stderr,"Allocated data size= %s%u*%dK.\n",
            "", zones_number, SCM_ZONE_SIZE/1024 ) ;
 }
 #endif /* NO_GC */
 
 /***********************************************************************
- * ALLOCATORS: 
+ * ALLOCATORS:
  *   All objects are boxed to simplify. They are named SCM_make_XXX
  *   or SCM_allocate_XXX. Errors are numbered from 100.
  *
- * Allocates a general Scheme object with a precise tag and size SCM slots 
+ * Allocates a general Scheme object with a precise tag and size SCM slots
  * sequentially after. You must cast the result and initialize
  * the other slots.							*/
 
@@ -552,7 +552,7 @@ SCM SCM_allocate (SCM_TAG tag, SIZE_T size)
 }
 
 /* Allocate a fixnum, try to find it in the preallocated ones.
- * SCM_make_fixnum appears in C generated code, SCM_allocate_fixnum 
+ * SCM_make_fixnum appears in C generated code, SCM_allocate_fixnum
  * is used in SCM_initialize(). 					*/
 
 struct SCM_fixnum SCM_small_fixnums[SCM_SMALL_FIXNUM_LIMIT] ;
@@ -570,7 +570,7 @@ SCM SCM_allocate_fixnum (int value)
 
 SCM SCM_make_fixnum (int value)
 { if ((value >= 0) & (value < SCM_SMALL_FIXNUM_LIMIT))
-    return ((SCM) (&(SCM_small_fixnums[value]))) ; 
+    return ((SCM) (&(SCM_small_fixnums[value]))) ;
   else return (SCM_allocate_fixnum(value)) ;
 }
 
@@ -600,7 +600,7 @@ SCM SCM_make_pair (SCM car, SCM cdr)
   (result->pair).cdr = cdr ;
   return result ;
 }
-  
+
 /* Push a frame t onto a continuation q.				*/
 
 SCM SCM_make_continuation (SCM t, SCM q)
@@ -614,7 +614,7 @@ SCM SCM_make_continuation (SCM t, SCM q)
   (result->continuation).below = q ;
   return result ;
 }
-  
+
 /* Allocate a box.
  * Boxes serves to hold values in case of mutable variables.		*/
 
@@ -678,7 +678,7 @@ SCM SCM_allocate_string (SIZE_T size)
 }
 
 /* Allocate a character. A global table contains the first
- * character codes. This makes easy to convert an integer into a 
+ * character codes. This makes easy to convert an integer into a
  * Scheme character.							*/
 
 struct SCM_char SCM_characters[SCM_CHAR_SIZE] ;
@@ -694,7 +694,7 @@ SCM SCM_make_character (char C_char)
   return result ;
 }
 
-/* Allocate a primitive 
+/* Allocate a primitive
  * To ease debugging, the name of the primitive is also given. Any legal
  * Scheme object can be a name (for instance an original Sexp).		*/
 
@@ -716,7 +716,7 @@ SCM SCM_make_primitive (SCM (*address)(), int arity, SCM name)
 SCM SCM_make_closure (SCM (*address)(), int arity, SIZE_T size)
 { SCM result ;
   SCM_TAG tag = SCM_CLOSURE_TAG ;
-  result = (SCM) allocate_object(SIZEOF(struct SCM_closure) + 
+  result = (SCM) allocate_object(SIZEOF(struct SCM_closure) +
                                  (SIZEOF(SCM)*((size>1)?(size-1):0)) ) ;
   if ( result == (SCM) NULL) SCM_error(110) ;
   SCM_tag_of(result) = tag ;
@@ -728,7 +728,7 @@ SCM SCM_make_closure (SCM (*address)(), int arity, SIZE_T size)
   return result ;
 }
 
-/* Allocate a port. 
+/* Allocate a port.
  * There is a slot for the poken character. This slot initially holds
  * (), can contain a SCM character or the Scheme object for
  * end-of-file.								*/
@@ -748,7 +748,7 @@ SCM SCM_make_port (FILE *file, int flag)
 
 /* Allocate a stack slice with size bytes long.
  * This is used to hold copies of stack for a naive implementation of
- * call/cc (written in pure C and not guaranteed to be portable).	
+ * call/cc (written in pure C and not guaranteed to be portable).
  * This type of data is used in direct style to implement call/cc.	*/
 
 SCM SCM_make_stack_slice (SIZE_T size)
@@ -807,12 +807,12 @@ SCM SCM_Get_Universal_Time ()
 { static struct rusage rusage ;
   static long seconds, microseconds ;
   float delta ;
-  if ( 0==getrusage(RUSAGE_SELF,&rusage) ) 
+  if ( 0==getrusage(RUSAGE_SELF,&rusage) )
     { seconds = (rusage.ru_utime).tv_sec ;
       microseconds = (rusage.ru_utime).tv_usec ;
       delta = ((float) seconds) + (((float) microseconds) / 10e+6) ;
       return SCM_make_floatnum(delta) ;
-    } 
+    }
   else SCM_error(29) ;
 }
 
@@ -870,16 +870,16 @@ SCM SCM_Cdr (SCM x)
 }
 
 SCM SCM_Set_Car (SCM x, SCM y)
-{ if ( SCM_pairp(x) ) 
+{ if ( SCM_pairp(x) )
     if ( SCM_staticp(x) ) SCM_error(64) ;
-    else return (SCM_set_car(x,y)) ; 
+    else return (SCM_set_car(x,y)) ;
   else SCM_error(62) ; /*TEMP*/
 }
 
 SCM SCM_Set_Cdr (SCM x, SCM y)
-{ if ( SCM_pairp(x) ) 
+{ if ( SCM_pairp(x) )
     if ( SCM_staticp(x) ) SCM_error(65) ;
-    else return (SCM_set_cdr(x,y)) ; 
+    else return (SCM_set_cdr(x,y)) ;
   SCM_error(63) ; /*TEMP*/
 }
 
@@ -956,7 +956,7 @@ DefFloatPred(SCM_Float_LeP,<=,48)
 static int SCM_show_limit = 0 ;
 
 SCM SCM_show (SCM x, FILE *stream) {
-  if (SCM_show_limit-- < 0) 
+  if (SCM_show_limit-- < 0)
     { fputs(" &&&",stream) ; }
   else
     switch (SCM_tag_of(x)) {
@@ -971,11 +971,11 @@ SCM SCM_show (SCM x, FILE *stream) {
                                         object = cdrobject ; }
             else if SCM_nullp(cdrobject) break ;
             else { fputs(" . ",stream) ;
-                   SCM_show(cdrobject,stream) ; 
+                   SCM_show(cdrobject,stream) ;
                    break ;
                  } ;
           } ;
-        fprintf(stream,")") ; 
+        fprintf(stream,")") ;
         break ; } ; } ;
     case SCM_SYMBOL_TAG: {
       { SCM string = SCM_symbol2string(x) ;
@@ -986,7 +986,7 @@ SCM SCM_show (SCM x, FILE *stream) {
         while ( length>0 )
           { n = fwrite(Cstring,sizeof(char),length,stream) ;
             if ( n==0 ) SCM_error(71) ;
-            length = length-n ; 
+            length = length-n ;
             Cstring = Cstring+n ; } ;
         break ; } ; } ;
     case SCM_EMPTY_TAG: {
@@ -1046,7 +1046,7 @@ SCM SCM_show (SCM x, FILE *stream) {
       fputs("#<Port>",stream) ; /* Indicate the port number */
       break ; } ;
     case SCM_STACK_SLICE_TAG: {
-      fprintf(stream,"#<Stack_Slice:x%x>",(void*)(x)) ; 
+      fprintf(stream,"#<Stack_Slice:x%x>",(void*)(x)) ;
       break ; } ;
     case SCM_CONTINUATION_TAG: {
       fprintf(stream,"#<Continuation:x%x>",(void*)(x)) ;
@@ -1078,9 +1078,9 @@ SCM SCM_show (SCM x, FILE *stream) {
     case SCM_FUNCTION_TAG: {
       fprintf(stream,"#<Function:x%x>",(void*)(x)) ;
       break ; } ;
-    default: 
+    default:
       SCM_error(73) ;
-    } 
+    }
 }
 
 SCM SCM_Basic_Write (SCM x) {
@@ -1132,7 +1132,7 @@ SCM SCM_Read_Char (SCM x) {
 
 /* Peek the next char (if not already done).				*/
 SCM SCM_Peek_Char (SCM x) {
-  if (SCM_streamp(x)) 
+  if (SCM_streamp(x))
     { SCM result = SCM_port2poken_char(x) ;
       if ( result == (SCM) NULL )
         { char c ;
@@ -1150,11 +1150,11 @@ SCM SCM_String_Length (SCM x) {
 }
 
 /* Return the Yth char of a string (or rope). Check the bounds.		*/
-SCM SCM_String_Ref (SCM x, SCM y) 
+SCM SCM_String_Ref (SCM x, SCM y)
 { if (SCM_stringp(x))
     { if (SCM_fixnump(y))
         { int index = SCM_fixnum2int(y) ;
-          if ( ( 0<=index ) & (index<SCM_string2size(x)) ) 
+          if ( ( 0<=index ) & (index<SCM_string2size(x)) )
             return (SCM_int2char((int) SCM_string2Cstring(x)[index])) ;
           else SCM_error(91) ; }
       else SCM_error(92) ; }
@@ -1162,8 +1162,8 @@ SCM SCM_String_Ref (SCM x, SCM y)
 }
 
 /* Modifies the Yth character of a string				*/
-SCM SCM_String_Set (SCM x, SCM y, SCM z) 
-{ if (SCM_stringp(x)) 
+SCM SCM_String_Set (SCM x, SCM y, SCM z)
+{ if (SCM_stringp(x))
     { if (SCM_mutable_stringp(x))
         { if (SCM_fixnump(y))
             { int index = SCM_fixnum2int(y) ;
@@ -1199,7 +1199,7 @@ SCM SCM_report_error(unsigned int code, char *file, unsigned int line) {
 
 /* Terminates the computation and exit with a precise value.		*/
 SCM SCM_Exit (SCM x) {
-  if (SCM_fixnump(x)) 
+  if (SCM_fixnump(x))
     { SCM_report_usage() ;
       exit((unsigned int) SCM_fixnum2int(x)) ; }
   else SCM_error(20) ;
@@ -1234,7 +1234,7 @@ SCM SCM_STDOUT = (SCM) &(SCM_stdout_object) ;
 DefinePort(SCM_stderr, stderr,O_WRONLY) ;
 SCM SCM_STDERR = (SCM) &(SCM_stderr_object) ;
 
-/* the options of the command gathered in a list. 
+/* the options of the command gathered in a list.
  * Will be initialized by SCM_initialize() 				 */
 SCM SCM_options ;
 
@@ -1307,14 +1307,14 @@ DefineGlobalFunction(STRING_SET,SCM_String_Set,3,"string-set!") ;
 DefineGlobalFunction(NOT,SCM_Not,1,"not") ;
 
 /***********************************************************************
- * All these global variables have to be initialized by explicit 
+ * All these global variables have to be initialized by explicit
  * allocations. These are gathered in this routine. It takes the
  * command arguments to convert them into a list of Scheme strings.
  *						                      */
 
 void SCM_initialize (int argc, char *argv[])
 { int i ;
-  /* Check that the C stack bottom is already set. 
+  /* Check that the C stack bottom is already set.
      It must be set just after main() if possible. */
   if ( SCM_Cstack_bottom == ((void*) NULL) )
     { fprintf(stderr,"Initialization error: SCM_Cstack_bottom not set.\n") ;
@@ -1324,14 +1324,14 @@ void SCM_initialize (int argc, char *argv[])
   /* Initialize the allocator(s) */
   initialize_allocator() ;
   /* Initialize characters		*/
-  for (i=0 ; i<SCM_CHAR_SIZE ; i++) 
+  for (i=0 ; i<SCM_CHAR_SIZE ; i++)
     { SCM_characters[i].C_char = i ;
       SCM_characters[i].header.tag = SCM_CHAR_TAG ; } ;
   /* Initialize the first natural numbers	*/
   for (i=0 ; i<SCM_SMALL_FIXNUM_LIMIT ; i++)
     { SCM_small_fixnums[i].value = i ;
       SCM_small_fixnums[i].header.tag = SCM_FIXNUM_TAG ; } ;
-  staticize_allocator() ; 
+  staticize_allocator() ;
   /* Handle command options: turn them into a mutable? list. */
   SCM_options = SCM_empty ;
   for ( i=argc-1 ; i>=0 ; i--)
@@ -1362,14 +1362,14 @@ void SCM_dump ()
           case SCM_PAIR_TAG: {
             fprintf(stderr,"PAIR\tcar=xg191%x, cdr=0x%x\n\tHint: ",
                     SCM_car(o), SCM_cdr(o)) ;
-            SCM_show(o,stderr) ; 
+            SCM_show(o,stderr) ;
             break ; } ;
           case SCM_SYMBOL_TAG: {
             fprintf(stderr,"SYMBOL\tstring=0x%x Hint: ",SCM_symbol2string(o)) ;
             SCM_show(o,stderr) ;
             break ; } ;
           case SCM_EMPTY_TAG:
-          case SCM_UNDETERMINED_TAG: 
+          case SCM_UNDETERMINED_TAG:
           case SCM_TRUE_TAG:
           case SCM_FALSE_TAG:
           case SCM_EOF_TAG: {
@@ -1416,7 +1416,7 @@ void SCM_dump ()
             break ; } ;
           case SCM_CONTINUATION_TAG: {
             fprintf(stderr,"CONTINUATION\ttransformer=0x%x, below=0x%x",
-                    SCM_continuation2transformer(o), 
+                    SCM_continuation2transformer(o),
                     SCM_continuation2below(o) ) ;
             break ; } ;
           case SCM_MODULE_TAG: {
@@ -1424,7 +1424,7 @@ void SCM_dump ()
             fprintf(stderr,"MODULE\tsize=%u",size) ;
             for ( i=0 ; i<((size>0)?size:1) ; i++ )
               { fprintf(stderr,"\n\tGlobal[%u] = 0x%x Hint: ",
-                        i, (o->module).global[i] ) ; 
+                        i, (o->module).global[i] ) ;
                 SCM_show_limit = show_limit ;
                 SCM_show((o->module).global[i],stderr) ; } ;
             break ; } ;
@@ -1474,7 +1474,7 @@ SCM SCM_Call_CC (SCM f) {
   i = SCM_Cstack_bottom ;
   o = (result->stack_slice).stack_char ;
   r = setjmp(((result->stack_slice).stack_jmp_buf)) ;
-  if ( r==0 ) { 
+  if ( r==0 ) {
     if (SCM_stack_grows==DOWN)
       for ( count=stack_length ; count>=0 ; i--,o++,count-- ) *o=(*i) ;
     else for ( count=stack_length ; count>=0 ; i++,o++,count-- ) *o=(*i) ;
@@ -1492,41 +1492,41 @@ DefineGlobalFunction(CALL_CC,SCM_Call_CC,1,"call/cc") ;
 void SCM_invoke_stack_slice (SCM function, SCM v1)
 { /* The following worked some time then failed!? There is only a minor
        alignment difference with the new version and it seems to be
-       insensitive to the value of STEP. 
+       insensitive to the value of STEP.
        SCM mark ;
        char *current_stack_ptr = (char*) &mark ; */
   void *current_stack_ptr ;
   current_stack_ptr = (void*) &current_stack_ptr ;
-  /* This test tries to check if both the stack and frame pointers 
+  /* This test tries to check if both the stack and frame pointers
      will not be overwritten when copying back the stack_slice.
      This works on Sony News with cc (and gcc???). */
   if ( ((SIZE_T)abs(SCM_Cstack_bottom - current_stack_ptr)) <
-      ( (function->stack_slice).stack_slice_length 
+      ( (function->stack_slice).stack_slice_length
        + ((SIZE_T) 2*STEP*SIZEOF(SCM)) ) )
     { SCM room[STEP] ; /* Augment the stack */
       SCM_invoke_stack_slice(function,v1) ; }
-  else 
+  else
     { char *i, *o ;
       int count ;
       static SCM save_function, save_v1 ;
       save_function = function ;
       save_v1 = v1 ;
       i = SCM_Cstack_bottom ;
-      o = (function->stack_slice).stack_char ; 
+      o = (function->stack_slice).stack_char ;
       if (SCM_stack_grows==DOWN)
         { for ( count=(function->stack_slice).stack_slice_length ;
                count>=0 ; i--,o++,count-- ) *i=(*o) ; }
       else for ( count=(function->stack_slice).stack_slice_length ;
                 count>=0 ; i++,o++,count-- ) *i=(*o) ;
-      longjmp((save_function->stack_slice).stack_jmp_buf,save_v1) ; 
-    } ; 
+      longjmp((save_function->stack_slice).stack_jmp_buf,save_v1) ;
+    } ;
 }
 
 /***********************************************************************
   The generic invokers of functions.
   They use errors numbered 2xy.						*/
 
-void SCM_first_invokation(SCM thunk) 
+void SCM_first_invokation(SCM thunk)
 { SCM_invoke0 (thunk) ;
 }
 
@@ -1535,28 +1535,28 @@ SCM SCM_invoke0 (SCM function)
  case SCM_PRIMITIVE_TAG:
   { SCM (*behavior)() = (function->primitive).behavior ;
     int arity = (function->primitive).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==0 ) return behavior() ;
-        else SCM_error(200) ; } 
+        else SCM_error(200) ; }
     else switch (SCM_minimal_arity(arity)) {
     case 0:
       return behavior(0,((SCM*) NULL)) ;
     default:
       SCM_error(201) ; } ;
   } ;
- case SCM_CLOSURE_TAG: 
+ case SCM_CLOSURE_TAG:
   { SCM (*behavior)() = (function->closure).behavior ;
     int arity = (function->closure).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==1 ) return behavior(function) ;
         else SCM_error(202) ; }
     else switch (SCM_minimal_arity(arity)) {
     case 1:
-      return behavior(function,0,((SCM*) NULL)) ; 
+      return behavior(function,0,((SCM*) NULL)) ;
     default: SCM_error(203) ; } ;
   } ;
  case SCM_STACK_SLICE_TAG:
-  SCM_error(204) ; 
+  SCM_error(204) ;
  default: SCM_error(205) ;
 }
 }
@@ -1566,7 +1566,7 @@ SCM SCM_invoke1 (SCM function, SCM v1)
  case SCM_PRIMITIVE_TAG:
   { SCM (*behavior)() = (function->primitive).behavior ;
     int arity = (function->primitive).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==1 ) return behavior(v1) ;
         else SCM_error(210) ; }
     else switch (SCM_minimal_arity(arity)) {
@@ -1575,14 +1575,14 @@ SCM SCM_invoke1 (SCM function, SCM v1)
         arguments[0]= v1 ;
         return behavior(1,arguments) ; }
     case 1:
-      return behavior(v1,0,((SCM*) NULL)) ; 
+      return behavior(v1,0,((SCM*) NULL)) ;
     default:
       SCM_error(211) ; } ;
   } ;
- case SCM_CLOSURE_TAG: 
+ case SCM_CLOSURE_TAG:
   { SCM (*behavior)() = (function->closure).behavior ;
     int arity = (function->closure).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==2 ) return behavior(function,v1) ;
         else SCM_error(212) ; }
     else switch (SCM_minimal_arity(arity)) {
@@ -1591,7 +1591,7 @@ SCM SCM_invoke1 (SCM function, SCM v1)
         arguments[0]= v1 ;
         return behavior(function,1,arguments) ; }
     case 2:
-      return behavior(function,v1,0,((SCM*) NULL)) ; 
+      return behavior(function,v1,0,((SCM*) NULL)) ;
     default:
       SCM_error(213) ; } ;
   } ;
@@ -1606,7 +1606,7 @@ SCM SCM_invoke2 (SCM function, SCM v1, SCM v2)
  case SCM_PRIMITIVE_TAG:
   { SCM (*behavior)() = (function->primitive).behavior ;
     int arity = (function->primitive).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==2 ) return behavior(v1,v2) ;
         else SCM_error(220) ; }
     else switch (SCM_minimal_arity(arity)) {
@@ -1620,14 +1620,14 @@ SCM SCM_invoke2 (SCM function, SCM v1, SCM v2)
         arguments[0]= v2 ;
         return behavior(v1,1,arguments) ; }
     case 2:
-      return behavior(v1,v2,0,((SCM*) NULL)) ; 
+      return behavior(v1,v2,0,((SCM*) NULL)) ;
     default:
       SCM_error(221) ; } ;
   } ;
- case SCM_CLOSURE_TAG: 
+ case SCM_CLOSURE_TAG:
   { SCM (*behavior)() = (function->closure).behavior ;
     int arity = (function->closure).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==3 ) return behavior(function,v1,v2) ;
         else SCM_error(222) ; }
     else switch (SCM_minimal_arity(arity)) {
@@ -1641,12 +1641,12 @@ SCM SCM_invoke2 (SCM function, SCM v1, SCM v2)
         arguments[0]= v2 ;
         return behavior(function,v1,1,arguments) ; }
     case 3:
-      return behavior(function,v1,v2,0,((SCM*) NULL)) ; 
+      return behavior(function,v1,v2,0,((SCM*) NULL)) ;
     default:
       SCM_error(223) ; } ;
   } ;
  case SCM_STACK_SLICE_TAG:
-  SCM_error(224) ; 
+  SCM_error(224) ;
  default: SCM_error(225) ;
 }
 }
@@ -1656,7 +1656,7 @@ SCM SCM_invoke3 (SCM function, SCM v1, SCM v2, SCM v3)
  case SCM_PRIMITIVE_TAG:
   { SCM (*behavior)() = (function->primitive).behavior ;
     int arity = (function->primitive).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==3 ) return behavior(v1,v2,v3) ;
         else SCM_error(230) ; }
     else switch (SCM_minimal_arity(arity)) {
@@ -1676,14 +1676,14 @@ SCM SCM_invoke3 (SCM function, SCM v1, SCM v2, SCM v3)
         arguments[0]= v3 ;
         return behavior(v1,v2,1,arguments) ; }
     case 3:
-      return behavior(v1,v2,v3,0,((SCM*) NULL)) ; 
+      return behavior(v1,v2,v3,0,((SCM*) NULL)) ;
     default:
       SCM_error(231) ; } ;
   } ;
- case SCM_CLOSURE_TAG: 
+ case SCM_CLOSURE_TAG:
   { SCM (*behavior)() = (function->closure).behavior ;
     int arity = (function->closure).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==4 ) return behavior(function,v1,v2,v3) ;
         else SCM_error(232) ; }
     else switch (SCM_minimal_arity(arity)) {
@@ -1703,13 +1703,13 @@ SCM SCM_invoke3 (SCM function, SCM v1, SCM v2, SCM v3)
         arguments[0]= v3 ;
         return behavior(function,v1,v2,1,arguments) ; }
     case 4:
-      return behavior(function,v1,v2,v3,0,((SCM*) NULL)) ; 
+      return behavior(function,v1,v2,v3,0,((SCM*) NULL)) ;
     default:
       SCM_error(233) ; } ;
   } ;
  case SCM_STACK_SLICE_TAG:
   SCM_error(234) ;
- default: SCM_error(235) ; 
+ default: SCM_error(235) ;
 }
 }
 
@@ -1718,7 +1718,7 @@ SCM SCM_invoke4 (SCM function, SCM v1, SCM v2, SCM v3, SCM v4)
  case SCM_PRIMITIVE_TAG:
   { SCM (*behavior)() = (function->primitive).behavior ;
     int arity = (function->primitive).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==4 ) return behavior(v1,v2,v3,v4) ;
         else SCM_error(240) ; }
     else switch (SCM_minimal_arity(arity)) {
@@ -1745,14 +1745,14 @@ SCM SCM_invoke4 (SCM function, SCM v1, SCM v2, SCM v3, SCM v4)
         arguments[0]= v4 ;
         return behavior(v1,v2,v3,1,arguments) ; }
     case 4:
-      return behavior(v1,v2,v3,v4,0,((SCM*) NULL)) ; 
+      return behavior(v1,v2,v3,v4,0,((SCM*) NULL)) ;
     default:
       SCM_error(241) ; } ;
   } ;
- case SCM_CLOSURE_TAG: 
+ case SCM_CLOSURE_TAG:
   { SCM (*behavior)() = (function->closure).behavior ;
     int arity = (function->closure).arity ;
-    if ( arity>=0 ) 
+    if ( arity>=0 )
       { if ( arity==5 ) return behavior(function,v1,v2,v3,v4) ;
         else SCM_error(242) ; }
     else switch (SCM_minimal_arity(arity)) {
@@ -1779,13 +1779,13 @@ SCM SCM_invoke4 (SCM function, SCM v1, SCM v2, SCM v3, SCM v4)
         arguments[0]= v4 ;
         return behavior(function,v1,v2,v3,1,arguments) ; }
     case 5:
-      return behavior(function,v1,v2,v3,v4,0,((SCM*) NULL)) ; 
+      return behavior(function,v1,v2,v3,v4,0,((SCM*) NULL)) ;
     default:
       SCM_error(243) ; } ;
   } ;
  case SCM_STACK_SLICE_TAG:
   SCM_error(244) ;
- default: SCM_error(245) ; 
+ default: SCM_error(245) ;
 }
 }
 
@@ -1815,7 +1815,7 @@ SCM SCM_invokeN (SCM function, int number, SCM args[])
           default:
             return behavior(args) ;
           } else SCM_error(251) ; }
-    else 
+    else
       { int min_arity = SCM_minimal_arity(arity) ;
         if ( number >= min_arity )
           switch (min_arity) {
@@ -1838,7 +1838,7 @@ SCM SCM_invokeN (SCM function, int number, SCM args[])
           default:
             return behavior(number,args) ;
           } else SCM_error(252) ; } ; } ;
- case SCM_CLOSURE_TAG: 
+ case SCM_CLOSURE_TAG:
   { SCM (*behavior)() = (function->closure).behavior ;
     int arity = (function->closure).arity ;
     if ( arity>=0 )
@@ -1859,7 +1859,7 @@ SCM SCM_invokeN (SCM function, int number, SCM args[])
           default:
             return behavior(function,args) ;
           } else SCM_error(254) ; }
-    else 
+    else
       { int min_arity = SCM_minimal_arity(arity) ;
         if ( (1+number) >= min_arity )
           switch (min_arity) {
@@ -1880,8 +1880,8 @@ SCM SCM_invokeN (SCM function, int number, SCM args[])
  case SCM_STACK_SLICE_TAG:
   { if ( number==1 ) SCM_invoke_stack_slice(function,args[0]) ;
     /* error code is 257 since only the eigth low bits are significant */
-    else SCM_error(257) ; } 
- default: SCM_error(258) ;  
+    else SCM_error(257) ; }
+ default: SCM_error(258) ;
 }
 }
 
@@ -1959,7 +1959,7 @@ SCM SCM_LIST = (SCM) &(SCM_LIST_object) ;
 SCM SCM_The_Dynamic_Environment = (SCM) &(SCM_nullenv_object) ;
 
 struct SCM_frame SCM_nullframe_object =
-  {{SCM_FRAME_TAG, (SCM) NULL}, (SCM) NULL, (SIZE_T) 0, (SCM) NULL} ;  
+  {{SCM_FRAME_TAG, (SCM) NULL}, (SCM) NULL, (SIZE_T) 0, (SCM) NULL} ;
 SCM SCM_The_Null_Frame = (SCM) &(SCM_nullframe_object) ;
 
 SCM SCM_Bind_DE (SCM key, SCM value, SCM thunk) {
@@ -1979,12 +1979,12 @@ DefineGlobalFunction(BIND_DE,SCM_Bind_DE,3,"bind/de") ;
 SCM SCM_Assoc_DE (SCM key, SCM success) {
   SCM dynenv ;
   SCM frame ;
-  for ( dynenv=SCM_The_Dynamic_Environment ; 
+  for ( dynenv=SCM_The_Dynamic_Environment ;
        !(SCM_eqp(dynenv,SCM_The_Null_Environment)) ;
        dynenv=dynenv->dynamic_link.next ) {
     if ( (SCM_eqp(dynenv->dynamic_link.key,key)) ) {
       return dynenv->dynamic_link.value ;
-    } 
+    }
   } ;
   frame = SCM_make_frame(1+1+1) ;
   frame->frame.value[0] = key ;
@@ -2009,7 +2009,7 @@ SCM SCM_Apply (SCM args, SCM nullenv)
       last_arg = SCM_cdr(last_arg) ; } ;
   /* Build a frame */
   frame = SCM_make_frame(1+size+1) ;
-  for ( index=0, i=1 ; i<number-1 ; i++,index++ ) 
+  for ( index=0, i=1 ; i<number-1 ; i++,index++ )
     frame->frame.value[index] = args->frame.value[i] ;
   last_arg = args->frame.value[number-1] ;
   while ( SCM_pairp(last_arg) )
@@ -2025,7 +2025,7 @@ SCM SCM_APPLY = (SCM) &(SCM_APPLY_object) ;
 SCM SCM_listify(SCM frame, SIZE_T arity) {
   SIZE_T index = frame->frame.size-2 ;
   SCM result = SCM_empty ;
-  for ( ; arity<index ; index-- ) 
+  for ( ; arity<index ; index-- )
     result = SCM_cons(frame->frame.value[index-1],result) ;
   frame->frame.value[arity] = result ;
 }

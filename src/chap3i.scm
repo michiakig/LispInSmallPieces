@@ -17,7 +17,7 @@
   (f (quotient p q) (remainder p q)) )
 
 (define (bezout n p k)    ; assume $n>p$
-  (divide 
+  (divide
    n p (lambda (q r)
          (if (= r 0)
              (if (= p 1)
@@ -54,8 +54,8 @@
                                  ((get) (store (cons (car behavior)
                                                      caller )))
                                  ((set)
-                                  (store 
-                                   (cons (car new) 
+                                  (store
+                                   (cons (car new)
                                          caller ) ) ) ) ) ) )) ) ) ))
               ((cdr behavior) (car behavior)) ) ) ) ) )
     (box 'set value)

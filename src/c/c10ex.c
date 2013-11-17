@@ -1,4 +1,4 @@
-/* Compiler to C $Revision: 1.23 $ 
+/* Compiler to C $Revision: 1.23 $
 (BEGIN
   (SET! INDEX 1)
   ((LAMBDA
@@ -51,7 +51,7 @@ SCM_DeclareFunction(function_2) {
 SCM_DefineClosure(function_3, );
 
 SCM_DeclareFunction(function_3) {
-  SCM TMP_2; SCM CNTER_1; 
+  SCM TMP_2; SCM CNTER_1;
   return ((INDEX=thing0),
           (CNTER_1=SCM_close(function_0,1,0),
            TMP_2=SCM_cons(thing2,

@@ -12,7 +12,7 @@
 ;;; Scheme + dynamic variables without special forms.
 
 (define (dd.evaluate e env denv)
-  (if (atom? e) 
+  (if (atom? e)
       (cond ((symbol? e) (lookup e env))
             ((or (number? e) (string? e) (char? e)
                  (boolean? e) (vector? e) )
@@ -24,8 +24,8 @@
                   (dd.evaluate (caddr e) env denv)
                   (dd.evaluate (cadddr e) env denv) ))
         ((begin) (dd.eprogn (cdr e) env denv))
-        ((set!) (update! (cadr e) 
-                         env 
+        ((set!) (update! (cadr e)
+                         env
                          (dd.evaluate (caddr e) env denv)))
         ((lambda) (dd.make-function (cadr e) (cddr e) env))
         (else (invoke (dd.evaluate (car e) env denv)
@@ -50,7 +50,7 @@
           (begin (dd.evaluate (car e*) env denv)
                  (dd.eprogn (cdr e*) env denv) )
           (dd.evaluate (car e*) env denv) )
-      empty-begin ) )  
+      empty-begin ) )
 
 (define (lookup id env)
   (if (pair? env)
@@ -65,7 +65,7 @@
           (begin (set-cdr! (car env) value)
                  value )
           (update! id (cdr env) value) )
-      (wrong "No such binding" id) ) ) 
+      (wrong "No such binding" id) ) )
 
 (define (extend env variables values)
   (cond ((pair? variables)
@@ -75,14 +75,14 @@
              (wrong "Too less values") ) )
         ((null? variables)
              (if (null? values)
-                 env 
+                 env
                  (wrong "Too much values") ) )
-        ((symbol? variables) (cons (cons variables values) env)) ) ) 
+        ((symbol? variables) (cons (cons variables values) env)) ) )
 
 (define (invoke fn args denv)
-  (if (procedure? fn) 
+  (if (procedure? fn)
       (fn args denv)
-      (wrong "Not a function" fn) ) ) 
+      (wrong "Not a function" fn) ) )
 
 (define the-false-value #f)
 
@@ -91,7 +91,7 @@
 (define env.global '())
 (define denv.global '())
 
-(define-syntax definitial 
+(define-syntax definitial
   (syntax-rules ()
     ((definitial name)
      (begin (set! env.global (cons (cons 'name 'void) env.global))
@@ -100,7 +100,7 @@
      (begin (set! env.global (cons (cons 'name value) env.global))
             'name ) ) ) )
 
-(define-syntax defprimitive 
+(define-syntax defprimitive
   (syntax-rules ()
    ((defprimitive name value arity)
     (definitial name
@@ -109,7 +109,7 @@
             (apply value values)
             (wrong "Incorrect arity" (list 'name values)) ) ) ) ) ) )
 
-(define-syntax defpredicate 
+(define-syntax defpredicate
   (syntax-rules ()
     ((defpredicate name value arity)
      (defprimitive name
@@ -147,7 +147,7 @@
 (defprimitive + + 2)
 (defprimitive - - 2)
 (defpredicate = = 2)
-(defprimitive < < 2) 
+(defprimitive < < 2)
 (defpredicate < < 2)
 (defpredicate > > 2)
 (defprimitive * * 2)
@@ -159,18 +159,18 @@
 
 (definitial error 'no-error-here)
 
-(defprimitive call/cc 
-  (lambda (f) 
-    (call/cc (lambda (g) 
+(defprimitive call/cc
+  (lambda (f)
+    (call/cc (lambda (g)
                (invoke f
                        (lambda (values denv)
                          (if (= (length values) 1)
                              (g (car values))
                              (wrong "Incorrect arity" g) ) )
                        denv ) )) )
-  1 )   
+  1 )
 
-(definitial apply 
+(definitial apply
   (lambda (values denv)
     (if (>= (length values) 2)
         (let ((f (car values))
@@ -181,7 +181,7 @@
         (invoke f args denv) )
         (wrong "Incorrect arity" 'apply) ) ) )
 
-(definitial list 
+(definitial list
   (lambda (values denv) values) )
 
 (definitial bind/de
@@ -214,8 +214,8 @@
               (comparator (caddr values)) )
           (let look ((denv current.denv))
             (if (pair? denv)
-                (if (eq? the-false-value 
-                         (invoke comparator (list tag (caar denv)) 
+                (if (eq? the-false-value
+                         (invoke comparator (list tag (caar denv))
                                             current.denv ) )
                     (look (cdr denv))
                     (cdar denv) )

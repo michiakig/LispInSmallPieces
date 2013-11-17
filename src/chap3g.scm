@@ -75,7 +75,7 @@
   (block-lookup (return-from-cont-r k)
                 (return-from-cont-label k)
                 (return-from-cont-k k)
-                v ) ) 
+                v ) )
 
 ;;; CATCH, THROW
 

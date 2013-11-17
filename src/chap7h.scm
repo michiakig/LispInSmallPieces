@@ -144,7 +144,7 @@
 
 (define (code-prologue)
   (set! finish-pc 1)
-  (append (NON-CONT-ERR) (FINISH) (POP-HANDLER) 
+  (append (NON-CONT-ERR) (FINISH) (POP-HANDLER)
           (RESTORE-ENV) (RETURN) ) )
 
 (define (search-exception-handlers)
@@ -190,22 +190,22 @@
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
 (define (show-registers message)
-  (when *debug* 
+  (when *debug*
     (format #t "~%----------------~A" message)
     (format #t "~%ENV  = ") (show *env*)
     (format #t "~%VAL  = ") (show *val*)
     (format #t "~%FUN  = ") (show *fun*)
     (show-stack (save-stack))
-    (format #t "~%(PC  = ~A), next INSTR to be executed = ~A~%" 
+    (format #t "~%(PC  = ~A), next INSTR to be executed = ~A~%"
             *pc* (instruction-decode *code* *pc*) ) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-;;; tests 
+;;; tests
 
 (define (run-machine pc code constants global-names dynamics)
   (define base-error-handler-primitive
     (make-primitive base-error-handler) )
-  (set! sg.current (make-vector (length global-names) 
+  (set! sg.current (make-vector (length global-names)
                                 undefined-value ))
   (set! sg.current.names    global-names)
   (set! *constants*         constants)
@@ -228,7 +228,7 @@
   (set! run-machine
         (lambda (pc code constants global-names dynamics)
           (when *debug*                     ; DEBUG
-            (format #t "Code= ~A~%" (disassemble code)) )         
+            (format #t "Code= ~A~%" (disassemble code)) )
           (native-run-machine pc code constants global-names dynamics) ) ) )
 
 (define (stand-alone-producer7h e)
@@ -248,8 +248,8 @@
 
 (define (scheme7h)
   (interpreter
-   "Scheme? "  
-   "Scheme= " 
+   "Scheme? "
+   "Scheme= "
    #t
    (lambda (read print error)
      (setup-wrong-functions error)
@@ -258,9 +258,9 @@
        (print *val*) ) ) ) )
 
 (define (test-scheme7h file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)

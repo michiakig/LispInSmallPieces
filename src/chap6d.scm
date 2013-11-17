@@ -35,7 +35,7 @@
   (and (pair? r)
        (let scan ((names (car r))
                   (j 0) )
-         (cond ((pair? names) 
+         (cond ((pair? names)
                 (if (eq? n (car names))
                     `(local ,i . ,j)
                     (scan (cdr names) (+ 1 j)) ) )
@@ -52,7 +52,7 @@
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Representation of local environments, they contain the values of
 ;;; the local variables (but global and predefined variables).
-;;; Runtime environment or, activation frames, are represented by 
+;;; Runtime environment or, activation frames, are represented by
 ;;; vectors (named v*). They have the following structure:
 ;;;           +------------+
 ;;;           | next       |  ---> next V*
@@ -64,10 +64,10 @@
 ;;; The number of arguments can be extracted from the size of the
 ;;; activation frame.
 
-;;; A direct implementation with inlined vectors is approximatively 
+;;; A direct implementation with inlined vectors is approximatively
 ;;; 7 times faster under sci.
 
-(define-class environment Object 
+(define-class environment Object
   ( next ) )
 
 (define-class activation-frame environment
@@ -93,7 +93,7 @@
 
 ;;; R is the static representation of the runtime local environment.
 ;;; It is represented by a list of list of variables (the classical
-;;; rib cage). 
+;;; rib cage).
 
 (define (r-extend* r n*)
   (cons n* r) )
@@ -105,7 +105,7 @@
 ;;; initially completely empty and can be extended by the user.
 ;;; It actually tolerates only 100 new global variables.
 
-;;; G.CURRENT represents the `static' user-defined global environment. 
+;;; G.CURRENT represents the `static' user-defined global environment.
 ;;; It is represented by the list of the symbols naming these global
 ;;; variables. Their values are held in the SG.CURRENT vector.
 
@@ -115,7 +115,7 @@
 
 (define (g.current-extend! n)
   (let ((level (length g.current)))
-    (set! g.current 
+    (set! g.current
           (cons (cons n `(global . ,level)) g.current) )
     level ) )
 
@@ -185,7 +185,7 @@
 (define desc.init '())
 
 (define (description-extend! name description)
-  (set! desc.init 
+  (set! desc.init
         (cons (cons name description) desc.init) )
   name )
 
@@ -194,7 +194,7 @@
 (define (get-description name)
   (let ((p (assq name desc.init)))
     (and (pair? p) (cdr p)) ) )
-        
+
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Representation of functions. A redefinition with inlined vectors
 ;;; for more speed.
@@ -234,7 +234,7 @@
 ;;; from elsewhere.   TOBEDONE
 
 (define (CHECKED-GLOBAL-REF i)
-  (lambda () 
+  (lambda ()
     (let ((v (global-fetch i)))
       (if (eq? v undefined-value)
           (wrong "Uninitialized variable")
@@ -271,7 +271,7 @@
   (lambda () (address (m1))) )
 
 (define (CALL2 address m1 m2)
-  (lambda () (let ((v1 (m1))) 
+  (lambda () (let ((v1 (m1)))
                (address v1 (m2)) )) )
 
 (define (CALL3 address m1 m2 m3)
@@ -294,14 +294,14 @@
     (lambda ()
       (define (the-function v* sr)
         (if (>= (activation-frame-argument-length v*) arity+1)
-            (begin 
+            (begin
               (listify! v* arity)
               (set! *env* (sr-extend* sr v*))
               (m+) )
             (wrong "Incorrect arity") ) )
       (make-closure the-function *env*) ) ) )
 
-(define (TR-REGULAR-CALL m m*) 
+(define (TR-REGULAR-CALL m m*)
   (lambda ()
     (let ((f (m)))
       (invoke f (m*)) ) ) )
@@ -326,7 +326,7 @@
   (lambda ()
     (let* ((v (m))
            (v* (m*)) )
-      (set-activation-frame-argument! 
+      (set-activation-frame-argument!
        v* arity (cons v (activation-frame-argument v* arity)) )
       v* ) ) )
 
@@ -388,7 +388,7 @@
         (m3 (meaning e3 r tail?)) )
     (ALTERNATIVE m1 m2 m3) ) )
 
-(define (meaning-assignment n e r tail?) 
+(define (meaning-assignment n e r tail?)
   (let ((m (meaning e r #f))
         (kind (compute-kind r n)) )
     (if kind
@@ -413,7 +413,7 @@
           (meaning*-single-sequence (car e+) r tail?) )
       (static-wrong "Illegal syntax: (begin)") ) )
 
-(define (meaning*-single-sequence e r tail?) 
+(define (meaning*-single-sequence e r tail?)
   (meaning e r tail?) )
 
 (define (meaning*-multiple-sequence e e+ r tail?)
@@ -427,7 +427,7 @@
     (cond
      ((pair? n*) (parse (cdr n*) (cons (car n*) regular)))
      ((null? n*) (meaning-fix-abstraction nn* e+ r tail?))
-     (else       (meaning-dotted-abstraction 
+     (else       (meaning-dotted-abstraction
                   (reverse regular) n* e+ r tail? )) ) ) )
 
 (define (meaning-fix-abstraction n* e+ r tail?)
@@ -453,7 +453,7 @@
                        (and desc
                             (eq? 'function (car desc))
                             (or (= (length (cddr desc)) (length e*))
-                                (static-wrong 
+                                (static-wrong
                                  "Incorrect arity for primitive" e )
                                 ) ) ) ) ) )
          (meaning-primitive-application e e* r tail?) )
@@ -471,23 +471,23 @@
                 (e* ee*)
                 (regular '()) )
       (cond
-       ((pair? n*) 
+       ((pair? n*)
         (if (pair? e*)
             (parse (cdr n*) (cdr e*) (cons (car n*) regular))
             (static-wrong "Too less arguments" e ee*) ) )
        ((null? n*)
         (if (null? e*)
-            (meaning-fix-closed-application 
+            (meaning-fix-closed-application
              nn* (cddr e) ee* r tail? )
             (static-wrong "Too much arguments" e ee*) ) )
-       (else (meaning-dotted-closed-application 
+       (else (meaning-dotted-closed-application
               (reverse regular) n* (cddr e) ee* r tail? )) ) ) ) )
 
 (define (meaning-fix-closed-application n* body e* r tail?)
   (let* ((m* (meaning* e* r (length e*) #f))
          (r2 (r-extend* r n*))
          (m+ (meaning-sequence body r2 tail?)) )
-    (if tail? (TR-FIX-LET m* m+) 
+    (if tail? (TR-FIX-LET m* m+)
         (FIX-LET m* m+) ) ) )
 
 (define (meaning-dotted-closed-application n* n body e* r tail?)
@@ -508,14 +508,14 @@
          (size (length e*)) )
     (case size
       ((0) (CALL0 address))
-      ((1) 
+      ((1)
        (let ((m1 (meaning (car e*) r #f)))
          (CALL1 address m1) ) )
-      ((2) 
+      ((2)
        (let ((m1 (meaning (car e*) r #f))
              (m2 (meaning (cadr e*) r #f)) )
          (CALL2 address m1 m2) ) )
-      ((3) 
+      ((3)
        (let ((m1 (meaning (car e*) r #f))
              (m2 (meaning (cadr e*) r #f))
              (m3 (meaning (caddr e*) r #f)) )
@@ -537,7 +537,7 @@
 
 (define (meaning-dotted* e* r size arity tail?)
   (if (pair? e*)
-      (meaning-some-dotted-arguments (car e*) (cdr e*) 
+      (meaning-some-dotted-arguments (car e*) (cdr e*)
                                      r size arity tail? )
       (meaning-no-dotted-argument r size arity tail?) ) )
 
@@ -592,7 +592,7 @@
     ((defprimitive name value 2)
      (defprimitive2 name value) )
     ((defprimitive name value 3)
-     (defprimitive3 name value) ) ) )    
+     (defprimitive3 name value) ) ) )
 
 (define-syntax defprimitive1
   (syntax-rules ()
@@ -601,13 +601,13 @@
        (letrec ((arity+1 (+ 1 1))
                 (behavior
                  (lambda (v* sr)
-                   (if (= (activation-frame-argument-length v*) 
+                   (if (= (activation-frame-argument-length v*)
                           arity+1 )
                        (value (activation-frame-argument v* 0))
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a))
          (make-closure behavior sr.init) ) ) ) ) )
-  
+
 (define-syntax defprimitive2
   (syntax-rules ()
     ((defprimitive2 name value)
@@ -617,7 +617,7 @@
                  (lambda (v* sr)
                    (if (= (activation-frame-argument-length v*)
                           arity+1 )
-                       (value (activation-frame-argument v* 0) 
+                       (value (activation-frame-argument v* 0)
                               (activation-frame-argument v* 1) )
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a b))
@@ -668,10 +668,10 @@
        (if (= arity+1 (activation-frame-argument-length v*))
            (call/cc
             (lambda (k)
-              (invoke 
+              (invoke
                (activation-frame-argument v* 0)
                (let ((frame (allocate-activation-frame (+ 1 1))))
-                 (set-activation-frame-argument! 
+                 (set-activation-frame-argument!
                   frame 0
                   (make-closure
                    (lambda (values r)
@@ -693,18 +693,18 @@
            (let* ((proc (activation-frame-argument v* 0))
                   (last-arg-index
                    (- (activation-frame-argument-length v*) 2) )
-                  (last-arg 
+                  (last-arg
                    (activation-frame-argument v* last-arg-index) )
                   (size (+ last-arg-index (length last-arg)))
                   (frame (allocate-activation-frame size)) )
              (do ((i 1 (+ i 1)))
                  ((= i last-arg-index))
-               (set-activation-frame-argument! 
+               (set-activation-frame-argument!
                 frame (- i 1) (activation-frame-argument v* i) ) )
              (do ((i (- last-arg-index 1) (+ i 1))
                   (last-arg last-arg (cdr last-arg)) )
                  ((null? last-arg))
-               (set-activation-frame-argument! 
+               (set-activation-frame-argument!
                 frame i (car last-arg) ) )
              (invoke proc frame) )
            (wrong "Incorrect arity" 'apply) ) )
@@ -764,30 +764,30 @@
       (m) ) ) )
 
 (define (CHECKED-GLOBAL-REF+ i)
-  (lambda () 
+  (lambda ()
     (let ((v (global-fetch i)))
       (if (eq? v undefined-value)
-          (wrong "Uninitialized variable" 
+          (wrong "Uninitialized variable"
                  (list-ref sg.current.names i) )
-          v ) ) ) )  
+          v ) ) ) )
 
 ;;; this one requires to close the name of the variables that must be
 ;;; checked. To use it you must also change meaning-reference that calls it.
 
 (define (CHECKED-GLOBAL-REF- i n)
-  (lambda () 
+  (lambda ()
     (let ((v (global-fetch i)))
       (if (eq? v undefined-value)
           (wrong "Uninitialized variable" n)
-          v ) ) ) ) 
+          v ) ) ) )
 
 ;;; retrofit for tests.
 (set! CHECKED-GLOBAL-REF CHECKED-GLOBAL-REF+)
 
 (define (scheme6d)
-  (interpreter 
-   "Scheme? "  
-   "Scheme= " 
+  (interpreter
+   "Scheme? "
+   "Scheme= "
    #t
    (lambda (read print error)
      (set! wrong error)
@@ -797,9 +797,9 @@
        (print ((stand-alone-producer (read)))) ) ) ) )
 
 (define (test-scheme6d file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)
@@ -825,7 +825,7 @@
           (loop (- factor 1)) ) ) ) )
 
 ;;;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-;;; The following code use 
+;;; The following code use
 ;;; pp to pretty-print expressions,
 ;;; and eval for a local hack (should be made of macros instead).
 
@@ -858,7 +858,7 @@
 
 (define install-regular-combinators
   (let ((originals (map eval combinator-names)))
-    (lambda () 
+    (lambda ()
       (for-each (lambda (old-value name)
                   (eval `(set! ,name ',old-value)) )
                 originals

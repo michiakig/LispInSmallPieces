@@ -28,7 +28,7 @@
 
 (define-method (resume (k protect-return-cont) v)
   (resume (protect-return-cont-k k) (protect-return-cont-value k)) )
-        
+
 (define-method (resume (k throwing-cont) v)            ; \modified
   (unwind (throwing-cont-k k) v (throwing-cont-cont k)) )
 
@@ -38,12 +38,12 @@
   (evaluate-begin (unwind-protect-cont-cleanup k)
                   (unwind-protect-cont-r k)
                   (make-unwind-cont
-                   (unwind-protect-cont-k k) v target ) ) ) 
+                   (unwind-protect-cont-k k) v target ) ) )
 
 (define-method (resume (k unwind-cont) v)
-  (unwind (unwind-cont-k k) 
-          (unwind-cont-value k) 
-          (unwind-cont-target k) ) ) 
+  (unwind (unwind-cont-k k)
+          (unwind-cont-value k)
+          (unwind-cont-target k) ) )
 
 (define-method (block-lookup (r block-env) n k v) ; \modified
   (if (eq? n (block-env-name r))

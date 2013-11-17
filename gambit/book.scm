@@ -33,7 +33,7 @@
 
 (define (last-pair l)
   (if (pair? l)
-      (if (pair? (cdr l)) 
+      (if (pair? (cdr l))
           (last-pair (cdr l))
           l )
       (support-error 'last-pair l) ) )
@@ -133,12 +133,12 @@
     (cond ((null? o*) #t)
           ((atom? o*) (display " . " stream)
                       (display o* stream) )
-          ((pair? o*) 
+          ((pair? o*)
            (print (car o*) len (+ dep 1))
            (if (pair? (cdr o*)) (display " " stream))
            (print-list (cdr o*) (+ len 1) dep) ) ) )
   (define (print o len dep)
-    (cond ((object? o) 
+    (cond ((object? o)
            (display "#<" stream)
            (display (Class-name (object->class o)) stream)
            (display ">" stream) )
@@ -162,7 +162,7 @@
 
 (include "gambit/format.scm")
 
-;;; Loads syntax-case V2.0.  
+;;; Loads syntax-case V2.0.
 
 (define error-hook error)
 
@@ -206,13 +206,13 @@
 (define (syntax-case-load file)
   (call-with-input-file file
     (lambda (in)
-      (if *syntax-case-load-verbose?* 
+      (if *syntax-case-load-verbose?*
           (begin (newline)
                  (display ";;; Loading ")
                  (display file)
                  (newline) ) )
       (let loop ((e (read in)))
-        (if (eof-object? e) 
+        (if (eof-object? e)
             file
             (let ((r (eval (expand-syntax e))))
               (if *syntax-case-load-verbose?*
@@ -236,7 +236,7 @@
 ;;; Load Meroonet. Meroonet defines three macros with
 ;;; define-meroonet-macro. These macros are not needed by the rest of
 ;;; this file, so it is sufficient to register them with syntax-case.
-;;; But, instead of syntax-case-loading the file, I only load it with 
+;;; But, instead of syntax-case-loading the file, I only load it with
 ;;; a definition of define-meroonet-macro that defines it for Dybvig.
 
 (define-macro (define-meroonet-macro call . body)
@@ -257,10 +257,10 @@
 
 (include "meroonet/meroonet.scm")
 
-;;; The test-driver should try to catch errors of the underlying Scheme 
+;;; The test-driver should try to catch errors of the underlying Scheme
 ;;; system. This is non-portable and difficult in many implementations. If
 ;;; you do not succeed writing it, you can still run the programs of the book
-;;; but you will not be able to run all the test-suites since some tests 
+;;; but you will not be able to run all the test-suites since some tests
 ;;; (for instance in meroonet/oo-tests.scm) require errors to be caught
 ;;; when signalled by list-tail with a non-numeric second argument.
 
@@ -268,8 +268,8 @@
  '(define-syntax catch-error
     (syntax-rules ()
       ((catch-error forms ...)
-       (protected-eval 
-        (lambda () 
+       (protected-eval
+        (lambda ()
           (list (begin forms ...)) ) ) ) ) ) )
 
 (define (make-new-error exit)
@@ -285,14 +285,14 @@
 
 (define (protected-eval thunk)
   (call/cc (lambda (exit)
-             (##dynamic-let (list (cons '##SIGNAL-CATCHER 
+             (##dynamic-let (list (cons '##SIGNAL-CATCHER
                                         (make-new-error exit) ))
                             thunk ) )) )
 ;;; Test: (protected-eval (lambda () (car #t)))
 
 ;;; Since the define-abbreviation is also necessary for the book when
 ;;; non high level macros are defined, register define-abbreviation
-;;; for syntax-case. 
+;;; for syntax-case.
 
 (expand-syntax
  '(define-syntax define-abbreviation
@@ -321,7 +321,7 @@
                    )
               (check r) ) ) ) ) )
    equal? ) )
-;;; Test: 
+;;; Test:
 ;;;	(test "meroonet/oo-tests.scm")
 ;;;	(test "bigloo/others/syntax.tst")
 
@@ -344,7 +344,7 @@
 
 ;;; The clone function that performs a shallow copy of a Meroonet object.
 
-(eval (expand-syntax 
+(eval (expand-syntax
        '(begin
           (define-generic (show (o) . stream)
             (let ((stream (if (pair? stream) (car stream)

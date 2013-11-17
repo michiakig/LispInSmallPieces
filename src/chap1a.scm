@@ -19,7 +19,7 @@
           (begin (evaluate (car exps) env)
                  (eprogn (cdr exps) env) )
           (evaluate (car exps) env) )
-      empty-begin ) )  
+      empty-begin ) )
 
 (define empty-begin 813)
 

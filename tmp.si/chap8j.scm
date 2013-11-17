@@ -6,10 +6,10 @@
 
 ;;; Bytecode size roughly 1K bytes.
 
-(call/cc 
+(call/cc
  (lambda (exit)
    ((lambda (extend! error make-toplevel)
-      (begin 
+      (begin
                                         ; extend!
         (set! extend!
               (lambda (env names values)
@@ -28,21 +28,21 @@
                                         ; error
         (set! error
               (lambda (msg hint)
-                (begin 
+                (begin
                   (display (list '*ERROR* msg hint))
                   (newline)
                   (exit 'aborted) ) ) )
                                         ; make-toplevel
         (set! make-toplevel
               (lambda (global-env prompt-in prompt-out)
-                ((lambda (toplevel eval evlis eprogn reference 
+                ((lambda (toplevel eval evlis eprogn reference
                                    begin quote if set! lambda export )
                    (begin
                                         ; toplevel
                      (set! toplevel
-                           (lambda () 
+                           (lambda ()
                              (begin (display prompt-in)
-                                    ((lambda (result) 
+                                    ((lambda (result)
                                        (begin (display prompt-out)
                                               (display result)
                                               (newline) ) )
@@ -51,7 +51,7 @@
                                         ; eval
                      (set! eval
                            (lambda (e r)
-                             (if (pair? e) 
+                             (if (pair? e)
                                  ((lambda (f)
                                     (if (if (primitive? f)  ; or
                                             #t
@@ -90,14 +90,14 @@
                                         ; quote
                      (set! quote
                            (lambda (r quotation) quotation) )
-                                        ; if 
+                                        ; if
                      (set! if
                            (lambda (r condition then else)
                              (eval (if (eval condition r) then else) r) ) )
                                         ; set!
                      (set! set!
                            (lambda (r name form)
-                             ((lambda (v) 
+                             ((lambda (v)
                                 (if (variable-defined? name r)
                                     (set-variable-value! name r v)
                                     (if (variable-defined? name global-env)
@@ -120,7 +120,7 @@
                              r ) )
                      (set! global-env (export))
                      (toplevel) ) )
-                 'toplevel 'eval 'evlis 'eprogn 'reference 
+                 'toplevel 'eval 'evlis 'eprogn 'reference
                  'begin 'quote 'if 'set! 'lambda 'export ) ) )
                                         ; real work
         (make-toplevel (export) "?? " "== ") ) )

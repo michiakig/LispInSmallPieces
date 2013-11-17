@@ -45,14 +45,14 @@
 
 ((eval '(lambda (x) (cons x x)))
  33 )
- (33 . 33) 
-(((eval '(lambda (f) 
+ (33 . 33)
+(((eval '(lambda (f)
            (lambda (x) (f x)) ))
-  list )  
- 44 )    
-   (44) 
+  list )
+ 44 )
+   (44)
 
-;;; Exercizing some errors. No test on syntax since interpreters of the 
+;;; Exercizing some errors. No test on syntax since interpreters of the
 ;;; book neglect this aspect.
 (eval car)
    ***

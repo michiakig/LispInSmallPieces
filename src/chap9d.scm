@@ -97,11 +97,11 @@
     (evaluate-error "Wrong arity" f args) )
   (evaluate (RunTime-Procedure-body f)
             (sr-extend* (RunTime-Procedure-environment f)
-                        (RunTime-Procedure-variables f) 
+                        (RunTime-Procedure-variables f)
                         args ) ) )
 
 (define-method (invoke (f RunTime-Primitive) args)
-  (unless ((RunTime-Primitive-comparator f) 
+  (unless ((RunTime-Primitive-comparator f)
            (length args) (RunTime-Primitive-arity f) )
     (evaluate-error "Wrong arity" f args) )
   (apply (RunTime-Primitive-address f) args) )
@@ -117,7 +117,7 @@
               (sr-extend (sr-extend* sr (cdr variables) (cdr values))
                          (car variables) (car values) )
               (evaluate-error "Not enough values" variables) ) )
-      (if (null? values) 
+      (if (null? values)
           sr
           (evaluate-error "Too much values" values) ) ) )
 
@@ -131,7 +131,7 @@
 
 (define-method (evaluate (e Fix-Let) sr)
   (let ((args (evaluate (Fix-Let-arguments e) sr)))
-    (evaluate (Fix-Let-body e) 
+    (evaluate (Fix-Let-body e)
               (sr-regular-extend* sr (Fix-Let-variables e) args) ) ) )
 
 ;;; (assume (every? Regular-Variable? variables))
@@ -165,48 +165,48 @@
 (define-syntax defprimitive
   (syntax-rules (>=0 >=2)
     ((defprimitive name value 0)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description = 0 "") ))
            (f (make-RunTime-Primitive value = 0)) )
        (set! g.predef  (make-Full-Environment g.predef v))
        (set! sg.predef (sr-extend sg.predef v f))
        'name ) )
     ((defprimitive name value 1)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description = 1 "") ))
            (f (make-RunTime-Primitive value = 1)) )
        (set! g.predef  (make-Full-Environment g.predef v))
        (set! sg.predef (sr-extend sg.predef v f))
        'name ) )
     ((defprimitive name value 2)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description = 2 "") ))
            (f (make-RunTime-Primitive value = 2)) )
        (set! g.predef  (make-Full-Environment g.predef v))
        (set! sg.predef (sr-extend sg.predef v f))
        'name ) )
     ((defprimitive name value 3)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description = 3 "") ))
            (f (make-RunTime-Primitive value = 3)) )
        (set! g.predef  (make-Full-Environment g.predef v))
        (set! sg.predef (sr-extend sg.predef v f))
        'name ) )
     ((defprimitive name value >=0)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description >= 0 "") ))
            (f (make-RunTime-Primitive value >= 0)) )
        (set! g.predef  (make-Full-Environment g.predef v))
        (set! sg.predef (sr-extend sg.predef v f))
        'name ) )
     ((defprimitive name value >=2)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description >= 2 "") ))
            (f (make-RunTime-Primitive value >= 2)) )
        (set! g.predef  (make-Full-Environment g.predef v))
        (set! sg.predef (sr-extend sg.predef v f))
        'name ) ) ) )
-  
+
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Initialization of the predefined global environment.
 
@@ -262,7 +262,7 @@
 
 (defprimitive list
   (lambda args args)
-  >=0 )    
+  >=0 )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
@@ -280,7 +280,7 @@
 ;;; appeared in g.
 
 (define (enrich-with-new-global-variables! level)
-  (let* ((g (find-global-environment 
+  (let* ((g (find-global-environment
              (Evaluator-Preparation-Environment level) ) )
          (sg-head (find-global-runtime-environment
                    (Evaluator-RunTime-Environment level) )) )
@@ -304,7 +304,7 @@
 
 (define-method (show (o Variable) . stream)
   (let ((stream (if (pair? stream) (car stream) (current-output-port))))
-    (format stream "#<~A ~A>" 
+    (format stream "#<~A ~A>"
             (Class-name (object->class o))
             (Variable-name o) ) ) )
 

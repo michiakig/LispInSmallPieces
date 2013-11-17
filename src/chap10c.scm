@@ -19,7 +19,7 @@
 
 (define-class No-Free Program ())
 
-(define-class Flattened-Program Program 
+(define-class Flattened-Program Program
   (form quotations definitions) )
 
 ;;; Keep the variables to compute the arity of the function when generating C.
@@ -70,12 +70,12 @@
 (define-method (lift-procedures! (o Function) flatfun vars)
   (let* ((localvars (Function-variables o))
          (body   (Function-body o))
-         (newfun (make-Flat-Function 
+         (newfun (make-Flat-Function
                   localvars body (make-No-Free) )) )
-    (set-Flat-Function-body! 
+    (set-Flat-Function-body!
      newfun (lift-procedures! body newfun localvars) )
     (let ((free* (Flat-Function-free newfun)))
-      (set-Flat-Function-free! 
+      (set-Flat-Function-free!
        newfun (lift-procedures! free* flatfun vars) ) )
     newfun ) )
 
@@ -85,7 +85,7 @@
   (set-Fix-Let-arguments!
    o (lift-procedures! (Fix-Let-arguments o) flatfun vars) )
   (let ((newvars (append (Fix-Let-variables o) vars)))
-    (set-Fix-Let-body! 
+    (set-Fix-Let-body!
      o (lift-procedures! (Fix-Let-body o) flatfun newvars) )
     o ) )
 
@@ -95,11 +95,11 @@
   (when (Flat-Function? flatfun)
     (let check ((free* (Flat-Function-free flatfun)))
       (if (No-Free? free*)
-          (set-Flat-Function-free! 
-           flatfun (make-Free-Environment 
+          (set-Flat-Function-free!
+           flatfun (make-Free-Environment
                     ref (Flat-Function-free flatfun) ) )
           (unless (eq? (Reference-variable ref)
-                       (Reference-variable 
+                       (Reference-variable
                         (Free-Environment-first free*) ) )
             (check (Free-Environment-others free*)) ) ) ) ) )
 
@@ -118,7 +118,7 @@
 
 (define-method (extract! (o Constant) result)
   (let* ((qv* (Flattened-Program-quotations result))
-         (qv  (make-Quotation-Variable (length qv*) 
+         (qv  (make-Quotation-Variable (length qv*)
                                        (Constant-value o) )) )
     (set-Flattened-Program-quotations! result (cons qv qv*))
     (make-Global-Reference qv) ) )
@@ -128,14 +128,14 @@
          (variables (Flat-Function-variables o))
          (freevars  (let extract ((free (Flat-Function-free o)))
                       (if (Free-Environment? free)
-                          (cons (Reference-variable 
+                          (cons (Reference-variable
                                  (Free-Environment-first free) )
-                                (extract 
+                                (extract
                                  (Free-Environment-others free) ) )
                           '() ) ))
-         (index (adjoin-definition! 
+         (index (adjoin-definition!
                  result variables newbody freevars )) )
-    (make-Closure-Creation 
+    (make-Closure-Creation
      index variables (Flat-Function-free o) ) ) )
 
 ;;; May try to share Function-Definitions.
@@ -143,7 +143,7 @@
 (define (adjoin-definition! result variables body free)
   (let* ((definitions (Flattened-Program-definitions result))
          (newindex (length definitions)) )
-    (set-Flattened-Program-definitions! 
+    (set-Flattened-Program-definitions!
      result (cons (make-Function-Definition
                    variables body free newindex )
                   definitions ) )

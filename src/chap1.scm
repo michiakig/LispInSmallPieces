@@ -13,7 +13,7 @@
 ;;; This is a naive evaluator for Scheme written in naive Scheme.
 
 (define (evaluate e env)
-  (if (atom? e) 
+  (if (atom? e)
       (cond ((symbol? e) (lookup e env))
             ((or (number? e) (string? e) (char? e)
                  (boolean? e) (vector? e) )
@@ -35,7 +35,7 @@
 (define the-false-value (cons "false" "boolean"))
 
 (define (evaluate e env)
-  (if (atom? e) 
+  (if (atom? e)
       (cond ((symbol? e) (lookup e env))
             ((or (number? e)(string? e)(char? e)(boolean? e)(vector? e))
              e )
@@ -63,7 +63,7 @@
   (if (pair? exps)
       (cons (evaluate (car exps) env)
             (evlis (cdr exps) env) )
-      '() ) ) 
+      '() ) )
 
 (define (lookup id env)
   (if (pair? env)
@@ -78,7 +78,7 @@
           (begin (set-cdr! (car env) value)
                  value )
           (update! id (cdr env) value) )
-      (wrong "No such binding" id) ) ) 
+      (wrong "No such binding" id) ) )
 
 (define env.init '())
 
@@ -90,22 +90,22 @@
              (wrong "Too less values") ) )
         ((null? variables)
              (if (null? values)
-                 env 
+                 env
                  (wrong "Too much values") ) )
-        ((symbol? variables) (cons (cons variables values) env)) ) ) 
+        ((symbol? variables) (cons (cons variables values) env)) ) )
 
 (define (invoke fn args)
-  (if (procedure? fn) 
+  (if (procedure? fn)
       (fn args)
-      (wrong "Not a function" fn) ) ) 
+      (wrong "Not a function" fn) ) )
 
 ;(define (make-function variables body env)
 ;  (lambda (values)
-;     (eprogn body (extend env.init variables values)) ) ) 
+;     (eprogn body (extend env.init variables values)) ) )
 
 ;(define (make-function variables body env)
 ;  (lambda (values)
-;     (eprogn body (extend env.global variables values)) ) ) 
+;     (eprogn body (extend env.global variables values)) ) )
 
 (define (make-function variables body env)
   (lambda (values)
@@ -113,7 +113,7 @@
 
 (define env.global env.init)
 
-(define-syntax definitial 
+(define-syntax definitial
   (syntax-rules ()
     ((definitial name)
      (begin (set! env.global (cons (cons 'name 'void) env.global))
@@ -122,17 +122,17 @@
      (begin (set! env.global (cons (cons 'name value) env.global))
             'name ) ) ) )
 
-(define-syntax defprimitive 
+(define-syntax defprimitive
   (syntax-rules ()
     ((defprimitive name value arity)
-     (definitial name 
-        (lambda (values) 
+     (definitial name
+        (lambda (values)
           (if (= arity (length values))
               (apply value values)       ; The real \texttt{apply} of Scheme
               (wrong "Incorrect arity"
                      (list 'name values) ) ) ) ) ) ) )
 
-(define-syntax defpredicate 
+(define-syntax defpredicate
   (syntax-rules ()
     ((defpredicate name value arity)
      (defprimitive name
@@ -179,17 +179,17 @@
 (defprimitive remainder remainder 2)
 (defprimitive display display 1)
 
-(defprimitive call/cc 
-  (lambda (f) 
-    (call/cc (lambda (g) 
-               (invoke 
+(defprimitive call/cc
+  (lambda (f)
+    (call/cc (lambda (g)
+               (invoke
                 f (list (lambda (values)
                           (if (= (length values) 1)
                               (g (car values))
                               (wrong "Incorrect arity" g) ) ))) )) )
-  1 )   
+  1 )
 
-(definitial apply 
+(definitial apply
   (lambda (values)
     (if (>= (length values) 2)
         (let ((f (car values))
@@ -200,7 +200,7 @@
         (invoke f args) )
         (wrong "Incorrect arity" 'apply) ) ) )
 
-(definitial list 
+(definitial list
   (lambda (values) values) )
 
 (define (chapter1-scheme)

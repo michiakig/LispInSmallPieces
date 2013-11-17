@@ -13,7 +13,7 @@
 ;;; special forms dynamic, dynamic-let, dynamic-set!
 
 (define (df.evaluate e env fenv denv)
-  (if (atom? e) 
+  (if (atom? e)
       (cond ((symbol? e) (lookup e env))
             ((or (number? e) (string? e) (char? e)
                  (boolean? e) (vector? e) )
@@ -25,34 +25,34 @@
                   (df.evaluate (caddr e) env fenv denv)
                   (df.evaluate (cadddr e) env fenv denv) ))
         ((begin) (df.eprogn (cdr e) env fenv denv))
-        ((set!) (update! (cadr e) 
-                         env 
+        ((set!) (update! (cadr e)
+                         env
                          (df.evaluate (caddr e) env fenv denv) ))
         ((function)
          (cond ((symbol? (cadr e))
                 (f.lookup (cadr e) fenv) )
                ((and (pair? (cadr e)) (eq? (car (cadr e)) 'lambda))
-                (df.make-function 
+                (df.make-function
                  (cadr (cadr e)) (cddr (cadr e)) env fenv ) )
                (else (wrong "Incorrect function" (cadr e))) ) )
         ((dynamic) (lookup (cadr e) denv))
-        ((dynamic-set!) 
-         (update! (cadr e) 
-                  denv 
+        ((dynamic-set!)
+         (update! (cadr e)
+                  denv
                   (df.evaluate (caddr e) env fenv denv) ) )
         ((dynamic-let)
          (df.eprogn (cddr e)
-                    env 
+                    env
                     fenv
-                    (extend denv 
+                    (extend denv
                             (map car (cadr e))
-                            (map (lambda (e) 
+                            (map (lambda (e)
                                    (df.evaluate e env fenv denv) )
                                  (map cadr (cadr e)) ) ) ) )
-        (else (df.evaluate-application 
-               (car e) 
+        (else (df.evaluate-application
+               (car e)
                (df.evlis (cdr e) env fenv denv)
-               env 
+               env
                fenv
                denv )) ) ) )
 
@@ -91,7 +91,7 @@
 (define fenv.global '())
 (define denv.global '())
 
-(define-syntax definitial 
+(define-syntax definitial
   (syntax-rules ()
     ((definitial name)
      (begin (set! env.global (cons (cons 'name 'void) env.global))
@@ -109,7 +109,7 @@
      (begin (set! fenv.global (cons (cons 'name value) fenv.global))
             'name ) ) ) )
 
-(define-syntax defprimitive 
+(define-syntax defprimitive
   (syntax-rules ()
    ((defprimitive name value arity)
     (definitial-function name
@@ -118,7 +118,7 @@
             (apply value values)
             (wrong "Incorrect arity" (list 'name values)) ) ) ) ) ) )
 
-(define-syntax defpredicate 
+(define-syntax defpredicate
   (syntax-rules ()
     ((defpredicate name value arity)
      (defprimitive name
@@ -156,7 +156,7 @@
 (defprimitive + + 2)
 (defprimitive - - 2)
 (defpredicate = = 2)
-(defprimitive < < 2) 
+(defprimitive < < 2)
 (defpredicate < < 2)
 (defpredicate > > 2)
 (defprimitive * * 2)
@@ -165,17 +165,17 @@
 (defprimitive remainder remainder 2)
 (defprimitive display display 1)
 
-(defprimitive call/cc 
-  (lambda (f) 
-    (call/cc (lambda (g) 
+(defprimitive call/cc
+  (lambda (f)
+    (call/cc (lambda (g)
                (f (lambda (values denv)
                     (if (= (length values) 1)
                         (g (car values))
                         (wrong "Incorrect arity" g) ) )
                   denv ) )) )
-  1 )   
+  1 )
 
-(definitial-function apply 
+(definitial-function apply
   (lambda (values denv)
     (if (>= (length values) 2)
         (let ((f (car values))
@@ -186,7 +186,7 @@
         (f args denv) )
         (wrong "Incorrect arity" 'apply) ) ) )
 
-(definitial-function list 
+(definitial-function list
   (lambda (values denv) values) )
 
 

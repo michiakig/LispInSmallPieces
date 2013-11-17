@@ -17,48 +17,48 @@
 ;;; Combinators
 
 (define (SHALLOW-ARGUMENT-REF j)
-  (lambda () 
+  (lambda ()
     (set! *val* (activation-frame-argument *env* j)) ) )
 
 (define (PREDEFINED i)
-  (lambda ()  
+  (lambda ()
     (set! *val* (predefined-fetch i)) ) )
 
 (define (DEEP-ARGUMENT-REF i j)
-  (lambda () 
+  (lambda ()
     (set! *val* (deep-fetch *env* i j)) ) )
 
 (define (SHALLOW-ARGUMENT-SET! j m)
-  (lambda () 
+  (lambda ()
     (m)
     (set-activation-frame-argument! *env* j *val*) ) )
 
 (define (DEEP-ARGUMENT-SET! i j m)
-  (lambda () 
+  (lambda ()
     (m)
     (deep-update! *env* i j *val*) ) )
 
 (define (GLOBAL-REF i)
-  (lambda () 
+  (lambda ()
     (set! *val* (global-fetch i)) ) )
 
 (define (CHECKED-GLOBAL-REF i)
-  (lambda () 
+  (lambda ()
     ((GLOBAL-REF i))
     (when (eq? *val* undefined-value)
       (wrong "Uninitialized variable") ) ) )
 
 (define (GLOBAL-SET! i m)
-  (lambda () 
+  (lambda ()
     (m)
     (global-update! i *val*) ) )
 
 (define (CONSTANT value)
-  (lambda ()  
+  (lambda ()
     (set! *val* value) ) )
 
 (define (ALTERNATIVE m1 m2 m3)
-  (lambda () 
+  (lambda ()
     (m1)
     (if *val* (m2) (m3)) ) )
 
@@ -79,23 +79,23 @@
     (set! *env* (activation-frame-next *env*)) ) )
 
 (define (CALL0 address)
-  (lambda ()  
+  (lambda ()
     (set! *val* (address)) ) )
 
 (define (CALL1 address m1)
-  (lambda ()  
+  (lambda ()
     (m1)
     (set! *val* (address *val*)) ) )
 
 (define (CALL2 address m1 m2)
-  (lambda ()  
+  (lambda ()
     (m1)
     (let ((arg1 *val*))
       (m2)
       (set! *val* (address arg1 *val*)) ) ) )
 
 (define (CALL3 address m1 m2 m3)
-  (lambda ()  
+  (lambda ()
     (m1)
     (let ((arg1 *val*))
       (m2)
@@ -118,14 +118,14 @@
     (lambda ()
       (define (the-function v* sr)
         (if (>= (activation-frame-argument-length v*) arity+1)
-            (begin 
+            (begin
               (listify! v* arity)
               (set! *env* (sr-extend* sr v*))
               (m+) )
             (wrong "Incorrect arity") ) )
       (set! *val* (make-closure the-function *env*)) ) ) )
 
-(define (TR-REGULAR-CALL m m*) 
+(define (TR-REGULAR-CALL m m*)
   (lambda ()
     (m)
     (let ((f *val*))
@@ -153,7 +153,7 @@
     (m)
     (let* ((v *val*))
       (m*)
-      (set-activation-frame-argument! 
+      (set-activation-frame-argument!
        *val* arity (cons v (activation-frame-argument *val* arity)) ) ) ) )
 
 (define (ALLOCATE-FRAME size)
@@ -182,7 +182,7 @@
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a))
          (make-closure behavior sr.init) ) ) ) ) )
-  
+
 (define-syntax defprimitive2
   (syntax-rules ()
     ((defprimitive2 name value)
@@ -191,7 +191,7 @@
                 (behavior
                  (lambda (v* sr)
                    (if (= arity+1 (activation-frame-argument-length v*))
-                       (set! *val* (value (activation-frame-argument v* 0) 
+                       (set! *val* (value (activation-frame-argument v* 0)
                                           (activation-frame-argument v* 1) ))
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a b))
@@ -216,7 +216,7 @@
 (defprimitive remainder remainder 2)
 (defprimitive display display 1)
 
-(definitial list 
+(definitial list
   (begin ((NARY-CLOSURE (SHALLOW-ARGUMENT-REF 0) 0))
          *val* ) )
 
@@ -231,7 +231,7 @@
               (invoke
                (activation-frame-argument v* 0)
                (let ((frame (allocate-activation-frame (+ 1 1))))
-                 (set-activation-frame-argument! 
+                 (set-activation-frame-argument!
                   frame 0
                   (make-closure
                    (lambda (values r)
@@ -249,7 +249,7 @@
 
 (define install-regular-combinators
   (let ((originals (map eval combinator-names)))
-    (lambda () 
+    (lambda ()
       (for-each (lambda (old-value name)
                   (eval `(set! ,name ',old-value)) )
                 originals
@@ -278,9 +278,9 @@
       (m) ) ) )
 
 (define (test-scheme7a file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)

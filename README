@@ -57,7 +57,7 @@ Chapter 3: Escape, Continuation
         unwind-protect, call/cc) all explained through an interpreter
         (eval exp env continuation) written in OO style.
 
-Chapter 4: Side-effect 
+Chapter 4: Side-effect
         Assignment, data mutation and equality explained through another
         interpreter (eval exp env cont memory) written with lambdas only.
 
@@ -69,11 +69,11 @@ Chapter 5: Denotational Semantics
 Chapter 6: Fast interpretation
         Precompile expressions to speed up interpretation. Introduce
         runtime representations of environment and continuations through
-        various interpreters such as 
+        various interpreters such as
                 ((eval exp lexical.env) runtime.env continuation),
                 ((eval exp lexical.env) runtime.env) and finally
                 ((eval exp lexical.env)).
-        
+
 Chapter 7: ByteCode compilation
         Compile expressions into byte-code instructions; invent registers,
         PC, stack and the like with still another compiler/interpreter
@@ -81,12 +81,12 @@ Chapter 7: ByteCode compilation
 
 Chapter 8: Eval and other reflective features.
         A whole chapter on eval, its implementation and cost, in all the
-        previous interpreters/compilers. Also introduce first class 
+        previous interpreters/compilers. Also introduce first class
         environments and a complete reflective interpreter.
 
 Chapter 9: Macros
         Everything you want to know on macros, macroexpansion, hygien etc.
-        in relation with (separate) compilation and interpretation. 
+        in relation with (separate) compilation and interpretation.
 
 Chapter 10: Compilation towards C
         Another complete compiler from Scheme to C and its runtime in C.
@@ -100,7 +100,7 @@ ____________________________________________________________________________
 *** INSTALLATION
 
 These files were tested with a Scheme interpreter augmented with
-        a test-suite driver (tester.scm), 
+        a test-suite driver (tester.scm),
         the define-syntax and define-abbreviation macros (using
                 Dybvig's syntax-case package),
         and an object system: Meroonet (meroonet.scm).
@@ -193,7 +193,7 @@ Makefile file:
         Used to regenerate intepreters with compiled Meroonet and syntax-case.
 Used to load and test the various source files.
 
-o/ directory: 
+o/ directory:
         This directory will contain relocatable or executable programs
 that depend on your computer. More precisely, it will contain
 subdirectories for each type of machine you use. These subdirectories
@@ -236,15 +236,15 @@ You can regenerate this interpreter by running:
         make o/${HOSTTYPE}/book.sci
 
 scm/ directory:
-        This directory contains the source files that are necessary to 
-run SCM with all the bells and whistles needed to run the programs of 
+        This directory contains the source files that are necessary to
+run SCM with all the bells and whistles needed to run the programs of
 the book. It contains the syntax-case package of Hieb and Dybvig and
 property list routines from Ozan Yigit.
 
 meroonet/ directory:
         This directory contains the original distribution of Meroonet
 (that can be obtained from the Scheme Repository) as well as some of the
-variants suggested in exercises in chapter 11 of the book. 
+variants suggested in exercises in chapter 11 of the book.
 
 src/ directory:
         It is detailed chapter by chapter.
@@ -259,7 +259,7 @@ chap1c.scm      shallow binding
 chap1d.scm      solutions to exercices.
 
 --------------- Multiple namespaces
-chap2a.scm      a small (naive) Lisp2 interpreter 
+chap2a.scm      a small (naive) Lisp2 interpreter
                 signature: (eval e env fenv)
 chap2a.tst      tests
 chap2b.scm      addition of flet, function, funcall ...
@@ -267,7 +267,7 @@ chap2b.tst      tests
 chap2c.scm      dynamic variables with dynamic-let, dynamic, dynamic-set!
                 signature: (eval e env fenv denv)
 chap2c.tst      tests
-chap2d.scm      various excerpts from chapter2 (a cyclic printer, various 
+chap2d.scm      various excerpts from chapter2 (a cyclic printer, various
                 fixpoints combinators)
 chap2e.scm      addition of Common-Lispy dynamic variables
 chap2e.tst      tests
@@ -307,7 +307,7 @@ chap5b.scm      lambda calculus denotation
 chap5b.tst      tests
 chap5c.scm      denotational intepreter for Scheme and dynamic variables
 chap5c.tst      tests
-chap5d.scm      another denotational intepreter for Scheme 
+chap5d.scm      another denotational intepreter for Scheme
 chap5e.scm      another one preserving an unspecified evaluation order
 chap5e.tst      tests
 chap5f.scm      delay, memo-delay and CPS
@@ -348,7 +348,7 @@ chap7e.scm      Addition of dynamic variables, error handler, bind-exit
 chap7f.scm      Instruction set for the bytecode interpreter
 chap7g.scm      Separate compilation stuff
 chap7h.scm      Dynamic variables and error handlers with specific registers
-chap7i.scm      Dynamic variables with shallow binding 
+chap7i.scm      Dynamic variables with shallow binding
 
 --------------- Evaluation
 chap8.tst       tests
@@ -379,7 +379,7 @@ chap9e.scm      convert Programs back to Scheme aspect
 chap9z.scm      other excerpts from chapter 9
 
 Complex macro stuff may be found in the source files defining the
-book.bigloo and book.sci executables that simultaneously use two 
+book.bigloo and book.sci executables that simultaneously use two
 different macro systems. Meroon sources are another example.
 
 --------------- Compilation to C

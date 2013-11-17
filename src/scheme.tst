@@ -112,8 +112,8 @@ xyzzy
  5 )
    (5 5 . 1)
 ;;; multiple levels of lambda
-((lambda (bar) 
-   (lambda (k) 
+((lambda (bar)
+   (lambda (k)
      (lambda (r) (k 4)) ) )
  (quote bar))
    ---
@@ -190,7 +190,7 @@ xyzzy
 ;;; begin evaluates only once its parameters
 (begin (set! a 1) (set! a (cons a a)) a)
    (1 . 1)
-   
+
 ((lambda (v f) (f v v))
  1 cons )
    (1 . 1)
@@ -218,7 +218,7 @@ xyzzy
  'fact )
    120
 ((lambda (fib)
-   (begin (set! fib 
+   (begin (set! fib
                 (lambda (n)
                   (if (<= n 2) 1
                       (+ (fib (- n 1)) (fib (- n 2))) ) ) )
@@ -226,8 +226,8 @@ xyzzy
  'fib )
    8
 ((lambda (bar fact)
-   (begin 
-     (set! bar 
+   (begin
+     (set! bar
            (lambda (n k)
              (if (< n 2) (k 1)
                  (bar (- n 1) (lambda (r) (k (* n r)))) ) ) )
@@ -245,10 +245,10 @@ xyzzy
 
 ;;; A little letrec by hand, using the `fact' global variable.
 (begin
-  (set! fact 
+  (set! fact
         (lambda (n)
           ((lambda (factint)
-             (begin (set! factint 
+             (begin (set! factint
                           (lambda (n f)
                             (if (< n 2) 1
                                 (* n (f (- n 1) f)) ) ) )
@@ -259,14 +259,14 @@ xyzzy
 
 ;;; Another hand-made letrec with more closures closing variables at
 ;;; different depths.
-((lambda (primes filter)  
+((lambda (primes filter)
    (set! primes
          (lambda (n f max)
            (if (> n max)
                '()
                (if (f n)
                    (primes (+ n 1) f max)
-                   (cons n 
+                   (cons n
                          ((lambda (ff)
                             (primes (+ n 1)
                                     (lambda (p) (if (f p) t (ff p)))
@@ -281,20 +281,20 @@ xyzzy
 
 ;;; Same example using the `primes' global variable.
 (begin
-  (set! primes 
+  (set! primes
         (lambda (n f max)
           ((lambda (filter)
              (begin
                ;; this predicate returns true if n is a composite number
                ;; ie a multiple of p.
                (set! filter (lambda (p)
-                              (lambda (n) 
+                              (lambda (n)
                                 (= 0 (remainder n p))) ))
                (if (> n max)
                    '()
                    (if (f n)
                        (primes (+ n 1) f max)
-                       (cons n 
+                       (cons n
                              ((lambda (ff)
                                 (primes (+ n 1)
                                         (lambda (p) (if (f p) t (ff p)))
@@ -563,7 +563,7 @@ list
    (x . y)
 
 ;;; Testing homonymy
-((lambda (x) 
+((lambda (x)
    ((lambda (x) (+ x 1))
     (* 2 x) ) )
  5 )
@@ -573,23 +573,23 @@ list
  (lambda (x) (* x x)) )
    9
 ((lambda (x)
-   ((lambda (x) 
+   ((lambda (x)
       (x) )
     (lambda () x) ) )
  3 )
     3
 ((lambda (x)
-   ((lambda (x) 
-      ((lambda (x) 
+   ((lambda (x)
+      ((lambda (x)
          ((car x)) )
        (cons x x) ) )
     (lambda () (+ 1 x)) ) )
  3 )
    4
 (((lambda (x)
-    ((lambda (x) 
-       ((lambda (x) 
-          (lambda () 
+    ((lambda (x)
+       ((lambda (x)
+          (lambda ()
             ((car x) 2) ) )
         (list x) ) )
      (lambda (y) (* y x)) ) )
@@ -614,7 +614,7 @@ list
        66 ) )
    ((33 . 33)(55 55)(66 66))
 
-;;; testing variable arity through apply 
+;;; testing variable arity through apply
 (apply (lambda (z) z) 1 '())
    1
 (apply (lambda (z) z) '(1))
@@ -941,7 +941,7 @@ list
                      (car args) ))
  1 2 3 4 )
    2
-(((lambda args (begin (set! args (cdr args)) 
+(((lambda args (begin (set! args (cdr args))
                       (lambda (x) (cons x args)) ))
   1 2 3 4 )
  0 )
@@ -1110,7 +1110,7 @@ call/cc
    z
 
 ((lambda (foo)
-   (begin 
+   (begin
      (set! foo ((lambda (z)
                   (lambda (x)
                     ((lambda (y) (begin (set! z x) y))
@@ -1212,16 +1212,16 @@ The following tests use continuations out of their dynamic extent."
                        ((lambda (v3)
                           (cons v3
                                 ((lambda (v4)
-                                   (cons v4 
-                                         (cons (foo 'f) 
+                                   (cons v4
+                                         (cons (foo 'f)
                                                '() )) )
                                  ((lambda (x)
-                                    (if (symbol? x) 
-                                        'ee 
+                                    (if (symbol? x)
+                                        'ee
                                         (x 'e) ) )
                                   ; store D, return the continuation
                                   (foo 'd) ) ) ) )
-                        (foo (call/cc (lambda (k) 
+                        (foo (call/cc (lambda (k)
                                         ; store continuation, return B
                                         (cons 2 (k k)) ))) ) ) )
                (foo (call/cc (lambda (k) ; store B, return A
@@ -1249,7 +1249,7 @@ The following tests use continuations out of their dynamic extent."
                                  ((lambda (x)
                                     (if (symbol? x) 'ee (x 'e)) )
                                   (foo 'd 4) ) ) ) )
-                        (foo (call/cc (lambda (k) 
+                        (foo (call/cc (lambda (k)
                                         ; store continuation, return B
                                         (cons 2 (k k)) ))
                              3 ) ) ) )
@@ -1261,7 +1261,7 @@ The following tests use continuations out of their dynamic extent."
            1 ) ) ) )
  'foo )
    (z a d ee d)
-;;; From an idea of D. Friedman reported to me by O. Danvy: 
+;;; From an idea of D. Friedman reported to me by O. Danvy:
 ;;; How can be used (call/cc list) ?
 ((lambda (r)
    ((car r) (list pair?)) )
@@ -1275,23 +1275,23 @@ The following tests use continuations out of their dynamic extent."
 
 ;;; check that activation frames are not shared (variable a).
 ((lambda (k f)
-  (begin 
+  (begin
     (set! f ((lambda (r) (cons r f))
              ((lambda (a) (lambda () a))
-              (call/cc (lambda (nk) 
+              (call/cc (lambda (nk)
                          (begin (set! k nk) (nk 1)) )) ) ))
-    (if (eq? (cdr f) '()) 
-        (k 2) 
+    (if (eq? (cdr f) '())
+        (k 2)
         (list ((car f)) ((car (cdr f)))) ) ) )
  'wait '() )
    (2 1)
 ((lambda (k f g)
-  (begin 
+  (begin
     (set! f ((lambda (r) (cons r f))
-             (g (call/cc (lambda (nk) 
+             (g (call/cc (lambda (nk)
                            (begin (set! k nk) (nk 1)) )) ) ))
-    (if (eq? (cdr f) '()) 
-        (k 2) 
+    (if (eq? (cdr f) '())
+        (k 2)
         (list ((car f)) ((car (cdr f)))) ) ) )
  'wait '() (lambda (a) (lambda () a)) )
    (2 1)

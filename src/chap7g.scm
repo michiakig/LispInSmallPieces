@@ -49,13 +49,13 @@
          (constants       (apply vector *quotations*))
          (dynamics        *dynamic-variables*)
          (ofilename       (string-append filename ".so")) )
-    (write-result-file ofilename 
-                       (list ";;; Bytecode object file for " 
+    (write-result-file ofilename
+                       (list ";;; Bytecode object file for "
                              complete-filename )
                        dynamics global-names constants code
                        (length (code-prologue)) ) ) )
 
-(define (write-result-file ofilename comments dynamics global-names 
+(define (write-result-file ofilename comments dynamics global-names
                            constants code entry )
   (call-with-output-file ofilename
     (lambda (out)
@@ -140,7 +140,7 @@
                     (= instr DYNAMIC-PUSH-code) )
             (let* ((i (vector-ref code (+ pc 1)))
                    (name (list-ref dynamics (- i 1))) )
-              (vector-set! code (+ pc 1) 
+              (vector-set! code (+ pc 1)
                            (get-dynamic-variable-index name) ) ) )
           (scan (+ pc (instruction-size code pc))) ) ) ) ) )
 
@@ -179,7 +179,7 @@
        (if (= arity+1 (activation-frame-argument-length *val*))
            (let ((filename (activation-frame-argument *val* 0)))
              (set! *pc* (install-object-file! filename)) )
-           (signal-exception 
+           (signal-exception
             #t (list "Incorrect arity" 'load) ) ) ) ) ) )
 
 ;;; A function to get the value of a global variable by its name
@@ -190,7 +190,7 @@
     (define (get-index name)
       (let ((where (memq name sg.current.names)))
         (if where (- (length where) 1)
-            (signal-exception 
+            (signal-exception
              #f (list "Undefined global variable" name) ) ) ) )
     (make-primitive
      (lambda ()
@@ -199,10 +199,10 @@
                   (i (get-index name)) )
              (set! *val* (global-fetch i))
              (when (eq? *val* undefined-value)
-               (signal-exception 
+               (signal-exception
                 #f (list "Uninitialized variable" i) ) )
              (set! *pc* (stack-pop)) )
-           (signal-exception 
+           (signal-exception
             #t (list "Incorrect arity" 'global-value) ) ) ) ) ) )
 
 ;;;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -230,10 +230,10 @@
 
 ;;;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; rename exported variables. It is even possible to swap variables as in:
-;;; (build-application-renaming-variables 
+;;; (build-application-renaming-variables
 ;;;     "tmp.si/na.out" "tmp.si/a.out" '((fib fact) (fact fib)) )
 
-(define (build-application-renaming-variables 
+(define (build-application-renaming-variables
          new-application-name application-name substitutions )
   (if (probe-file application-name)
       (call-with-input-file application-name
@@ -244,13 +244,13 @@
                  (code         (read in))
                  (entries      (read in)) )
             (close-input-port in)
-            (write-result-file 
+            (write-result-file
              new-application-name
              (list ";;; renamed variables from " application-name)
-             dynamics 
+             dynamics
              (let sublis ((global-names global-names))
                (if (pair? global-names)
-                   (cons (let ((s (assq (car global-names) 
+                   (cons (let ((s (assq (car global-names)
                                         substitutions )))
                            (if (pair? s) (cadr s)
                                (car global-names) ) )
@@ -277,7 +277,7 @@
             (close-input-port in)
             (set! sg.current.names    global-names)
             (set! *dynamic-variables* dynamics)
-            (set! sg.current (make-vector (length sg.current.names) 
+            (set! sg.current (make-vector (length sg.current.names)
                                           undefined-value ))
             (set! *constants*         constants)
             (set! *code*              (vector))
@@ -289,8 +289,8 @@
             (set! *fun*               'anything)
             (set! *arg1*              'anything)
             (set! *arg2*              'anything)
-            (push-dynamic-binding 
-             0 (list (make-primitive (lambda () 
+            (push-dynamic-binding
+             0 (list (make-primitive (lambda ()
                                        (show-exception)
                                        (*exit* 'aborted) ))) )
             (stack-push 1)                        ; pc for FINISH
@@ -313,7 +313,7 @@
 		>>>>>>>>>>>>>>>>>>RunTime PANIC<<<<<<<<<<<<<<<<<<<<<<<<<
 		~A~%" (activation-frame-argument *val* 1) )
   (set! *debug* #t)
-  (show-registers "Panic error:") 
+  (show-registers "Panic error:")
   (format #t "Global resources:
 	Constants: ~A
 	Names of global variables: ~A
@@ -325,9 +325,9 @@
 ;;; Tests
 
 (define (test-scheme7g file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)
@@ -359,7 +359,7 @@
             (close-input-port in)
             (set! sg.current.names    global-names)
             (set! *dynamic-variables* dynamics)
-            (set! sg.current (make-vector (length sg.current.names) 
+            (set! sg.current (make-vector (length sg.current.names)
                                           undefined-value ))
             (set! *constants*         constants)
             (set! *code*              (vector))
@@ -379,7 +379,7 @@
           (set! *pc* (stack-pop))
           (call/cc (lambda (exit)
                      (set! *exit* exit)
-                     (let* ((errprim (make-primitive (lambda () 
+                     (let* ((errprim (make-primitive (lambda ()
                                                        (show-exception)
                                                        (wrong 'aborted) )))
                             (handlers (search-exception-handlers)) )

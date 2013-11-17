@@ -15,12 +15,12 @@
 (set! format-error tester-error)
 ;;; [QNC] unified case to lower-case everywhere.
 
-;;  
-;;  
+;;
+;;
 ;;  ========
 ;;  FUNCTION: (FORMAT <port> <format-string> . <args>)
 ;;  ========
-;;  
+;;
 ;;  RESULT: returns unconsumed <args> or a string; has side effect of
 ;;  printing according to <format-string>.  If <port> is #t the output is
 ;;  to the current input port.  If <port> is #f, a formatted string is
@@ -53,7 +53,7 @@
 ;;
 ;; NYI 8^(
 ;;    ~|  page seperator: output a page seperator.
-;;  
+;;
 
 ;----- IMPLEMENTATION SPECIFIC OPTIMIZATIONS
 
@@ -141,7 +141,7 @@
 		    (anychar-dispatch (+ pos 1) (cdr arglist))
 		    )
 		   ((#\C)	; Character
-		    (char-write (car arglist)) 
+		    (char-write (car arglist))
 		    (anychar-dispatch (+ pos 1) (cdr arglist))
 		    )
 		   ((#\P)	; Plural
@@ -167,11 +167,11 @@
 		    (anychar-dispatch (+ pos 1) arglist)
 		    )
 		   ((#\T)	; Tab -- Implementation dependent
-		    (char-write tab-character) 
+		    (char-write tab-character)
 		    (anychar-dispatch (+ pos 1) arglist)
 		    )
 ;;                 ((#\|)	; Page Seperator -- Implementation dependent
-;;                     (char-write #\???) 
+;;                     (char-write #\???)
 ;;                     (anychar-dispatch (+ pos 1) arglist)
 ;;                  )
 		   ((#\G)	; Pretty-print {T}
@@ -183,19 +183,19 @@
 		   ;; {"~?" in Common Lisp is "~K" in T}
                    ;; [QNC] Removed
 		   ;;((#\?)	; indirection -- take next arg as format string.
-		   ;; (anychar-dispatch (+ pos 1) 
+		   ;; (anychar-dispatch (+ pos 1)
 		   ;;	      (format-help (car arglist) (cdr arglist)))
 		   ;;                   ; Note: format-help returns unused args
 		   ;; )
 		   (else
-                    (format-error "FORMAT: unknown tilde escape" 
+                    (format-error "FORMAT: unknown tilde escape"
                            (string-ref format-strg pos)))
 		   )))
 	       )) ; end tilde-dispatch
 
-	    )			 
+	    )
 
-	; format-help main 
+	; format-help main
 	(anychar-dispatch 0 arglyst)
 	)) ; end format-help
 
@@ -211,7 +211,7 @@
 		(lambda (any) (string-display (object->string any))) )
 	  (set! do-display
 		(lambda (any) (string-display (object->display-string any))))
-	  (set! char-write  
+	  (set! char-write
 		(lambda (c) (set! out-char-list (cons c out-char-list))) )
 	  (set! string-display
 		(lambda (str)
@@ -219,7 +219,7 @@
 		   ((null? out-char-list)
 		    (set! out-string-list (cons str out-string-list))
 		   )
-		   (else ;; make chars into string 
+		   (else ;; make chars into string
 		    (set! out-string-list
 			  (cons str
 				(cons (list->string (reverse out-char-list))
@@ -240,7 +240,7 @@
 
     (format-help <format-string> <args>)
     (return-value)
-    
+
 
     ) ; end let
 ) ; end format

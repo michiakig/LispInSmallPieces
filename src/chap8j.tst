@@ -40,10 +40,10 @@ nil
 ((flambda (r x) (cons r x)) (+ 1 2))
 
 ;;; defining usual special forms
-(set! global-env 
+(set! global-env
       (enrich global-env 'begin 'the-environment) )
 
-(set! begin 
+(set! begin
       (flambda (r . forms)
          (eprogn forms r) ) )
 
@@ -56,7 +56,7 @@ nil
 (the-environment)
 
 ((lambda (fact)
-   (set! fact (lambda (n) 
+   (set! fact (lambda (n)
                 (if (= n 0) 1 (* n (fact (- n 1)))) ))
    (fact 4) )
  'fact )
@@ -75,7 +75,7 @@ nil
 ;;; New special form
 (set! global-env (enrich global-env 'when))
 
-(set! when 
+(set! when
       (flambda (r condition . body)
         (if (eval condition r) (eprogn body r) #f) ) )
 
@@ -116,7 +116,7 @@ nil
 
 (display "Attention, this error will not abort level 1.")
 
-(monitor (lambda (c b) 
+(monitor (lambda (c b)
            (display b)
            b )
   (car) )
@@ -130,9 +130,9 @@ it
 
 ;;; Changing an existing special form
 ;;; There is a problem if the variable is undefined before.
-(set! set! 
+(set! set!
       (flambda (r name form)
-        ((lambda (new-value) 
+        ((lambda (new-value)
            (if (variable-defined? name r)
                ((lambda (old-value)
                   (set-variable-value! name r new-value)

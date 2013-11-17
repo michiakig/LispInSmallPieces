@@ -23,7 +23,7 @@
     22 33 )
    22
 ;;; This would need to recognize functions equivalence modulo alpha-conversion.
-((lambda (x) 
+((lambda (x)
    (list (lambda () x) (lambda () x)) )
  'x )
    (?- ?-)

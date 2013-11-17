@@ -24,7 +24,7 @@
  #f )
    0
 ((lambda (loop)
-   (set! loop (lambda (n k) 
+   (set! loop (lambda (n k)
                 (if (> n 0)
                     (call/cc (lambda (kk) (loop (- n 1) k)))
                     (k n) ) ))
@@ -32,7 +32,7 @@
   #f )
   0
 ((lambda (loop)
-   (set! loop (lambda (n k) 
+   (set! loop (lambda (n k)
                 (if (> n 0)
                     (call/cc (lambda (kk) (loop (- n 1) k)))
                     (k n) ) ))
@@ -50,7 +50,7 @@
    a
 (bind-exit (k) k)
    ---
-(bind-exit (k) 
+(bind-exit (k)
   ((lambda (kk) (+ 1 (kk 'z)))
    k )
   (k 'a) )
@@ -168,7 +168,7 @@ bar
    120
 
 ;;; combining dynamics and escapes. show that shallow binding without
-;;; unwind-protect looses.  
+;;; unwind-protect looses.
 "shallow binding without unwind-protect when escaping"
    ---
 (dynamic-let (a 1)
@@ -177,6 +177,6 @@ bar
         (k 'out) ) )
    "shallow binding returns 2 instead of 1!!! "
    (dynamic a) )
-   1 
+   1
 
 ;;; end of chap7d.tst

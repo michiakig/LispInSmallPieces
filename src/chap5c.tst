@@ -24,7 +24,7 @@
 
 ;;; with respect to functions
 ((lambda (f)
-   (dynamic-let (a 1) (f)) ) 
+   (dynamic-let (a 1) (f)) )
  (lambda () (dynamic a)) )
    1
 ((lambda (f)
@@ -37,7 +37,7 @@
 ;;; with respect to continuations
 (dynamic-let (a 1)
    ((call/cc (lambda (k)
-               ((lambda (f) 
-                   (dynamic-let (a 2) f) )                      
+               ((lambda (f)
+                   (dynamic-let (a 2) f) )
                 (lambda () (dynamic a)) ) ))) )
    1

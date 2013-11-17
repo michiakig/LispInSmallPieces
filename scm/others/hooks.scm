@@ -17,7 +17,7 @@
 
 (define eval-hook eval)
 
-(define expand-install-hook 
+(define expand-install-hook
   (lambda (expand)
     (error-hook 'expand-install-hook "Not implemented" 34) ) )
 
@@ -32,7 +32,7 @@
 ;;; expansion and either feed the result directly into the compiler or
 ;;; make another pass to perform alpha substitution.
 
-(define new-symbol-hook 
+(define new-symbol-hook
   (lambda (x) (gentemp)) )
 
 ;;; "put-global-definition-hook" should overwrite existing definitions.
@@ -44,7 +44,7 @@
      (let ((pair (assq symbol *syntax-case-macros*)))
        (if pair
            (set-cdr! pair binding)
-           (set! *syntax-case-macros* 
+           (set! *syntax-case-macros*
                  (cons (cons symbol binding) *syntax-case-macros*) ) ) ) ) )
 
 ;;; "get-global-definition-hook" should return "#f" if no binding

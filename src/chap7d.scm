@@ -118,8 +118,8 @@
   (append m1 (PUSH-VALUE) m2 (POP-ARG1) (INVOKE2 address)) )
 
 (define (CALL3 address m1 m2 m3)
-  (append m1 (PUSH-VALUE) 
-          m2 (PUSH-VALUE) 
+  (append m1 (PUSH-VALUE)
+          m2 (PUSH-VALUE)
           m3 (POP-ARG2) (POP-ARG1) (INVOKE3 address) ) )
 
 (define (FIX-CLOSURE m+ arity)
@@ -138,7 +138,7 @@
   (append m (PUSH-VALUE) m* (POP-FUNCTION) (FUNCTION-GOTO)) )
 
 (define (REGULAR-CALL m m*)
-  (append m (PUSH-VALUE) m* (POP-FUNCTION) 
+  (append m (PUSH-VALUE) m* (POP-FUNCTION)
           (PRESERVE-ENV) (FUNCTION-INVOKE) (RESTORE-ENV) ) )
 
 (define (STORE-ARGUMENT m m* rank)
@@ -154,7 +154,7 @@
   (syntax-rules (define-instruction)
     ((define-instruction-set
        (define-instruction (name . args) n . body) ... )
-     (begin 
+     (begin
        (define (run)
          (let ((instruction (fetch-byte)))
            (case instruction
@@ -173,7 +173,7 @@
              ((decode-clause
                (syntax-rules ()
                  ((decode-clause iname ()) '(iname))
-                 ((decode-clause iname (a)) 
+                 ((decode-clause iname (a))
                   (let ((a (fetch-byte))) (list 'iname a)) )
                  ((decode-clause iname (a b))
                   (let* ((a (fetch-byte))(b (fetch-byte)))
@@ -190,7 +190,7 @@
     ((run-clause (a) body)
      (let ((a (fetch-byte))) . body) )
     ((run-clause (a b) body)
-     (let* ((a (fetch-byte))(b (fetch-byte))) . body) ) ) )           
+     (let* ((a (fetch-byte))(b (fetch-byte))) . body) ) ) )
 
 (define-syntax size-clause
   (syntax-rules ()
@@ -199,7 +199,7 @@
     ((size-clause (a b)) 3) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-;;; Instruction-set. 
+;;; Instruction-set.
 ;;; The instructions are kept in a separate file (to be read by
 ;;; LiSP2TeX), the following macro reads them and generates a
 ;;; (define-instruction-set...) call.                       HACK!
@@ -227,7 +227,7 @@
 (define (check-byte j)
   (unless (and (<= 0 j) (<= j 255))
     (static-wrong "Cannot pack this number within a byte" j) ) )
-  
+
 (define (SHALLOW-ARGUMENT-REF j)
   (check-byte j)
   (case j
@@ -279,7 +279,7 @@
 
 (define (GOTO offset)
   (cond ((< offset 255) (list 30 offset))
-        ((< offset (+ 255 (* 255 256))) 
+        ((< offset (+ 255 (* 255 256)))
          (let ((offset1 (modulo offset 256))
                (offset2 (quotient offset 256)) )
            (list 28 offset1 offset2) ) )
@@ -287,7 +287,7 @@
 
 (define (JUMP-FALSE offset)
   (cond ((< offset 255) (list 31 offset))
-        ((< offset (+ 255 (* 255 256))) 
+        ((< offset (+ 255 (* 255 256)))
          (let ((offset1 (modulo offset 256))
                (offset2 (quotient offset 256)) )
            (list 29 offset1 offset2) ) )
@@ -326,7 +326,7 @@
     ((eof-object?)   (list 98))
     (else (static-wrong "Cannot integrate" address)) ) )
 
-(define (PUSH-VALUE) (list 34)) 
+(define (PUSH-VALUE) (list 34))
 
 (define (POP-ARG1) (list 35))
 
@@ -458,7 +458,7 @@
                        (signal-exception #t (list "Incorrect arity" 'name)) ) ) ) )
          (description-extend! 'name `(function value))
          (make-primitive behavior) ) ) ) ) )
-  
+
 (define-syntax defprimitive1
   (syntax-rules ()
     ((defprimitive1 name value)
@@ -473,7 +473,7 @@
                        (signal-exception #t (list "Incorrect arity" 'name)) ) ) ) )
          (description-extend! 'name `(function value a))
          (make-primitive behavior) ) ) ) ) )
-  
+
 (define-syntax defprimitive2
   (syntax-rules ()
     ((defprimitive2 name value)
@@ -516,7 +516,7 @@
 (defprimitive eof-object? eof-object? 1)
 
 ;;; The function which is invoked by call/cc always waits for an
-;;; activation frame. 
+;;; activation frame.
 
 (definitial call/cc
   (let* ((arity 1)
@@ -526,12 +526,12 @@
        (if (= arity+1 (activation-frame-argument-length *val*))
            (let ((f (activation-frame-argument *val* 0))
                  (frame (allocate-activation-frame (+ 1 1))) )
-             (set-activation-frame-argument! 
+             (set-activation-frame-argument!
               frame 0 (make-continuation (save-stack)) )
              (set! *val* frame)
              (set! *fun* f)             ; useful for debug
              (invoke f #t) )
-           (signal-exception #t (list "Incorrect arity" 
+           (signal-exception #t (list "Incorrect arity"
                                       'call/cc )) ) ) ) ) )
 
 (definitial apply
@@ -548,7 +548,7 @@
                   (frame (allocate-activation-frame size)) )
              (do ((i 1 (+ i 1)))
                  ((= i last-arg-index))
-               (set-activation-frame-argument! 
+               (set-activation-frame-argument!
                 frame (- i 1) (activation-frame-argument *val* i) ) )
              (do ((i (- last-arg-index 1) (+ i 1))
                   (last-arg last-arg (cdr last-arg)) )
@@ -566,8 +566,8 @@
            (result '()) )
        (do ((i args-number (- i 1)))
            ((= i 0))
-         (set! result (cons (activation-frame-argument *val* (- i 1)) 
-                            result )) ) 
+         (set! result (cons (activation-frame-argument *val* (- i 1))
+                            result )) )
        (set! *val* result)
        (set! *pc* (stack-pop)) ) ) ) )
 
@@ -599,13 +599,13 @@
 (define *debug* #f)
 
 (define (show-registers message)
-  (when *debug* 
+  (when *debug*
     (format #t "~%----------------~A" message)
     (format #t "~%ENV  = ") (show *env*)
     (format #t "~%VAL  = ") (show *val*)
     (format #t "~%FUN  = ") (show *fun*)
     (show-stack (save-stack))
-    (format #t "~%(PC  = ~A), next INSTR to be executed = ~A~%" 
+    (format #t "~%(PC  = ~A), next INSTR to be executed = ~A~%"
             *pc* (instruction-decode *code* *pc*) ) ) )
 
 (define (show-stack stack)
@@ -642,7 +642,7 @@
   (define (toplevel)
     (display ((stand-alone-producer7d (read)) 100))
     (toplevel) )
-  (toplevel) ) 
+  (toplevel) )
 
 (define (stand-alone-producer7d e)
   (set! g.current (original.g.current))
@@ -652,11 +652,11 @@
          (global-names (map car (reverse g.current)))
          (constants (apply vector *quotations*)) )
     (lambda (stack-size)
-      (run-machine stack-size start-pc code 
+      (run-machine stack-size start-pc code
                    constants global-names ) ) ) )
 
 (define (run-machine stack-size pc code constants global-names)
-  (set! sg.current (make-vector (length global-names) 
+  (set! sg.current (make-vector (length global-names)
                                 undefined-value ))
   (set! sg.current.names global-names)
   (set! *constants*   constants)
@@ -684,7 +684,7 @@
   (set! run-machine
         (lambda (stack-size pc code constants global-names)
           (when *debug*                     ; DEBUG
-            (format #t "Code= ~A~%" (disassemble code)) )         
+            (format #t "Code= ~A~%" (disassemble code)) )
           (native-run-machine stack-size pc code constants global-names) ) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -692,8 +692,8 @@
 
 (define (scheme7d)
   (interpreter
-   "Scheme? "  
-   "Scheme= " 
+   "Scheme? "
+   "Scheme= "
    #t
    (lambda (read print error)
      (setup-wrong-functions error)
@@ -702,9 +702,9 @@
        (print *val*) ) ) ) )
 
 (define (test-scheme7d file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)

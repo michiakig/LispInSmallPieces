@@ -3,7 +3,7 @@
 
 ;;; Define the string to be emitted between lines.
 (define *inter-line-string* (make-string 1 #\newline))
-(set! *inter-line-string* *inter-line-string*) 
+(set! *inter-line-string* *inter-line-string*)
 
 ; 'generic-write' is a procedure that transforms a Scheme data value (or
 ; Scheme program expression) into its textual representation.  The interface

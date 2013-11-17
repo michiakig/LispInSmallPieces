@@ -16,12 +16,12 @@
       (case (car exp) \ldots
         (else (let ((fn (evaluate (car e) env))
                     (arguments (evlis (cdr e) env)) )
-                (display `(calling ,(car e) with . ,arguments) 
+                (display `(calling ,(car e) with . ,arguments)
                          *trace-port* )
                 (let ((result (invoke fn arguments)))
                   (display `(returning from ,(car e) with ,result)
                            *trace-port* )
-                  result ) )) ) ) ) 
+                  result ) )) ) ) )
 
 (define (evlis exps env)
   (define (evlis exps)
@@ -35,17 +35,17 @@
       '() ) )
 
 (define (extend env names values)
-  (cons (cons names values) env) ) 
+  (cons (cons names values) env) )
 
 (define (lookup id env)
   (if (pair? env)
       (let look ((names (caar env))
                  (values (cdar env)) )
          (cond ((symbol? names)
-                (if (eq? names id) values 
+                (if (eq? names id) values
                     (lookup id (cdr env)) ) )
                ((null? names) (lookup id (cdr env)))
-               ((eq? (car names) id) 
+               ((eq? (car names) id)
                 (if (pair? values)
                     (car values)
                     (wrong "Too less values") ) )
@@ -57,12 +57,12 @@
 (define (s.make-function variables body env)
   (lambda (values current.env)
      (for-each (lambda (var val)
-                 (putprop var 
-                          'apval 
+                 (putprop var
+                          'apval
                           (cons val (getprop var 'apval)) ) )
                variables values )
      (let ((result (eprogn body current.env)))
-        (for-each (lambda (var) 
+        (for-each (lambda (var)
                     (putprop var 'apval (cdr (getprop var 'apval))) )
                   variables )
         result ) ) )

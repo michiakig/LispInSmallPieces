@@ -24,7 +24,7 @@ b
  (lambda (x) (lambda (y) x)) )
    1
 
-((lambda (S) 
+((lambda (S)
    ((lambda (K) (((S K) K) b))
     (lambda (x) (lambda (y) x)) ) )
  (lambda (f) (lambda (g) (lambda (x) ((f x) (g x))))) )
@@ -43,7 +43,7 @@ b
   ((+ b) b) )
     24
 
-;;; this one loops 
+;;; this one loops
 ((lambda (Y)
    ((lambda (meta-fact)
       ((Y meta-fact) ((+ b) b)) )

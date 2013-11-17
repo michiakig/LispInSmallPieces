@@ -36,7 +36,7 @@
 
 (define (last-pair l)
   (if (pair? l)
-      (if (pair? (cdr l)) 
+      (if (pair? (cdr l))
           (last-pair (cdr l))
           l )
       (support-error 'last-pair l) ) )
@@ -98,12 +98,12 @@
     (cond ((null? o*) #t)
           ((atom? o*) (display " . " stream)
                       (display o* stream) )
-          ((pair? o*) 
+          ((pair? o*)
            (print (car o*) len (+ dep 1))
            (if (pair? (cdr o*)) (display " " stream))
            (print-list (cdr o*) (+ len 1) dep) ) ) )
   (define (print o len dep)
-    (cond ((object? o) 
+    (cond ((object? o)
            (display "#<" stream)
            (display (Class-name (object->class o)) stream)
            (display ">" stream) )
@@ -166,13 +166,13 @@
 (define (syntax-case-load file)
   (call-with-input-file file
     (lambda (in)
-      (if *syntax-case-load-verbose?* 
+      (if *syntax-case-load-verbose?*
           (begin (newline)
                  (display ";;; Loading ")
                  (display file)
                  (newline) ) )
       (let loop ((e (read in)))
-        (if (eof-object? e) 
+        (if (eof-object? e)
             file
             (let ((r (eval (expand-syntax e))))
               (if *syntax-case-load-verbose?*
@@ -214,7 +214,7 @@
                               args))))))
       (syntax-case y ()
         ((_ (name . variables) . body)
-         (with-syntax 
+         (with-syntax
            ((expander (construct-name (syntax name) (syntax name) "-expander")))
            (syntax
             (begin (define (expander x)
@@ -225,16 +225,16 @@
                             (cdr (strip x)) ) )
                    ;; Oddly enough, writing expander alone hurts !?
                    ;; so delay it in a lambda.
-                   (define-syntax name 
+                   (define-syntax name
                      (lambda a (apply expander a)) ) ) ) ) ) ) ) ) )
 
 (syntax-case-load "meroonet/meroonet.scm")
 
 ;;; **IMPORTANT 2**
-;;; The test-driver should try to catch errors of the underlying Scheme 
+;;; The test-driver should try to catch errors of the underlying Scheme
 ;;; system. This is non-portable and difficult in many implementations. If
 ;;; do not succeed writing it, you can still run the programs of the book
-;;; but you will not be able to run all the test-suites since some tests 
+;;; but you will not be able to run all the test-suites since some tests
 ;;; (for instance in meroonet/oo-tests.scm) require errors to be caught
 ;;; when signalled by list-tail with a non-numeric second argument.
 
@@ -246,7 +246,7 @@
 ;;; that is why there is the *error-already-handled?* flag. An error such
 ;;; as (list-tail '(a b) 'erroneous) does not call error, nor slib:error
 ;;; but performs an abort control effect that is caught by the postlude
-;;; of the dynamic-wind which goes back to the normal work. But since at 
+;;; of the dynamic-wind which goes back to the normal work. But since at
 ;;; that time, ,the postlude is always invoked, you must differentiate
 ;;; the errors explicitely caught by Meroonet from those caught by SCM,
 ;;; this is what does the *error-already-handled?* flag.
@@ -269,12 +269,12 @@
         (lambda ()
           (call-with-current-continuation
            (lambda (k) (set! restart k)) )
-          (if result 
+          (if result
               (begin ;;(write `(caught!))(newline) ; DEBUG
                      (exit result) )
               (begin (set! result (list (thunk)))
                      result ) ) )
-        (lambda () 
+        (lambda ()
           (if (or *error-already-handled?* result)
               ;; this is a normal return
               'nothing
@@ -289,7 +289,7 @@
 
 ;;; **IMPORTANT 3**
 ;;; The problem now is that catch-error is a syntax-case macro but not
-;;; a regular macro for the current macroexpander. So define a 
+;;; a regular macro for the current macroexpander. So define a
 ;;; macro-definer for it.
 
 (defmacro define-abbreviation (call . body)
@@ -303,7 +303,7 @@
 
 ;;; Since the define-abbreviation is also necessary for the book when
 ;;; non high level macros are defined, register define-abbreviation
-;;; for syntax-case. 
+;;; for syntax-case.
 
 (expand-syntax
  '(define-syntax define-abbreviation
@@ -331,7 +331,7 @@
          (let ((r (catch-error (eval (expand-syntax e)))))
            (if (pair? r) (check (car r)) (err 'test-meroonet r)) ) ) ) )
    equal? ) )
-;;; Test: 
+;;; Test:
 ;;;	(test "meroonet/oo-tests.scm")
 ;;;	(test "bigloo/others/syntax.tst")
 
@@ -354,7 +354,7 @@
 
 ;;; The clone function that performs a shallow copy of a Meroonet object.
 
-(eval (expand-syntax 
+(eval (expand-syntax
        '(begin
           (define-generic (show (o) . stream)
             (let ((stream (if (pair? stream) (car stream)

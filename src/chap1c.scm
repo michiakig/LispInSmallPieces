@@ -14,7 +14,7 @@
 (define (s.make-function variables body env)
   (lambda (values current.env)
     (let ((old-bindings
-           (map (lambda (var val) 
+           (map (lambda (var val)
                       (let ((old-value (getprop var 'apval)))
                         (putprop var 'apval val)
                         (cons var old-value) ) )
@@ -29,6 +29,6 @@
   (getprop id 'apval) )
 
 (define (s.update! id env value)
-  (putprop id 'apval value) ) 
+  (putprop id 'apval value) )
 
 ;;; end of chap1c.scm

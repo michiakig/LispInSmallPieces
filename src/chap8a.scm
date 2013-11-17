@@ -13,13 +13,13 @@
 ;;; Modification of chap1.scm, introducing eval as a special form.
 
 (define (evaluate e env)
-  (if (atom? e) 
+  (if (atom? e)
       (cond ((symbol? e) (lookup e env))
             ((or (number? e)(string? e)(char? e)(boolean? e)) e)
             (else (wrong "Cannot evaluate" e)) )
       (case (car e)
         ((quote)  (cadr e))
-        ((if)     (if (not (eq? (evaluate (cadr e) env) 
+        ((if)     (if (not (eq? (evaluate (cadr e) env)
                                 the-false-value ))
                       (evaluate (caddr e) env)
                       (evaluate (cadddr e) env) ))
@@ -36,7 +36,7 @@
 (define (program? e)
   (define (program? e m)
     (if (atom? e)
-        (or (symbol? e) (number? e) (string? e) 
+        (or (symbol? e) (number? e) (string? e)
             (char? e) (boolean? e) )
         (if (memq e m) #f
             (let ((m (cons e m)))
@@ -74,10 +74,10 @@
   (define (variables-list? v* already-seen)
     (or (null? v*)
         (and (symbol? v*) (not (memq v* already-seen)))
-        (and (pair? v*) 
+        (and (pair? v*)
              (symbol? (car v*))
              (not (memq (car v*) already-seen))
-             (variables-list? (cdr v*) 
+             (variables-list? (cdr v*)
                               (cons (car v*) already-seen) ) ) ) )
   (variables-list? v* '()) )
 
@@ -114,7 +114,7 @@
           (begin (set-cdr! (car env) value)
                  value )
           (update! id (cdr env) value) )
-      (set-global-value! id value) ) ) 
+      (set-global-value! id value) ) )
 
 ;;; A quick and dirty simulation of global-value and set-global-value!
 

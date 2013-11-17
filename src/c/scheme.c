@@ -18,7 +18,7 @@
 /* Identify this library.
  */
 
-static char *rcsid = 
+static char *rcsid =
   "@(#)$Id: scheme.c,v 4.0 1995/07/10 06:52:28 queinnec Exp $";
 
 /* Static allocation of the basic constants #t, #f, nil and the pseudo
@@ -30,12 +30,12 @@ SCM_DefineImmediateObject(SCM_false_object,SCM_BOOLEAN_TAG);
 SCM_DefineImmediateObject(SCM_nil_object,SCM_NULL_TAG);
 SCM_DefineImmediateObject(SCM_undefined_object,SCM_UNDEFINED_TAG);
 
-/* Allocations.  
+/* Allocations.
  * Allocate boxes for mutable variables. Boxes are not
  * first class Scheme values so their type need not be encoded. This
  * allocation is ridiculous since to use malloc to allocate a single
  * word has a very high overhead, but you can use Boehm's GC quite
- * easily. Boxes are not wrapped. 
+ * easily. Boxes are not wrapped.
  */
 
 SCM SCM_allocate_box (SCM v) {
@@ -57,7 +57,7 @@ SCM SCM_cons (SCM x, SCM y) {
   return SCM_Wrap(cell);
 }
 
-/* Allocate continuations.  
+/* Allocate continuations.
  * They are restricted to their dynamic extent and are implemented
  * with a jmp buffer in the stack and the continuation object in the
  * heap.  A backpointer from the stack to the heap exists. If it is
@@ -77,16 +77,16 @@ SCM SCM_allocate_continuation (struct SCM_jmp_buf *address) {
   return SCM_Wrap(continuation);
 }
 
-/* Build a closure.  
+/* Build a closure.
  * Since a closure can close over many free variables, this function
- * is implemented as a vararg C function. Since C structures cannot 
+ * is implemented as a vararg C function. Since C structures cannot
  * have a varying length, we cheat a little and allocate a SCM_closure
  * with the appropriate length and hope that C will not detect that the
  * additional free variables are beyond the normal end of the structure.
  */
 
 SCM SCM_close (SCM (*Cfunction)(void), long arity, unsigned long size, ...) {
-  SCMref result = (SCMref) malloc(sizeof(struct SCM_unwrapped_closure) 
+  SCMref result = (SCMref) malloc(sizeof(struct SCM_unwrapped_closure)
                                   + (size-1)*sizeof(SCM) );
   unsigned long i;
   va_list args;
@@ -114,7 +114,7 @@ SCM SCM_close (SCM (*Cfunction)(void), long arity, unsigned long size, ...) {
  * take the values out of args one after one.  The jumpvalue variable
  * is needed when invoking continuations since we cannot ensure that
  * the transmitted value is different from zero so it is passed
- * through the store rather than by longjmp. 
+ * through the store rather than by longjmp.
  */
 
 static SCM jumpvalue;
@@ -153,7 +153,7 @@ SCM SCM_invoke(SCM function, unsigned long number, ...) {
                     result = ((SCM (*)(SCM,SCM,SCM)) *behavior)(a0,a1,a2);
                   } else {
                     /* No fixed arity subr with more than 3 variables */
-                    return SCM_error(SCM_ERR_INTERNAL); 
+                    return SCM_error(SCM_ERR_INTERNAL);
                   }
                 }
               }
@@ -190,7 +190,7 @@ SCM SCM_invoke(SCM function, unsigned long number, ...) {
         }
       } else {
         long min_arity = SCM_MinimalArity(arity) ;
-        if ( number < min_arity ) { 
+        if ( number < min_arity ) {
           return SCM_error(SCM_ERR_MISSING_ARGS);     /* Too less arguments! */
         } else {
           result = ((SCM (*)(SCM,unsigned long,va_list)) *behavior)(function,number,args);
@@ -205,13 +205,13 @@ SCM SCM_invoke(SCM function, unsigned long number, ...) {
         va_start(args,number);
         jumpvalue = va_arg(args,SCM);
         va_end(args);
-        { struct SCM_jmp_buf *address = 
+        { struct SCM_jmp_buf *address =
             SCM_Unwrap(function)->escape.stack_address;
-          if ( SCM_EqP(address->back_pointer,function) 
+          if ( SCM_EqP(address->back_pointer,function)
               && ( (void *) &address SCM_STACK_HIGHER (void *) address ) ) {
             longjmp(address->jb,1);
           } else {    /* surely out of dynamic extent! */
-            return SCM_error(SCM_ERR_OUT_OF_EXTENT); 
+            return SCM_error(SCM_ERR_OUT_OF_EXTENT);
           }
         }
       } else {
@@ -220,7 +220,7 @@ SCM SCM_invoke(SCM function, unsigned long number, ...) {
     }
     default: {
       return SCM_error(SCM_ERR_CANNOT_APPLY);       /* Cannot apply! */
-    } 
+    }
     }
   }
 }
@@ -230,7 +230,7 @@ SCM SCM_invoke(SCM function, unsigned long number, ...) {
  */
 
 SCM SCM_list (unsigned long count, va_list arguments) {
-  if ( count == 0 ) { 
+  if ( count == 0 ) {
     return SCM_nil;
   } else {
     SCM arg = va_arg(arguments,SCM);
@@ -238,19 +238,19 @@ SCM SCM_list (unsigned long count, va_list arguments) {
   }
 }
 
-/* These are safe accessors. It is of course more efficient to perform 
+/* These are safe accessors. It is of course more efficient to perform
  * type recovery or control flow analysis to generate safe calls to the
  * unsafe accessors.
  */
 
 SCM SCM_car (SCM x) {
-  if ( SCM_PairP(x) ) { 
+  if ( SCM_PairP(x) ) {
     return SCM_Car(x);
   } else return SCM_error(SCM_ERR_CAR);
 }
 
-SCM SCM_cdr (SCM x) { 
-  if ( SCM_PairP(x) ) { 
+SCM SCM_cdr (SCM x) {
+  if ( SCM_PairP(x) ) {
     return SCM_Cdr(x);
   } else return SCM_error(SCM_ERR_CDR);
 }
@@ -286,7 +286,7 @@ DefMonadicPred(SCM_stringp,SCM_StringP)
 /* This is the procedure? predicates that answers true to many types.
  */
 
-SCM SCM_procedurep (SCM x) { 
+SCM SCM_procedurep (SCM x) {
   if (SCM_FixnumP(x) ) {
     return SCM_false;
   } else {
@@ -310,7 +310,7 @@ DefDyadicPred(SCM_eqp,SCM_EqP)
 
 /* Arithmetic operations.
  * It is possible to do better and reduce the cost of wrapping/unwrapping.
- * Since here [n] is represented by 2n+1, then, for instance, [n+p] is 
+ * Since here [n] is represented by 2n+1, then, for instance, [n+p] is
  * directly [n]+[p]-1.
  */
 
@@ -325,9 +325,9 @@ DefDyadicFunction(SCM_times,SCM_Times)
 DefDyadicFunction(SCM_quotient,SCM_Quotient)
 DefDyadicFunction(SCM_remainder,SCM_Remainder)
 
-DefDyadicFunction(SCM_gtp,SCM_GtP) 
+DefDyadicFunction(SCM_gtp,SCM_GtP)
 DefDyadicFunction(SCM_ltp,SCM_LtP)
-DefDyadicFunction(SCM_eqnp,SCM_EqnP) 
+DefDyadicFunction(SCM_eqnp,SCM_EqnP)
 DefDyadicFunction(SCM_gep,SCM_GeP)
 DefDyadicFunction(SCM_lep,SCM_LeP)
 
@@ -335,7 +335,7 @@ DefDyadicFunction(SCM_lep,SCM_LeP)
  * Similar to call/cc but for the extent of the continuation.
  * The value got by the continuation when invoked is stored temporarily
  * in jumpvalue then returned by SCM_callep to avoid passing zero through
- * longjmp [cf. Harbison & Steele]. 
+ * longjmp [cf. Harbison & Steele].
  */
 
 SCM SCM_callep (SCM f) {
@@ -361,7 +361,7 @@ SCM SCM_signal_error (unsigned long code, unsigned long line, char *file) {
   exit(code);
 }
 
-/* Basic printing machinery.  
+/* Basic printing machinery.
 
  * This could have been defined more simply in Scheme with just s
  * print-string facility. But it is useful to have this sort of thing
@@ -429,7 +429,7 @@ SCM SCM_prin (SCM x) {
       fprintf(stdout,"\"%s\"",Cstring);
       break;
     }
-    case SCM_SUBR_TAG: { 
+    case SCM_SUBR_TAG: {
       fprintf(stdout,"#<Subr@%p>",(void *)(x));
       break;
     }

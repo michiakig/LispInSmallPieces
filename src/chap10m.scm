@@ -11,7 +11,7 @@
 
 ;;; The letify generic function that take an AST with possible sharing
 ;;; and copies it in a pure tree, trying at the same time to insert
-;;; let forms where possible. 
+;;; let forms where possible.
 
 ;;; Only local variables are cloned. Global or predefined variables
 ;;; stay the same (and are shared between the input and the result of
@@ -44,7 +44,7 @@
   (let* ((vars (Function-variables o))
          (body (Function-body o))
          (new-vars (map clone vars)) )
-    (make-Function 
+    (make-Function
      new-vars
      (letify body (append (map cons vars new-vars) env)) ) ) )
 
@@ -58,13 +58,13 @@
 (define-method (letify (o Local-Reference) env)
   (let* ((v (Local-Reference-variable o))
          (r (assq v env)) )
-    (if (pair? r) 
+    (if (pair? r)
         (make-Local-Reference (cdr r))
         (letify-error "Disappeared variable" o) ) ) )
 
 (define-method (letify (o Regular-Application) env)
   (if (Function? (Regular-Application-function o))
-      (letify (process-closed-application 
+      (letify (process-closed-application
                (Regular-Application-function o)
                (Regular-Application-arguments o) )
               env )
@@ -78,7 +78,7 @@
     (make-Fix-Let
      new-vars
      (letify (Fix-Let-arguments o) env)
-     (letify (Fix-Let-body o) 
+     (letify (Fix-Let-body o)
              (append (map cons vars new-vars) env) ) ) ) )
 
 (define-method (letify (o Box-Creation) env)

@@ -14,11 +14,11 @@
 (-1 '(a b c))
    (b c)
 
-(2 '(foo bar hux wok))  
+(2 '(foo bar hux wok))
    hux
-(-2 '(foo bar hux wok)) 
+(-2 '(foo bar hux wok))
    (hux wok)
-(0 '(foo bar hux wok))  
+(0 '(foo bar hux wok))
   foo
 (2 (-3 '(a b c d e f g h)))
    f

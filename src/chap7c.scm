@@ -12,7 +12,7 @@
 ;;; Refinement of chap6d and chap7b. This interpreter introduces a
 ;;; *val* register and a *stack* to save/restore arguments that wait
 ;;; to be stored in an activation block. Functions now take their
-;;; activation frame in the *val* register. Code is now a list of combinators. 
+;;; activation frame in the *val* register. Code is now a list of combinators.
 
 ;;; Load chap6d before.
 
@@ -57,7 +57,7 @@
   ( address ) )
 
 (define-class continuation Object
-  ( stack 
+  ( stack
     ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -103,7 +103,7 @@
 
 (define (ALTERNATIVE m1 m2 m3)
   (append m1 (JUMP-FALSE (+ 1 (length m2)))
-          m2 (GOTO (length m3)) 
+          m2 (GOTO (length m3))
           m3 ) )
 
 (define (JUMP-FALSE i)
@@ -149,8 +149,8 @@
   (list (lambda () (set! *val* (address *arg1* *val*)))) )
 
 (define (CALL3 address m1 m2 m3)
-  (append m1 (PUSH-VALUE) 
-          m2 (PUSH-VALUE) 
+  (append m1 (PUSH-VALUE)
+          m2 (PUSH-VALUE)
           m3 (POP-ARG2) (POP-ARG1) (INVOKE3 address) ) )
 
 (define (POP-ARG2)
@@ -162,15 +162,15 @@
 (define (FIX-CLOSURE m+ arity)
   (define the-function
     (append (ARITY=? (+ arity 1)) (EXTEND-ENV) m+ (RETURN)) )
-  (append (CREATE-CLOSURE 1) (GOTO (length the-function)) 
+  (append (CREATE-CLOSURE 1) (GOTO (length the-function))
           the-function ) )
 
 (define (CREATE-CLOSURE offset)
-  (list (lambda () (set! *val* (make-closure (list-tail *pc* offset) 
+  (list (lambda () (set! *val* (make-closure (list-tail *pc* offset)
                                              *env* )))) )
 
 (define (ARITY=? arity+1)
-  (list (lambda () 
+  (list (lambda ()
           (unless (= (activation-frame-argument-length *val*) arity+1)
             (wrong "Incorrect arity") ) )) )
 
@@ -178,7 +178,7 @@
   (define the-function
     (append (ARITY>=? (+ arity 1)) (PACK-FRAME! arity) (EXTEND-ENV)
             m+ (RETURN) ) )
-  (append (CREATE-CLOSURE 1) (GOTO (length the-function)) 
+  (append (CREATE-CLOSURE 1) (GOTO (length the-function))
           the-function ) )
 
 (define (RETURN)
@@ -188,7 +188,7 @@
   (list (lambda () (listify! *val* arity))) )
 
 (define (ARITY>=? arity+1)
-  (list (lambda () 
+  (list (lambda ()
           (unless (>= (activation-frame-argument-length *val*) arity+1)
             (wrong "Incorrect arity") ) )) )
 
@@ -202,8 +202,8 @@
   (list (lambda () (invoke *fun*))) )
 
 (define (REGULAR-CALL m m*)
-  (append m (PUSH-VALUE) 
-          m* (POP-FUNCTION) (PRESERVE-ENV) 
+  (append m (PUSH-VALUE)
+          m* (POP-FUNCTION) (PRESERVE-ENV)
              (FUNCTION-INVOKE) (RESTORE-ENV)
           ) )
 
@@ -223,8 +223,8 @@
   (append m (PUSH-VALUE) m* (POP-CONS-FRAME! arity)) )
 
 (define (POP-CONS-FRAME! arity)
-  (list (lambda () 
-          (set-activation-frame-argument! 
+  (list (lambda ()
+          (set-activation-frame-argument!
            *val* arity (cons (stack-pop)
                              (activation-frame-argument *val* arity) ) ) )) )
 
@@ -259,7 +259,7 @@
                (set! *pc* (stack-pop)) )
              (wrong "Incorrect arity" 'continuation) ) )
         (else (wrong "Not a function" f)) ) )
-      
+
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
 (define-syntax defprimitive1
@@ -274,7 +274,7 @@
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a))
          (make-primitive behavior) ) ) ) ) )
-  
+
 (define-syntax defprimitive2
   (syntax-rules ()
     ((defprimitive2 name value)
@@ -284,8 +284,8 @@
                  (lambda ()
                    (show-registers 'name) ;; debug
                    (if (= arity+1 (activation-frame-argument-length *val*))
-                       (set! *val* 
-                             (value (activation-frame-argument *val* 0) 
+                       (set! *val*
+                             (value (activation-frame-argument *val* 0)
                                     (activation-frame-argument *val* 1) ) )
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a b))
@@ -319,7 +319,7 @@
            (let ((f (activation-frame-argument *val* 0))
                  (frame (allocate-activation-frame (+ 1 1))))
              (stack-push *pc*)
-             (set-activation-frame-argument! 
+             (set-activation-frame-argument!
               frame 0 (make-continuation (save-stack)) )
              (stack-pop)
              (set! *val* frame)
@@ -339,7 +339,7 @@
                   (frame (allocate-activation-frame size)) )
              (do ((i 1 (+ i 1)))
                  ((= i last-arg-index))
-               (set-activation-frame-argument! 
+               (set-activation-frame-argument!
                 frame (- i 1) (activation-frame-argument *val* i) ) )
              (do ((i (- last-arg-index 1) (+ i 1))
                   (last-arg last-arg (cdr last-arg)) )
@@ -356,8 +356,8 @@
            (result '()) )
        (do ((i args-number (- i 1)))
            ((= i 0))
-         (set! result (cons (activation-frame-argument *val* (- i 1)) 
-                            result )) ) 
+         (set! result (cons (activation-frame-argument *val* (- i 1))
+                            result )) )
        (set! *val* result) ) ) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -386,7 +386,7 @@ STACK = ~A~%" message (length *pc*)
 
 (define install-regular-combinators
   (let ((originals (map eval combinator-names)))
-    (lambda () 
+    (lambda ()
       (for-each (lambda (old-value name)
                   (eval `(set! ,name ',old-value)) )
                 originals
@@ -474,12 +474,12 @@ STACK = ~A~%" message (length *pc*)
       ;;(display m)(newline) ;; debug
       (call/cc (lambda (exit)
                  (set! *exit* exit)
-                 (run) )) ) ) )    
+                 (run) )) ) ) )
 
 (define (test-scheme7c file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)

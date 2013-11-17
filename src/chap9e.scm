@@ -25,7 +25,7 @@
 
 (define-method (variable->Scheme (e Local-Variable) r)
   (let ((v (assq e r)))
-    (if (pair? v) (cdr v) 
+    (if (pair? v) (cdr v)
         (->Scheme-error "Unexistant variable" e) ) ) )
 
 (define (->Scheme-error msg e)
@@ -59,7 +59,7 @@
          (new-names (map (lambda (v) (gensym))
                          variables ))
          (newr (renamings-extend r variables new-names)) )
-    `(lambda ,(pack variables new-names) 
+    `(lambda ,(pack variables new-names)
        ,(->Scheme (Function-body e) newr)) ) )
 
 (define-method (->Scheme (e Alternative) r)

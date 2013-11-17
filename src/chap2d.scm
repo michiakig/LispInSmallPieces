@@ -19,7 +19,7 @@
           ((eq? l1 l2) (display "...)") )
           (else        (display (car l1))
                        (when (pair? (cdr l1)) (display " "))
-                       (scan (cdr l1) 
+                       (scan (cdr l1)
                              (if (and flip (pair? l2)) (cdr l2) l2)
                              (not flip) ) ) ) )
   (display "(")
@@ -40,13 +40,13 @@
 ;;; recursion combinator
 
 (let ((W (lambda (w)
-           (lambda (f) 
+           (lambda (f)
              (f ((w w) f)) ) )))
-   (W W) ) 
+   (W W) )
 
 (define fix
-  (let ((d (lambda (w) 
-             (lambda (f) 
+  (let ((d (lambda (w)
+             (lambda (f)
                (f (lambda (x) (((w w) f) x))) ) )))
     (d d) ) )
 
@@ -77,7 +77,7 @@
     this-would-be-an-error )
 
 (define fix2
-  (let ((d (lambda (w) 
+  (let ((d (lambda (w)
              (lambda (f)
                (f (lambda (x y) (((w w) f) x y))) ) )))
     (d d) ) )
@@ -92,7 +92,7 @@
     this-would-be-an-error )
 
 (define fixN
-  (let ((d (lambda (w) 
+  (let ((d (lambda (w)
              (lambda (f)
                (f (lambda args (apply ((w w) f) args))) ) )))
     (d d) ) )
@@ -109,7 +109,7 @@
 (define NfixN
   (let ((d (lambda (w)
              (lambda (f*)
-               (list ((car f*) 
+               (list ((car f*)
                       (lambda a (apply (car ((w w) f*)) a))
                       (lambda a (apply (cadr ((w w) f*)) a)) )
                      ((cadr f*)
@@ -133,11 +133,11 @@
 (define NfixN2
   (let ((d (lambda (w)
              (lambda (f*)
-               (map (lambda (f) 
-                      (apply f (map (lambda (i) 
-                                      (lambda a (apply 
-                                                 (list-ref ((w w) f*) 
-                                                           i ) 
+               (map (lambda (f)
+                      (apply f (map (lambda (i)
+                                      (lambda a (apply
+                                                 (list-ref ((w w) f*)
+                                                           i )
                                                  a )) )
                                     (iota 0 (length f*)) )) )
                     f* ) ) )))
@@ -159,7 +159,7 @@
 (define klop
   (let ((r (lambda (s c h e m)
              (lambda (f)
-               (f (lambda (n) 
+               (f (lambda (n)
                     (((m e c h e s) f) n) )) ) )))
     (r r r r r r) ) )
 
@@ -201,19 +201,19 @@
 (define-syntax dynamic-set!
   (syntax-rules ()
     ((dynamic-set! variable value)
-     (set-car! (assoc/de 'variable specific-error) value) ) ) ) 
+     (set-car! (assoc/de 'variable specific-error) value) ) ) )
 
 ;;; Exercice on Plists
 
 (let ((properties '()))
-  (set! putprop 
+  (set! putprop
         (lambda (symbol key value)
           (let ((plist (assq symbol properties)))
             (if (pair? plist)
                 (let ((couple (assq key (cdr plist))))
                   (if (pair? couple)
                       (set-cdr! couple value)
-                      (set-cdr! plist (cons (cons key value) 
+                      (set-cdr! plist (cons (cons key value)
                                             (cdr plist) )) ) )
                 (let ((plist (list symbol (cons key value))))
                   (set! properties (cons plist properties)) ) ) )
@@ -226,7 +226,7 @@
                   (if (pair? couple)
                       (cdr couple)
                       #f ) )
-                #f ) ) ) ) ) 
+                #f ) ) ) ) )
 
 (or (begin (putprop 'symbol 'key 'value)
            (eq? (getprop 'symbol 'key) 'value) )

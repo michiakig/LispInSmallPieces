@@ -11,7 +11,7 @@
 ;;; Denotation preserving the unspecification of the evaluation order
 
 ;;; Forall cuts the list L in all possible ways and applies F on the
-;;; three obtained parts. 
+;;; three obtained parts.
 ;;; forall : ((a list * a * a list) -> b list) * (a list) -> b list
 (define (forall f l)
   ;; (assume (pair? l))
@@ -20,7 +20,7 @@
                           (if (pair? after)
                               (loop (append before (list item))
                                     (car after)
-                                    (cdr after) ) 
+                                    (cdr after) )
                               empty-set ) ) )))
     (loop (list) (car l) (cdr l)) ) )
 ;(forall list '(a b c d))
@@ -31,7 +31,7 @@
 
 ;;; Invoke q on V* cut into two parts, the first I items and the rest.
 (define (cut i v* q)
-  (letrec ((accumulate 
+  (letrec ((accumulate
             (lambda (left i right)
               (if (> i 0)
                   (accumulate (cons (car right) left)
@@ -41,7 +41,7 @@
     (accumulate (list) i v*) ) )
 ;(cut 3 '(a b c d e f g h i) list)
 
-;;; Takes a list of denotations, builds all possible ways to interleave 
+;;; Takes a list of denotations, builds all possible ways to interleave
 ;;; them and returns the list of all possible answers.
 ;;; possible-path : meaning list -> env * cont * store -> Answer list
 (define (possible-paths m+)
@@ -51,7 +51,7 @@
                   (m r
                      (lambda (v ss)
                        ((possible-paths (append <m m>))
-                        r 
+                        r
                         (lambda (v* sss)
                           (let ((q (lambda (<v v>)
                                      (k (append <v (list v) v>) sss) )))
@@ -59,7 +59,7 @@
                         ss ) )
                      s ) )
                 m+ )
-        ((car m+) r 
+        ((car m+) r
                   (lambda (v ss) (k (list v) ss))
                   s ) ) ) )
 
@@ -68,12 +68,12 @@
 ;;; and S the store.
 (define ((meaning-orderless-application *e*0*n) r k s)
   ((possible-paths (map meaning *e*0*n))
-   r 
+   r
    (lambda (v* s)
      ((Value->Function (car v*)) (cdr v*) k s) )
    s ) )
 
-(set! meaning-application 
+(set! meaning-application
       (lambda (e e*) (meaning-orderless-application (cons e e*))) )
 
 (define ((new-meaning e*0*n) r k s)
@@ -82,7 +82,7 @@
 ;;; Tests
 
 (define (den+Scheme)
-  (interpreter 
+  (interpreter
    "den+Scheme? "
    "den+Scheme= "
    #f
@@ -103,10 +103,10 @@
                    s.current )) ) ) ) ) ) )
 
 (define (test-den+Scheme file)
-  (suite-test 
+  (suite-test
    file
-   "den+Scheme? " 
-   "den+Scheme= " 
+   "den+Scheme? "
+   "den+Scheme= "
    #t
    (lambda (read check error)
      (set! wrong error)

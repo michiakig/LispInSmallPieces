@@ -28,23 +28,23 @@
     (import (a) (procedure->environment f) c) )
  ((lambda (a b) (lambda (x) (list a x)))
   2 3 )
- 4 
+ 4
  5 )
    5
 ((lambda (f b c)
     (import (a) (procedure->environment f) b) )
  ((lambda (a b) (lambda (x) (list a x)))
   2 3 )
- 4 
+ 4
  5 )
    4
 ((lambda (f b c)
-    (import (a) (procedure->environment f) 
+    (import (a) (procedure->environment f)
        ((lambda (a) a)
         b ) ) )
  ((lambda (a b) (lambda (x) (list a x)))
   2 3 )
- 4 
+ 4
  5 )
    4
 
@@ -68,11 +68,11 @@
     (import (a) (procedure->environment f) a) )
  ((lambda (a b) (lambda (x) (list a x)))
   2 3 )
- 4 
+ 4
  5 )
    2
 ;;; capture a global binding
-((lambda (e) 
+((lambda (e)
    ((lambda (car) (import (car) e (car (cons 1 2))))
     cdr ) )
  (export car) )
@@ -107,11 +107,11 @@
     (f 6) )
  ((lambda (a b) (lambda (x) (list a x)))
   2 3 )
- 4 
+ 4
  5 )
    (4 6)
 ;;; capture a global binding
-((lambda (e) 
+((lambda (e)
    ((lambda (foo) (import (foo) e (set! foo (cons 1 2))))
     cdr )
    foo )

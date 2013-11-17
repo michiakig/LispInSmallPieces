@@ -9,7 +9,7 @@ $Id: Notice,v 1.6 1996/01/28 17:29:37 queinnec Exp $
  Check the README file before using this file.
 (((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 
-               Meroonet, the little brother of Meroon. 
+               Meroonet, the little brother of Meroon.
                         Christian Queinnec
                 Ecole Polytechnique & INRIA-Rocquencourt
                     Christian.Queinnec@inria.fr
@@ -50,14 +50,14 @@ Quick reference card
 (define-class <name-of-the-class> <name-of-the-superclass>
        ( <name-of-a-Mono-Field>          |
          (= <name-of-a-Mono-Field>)      |
-         (* <name-of-a-Poly-Field>)      
+         (* <name-of-a-Poly-Field>)
          ... ) )
 
 (define-generic ( <name-of-the-generic-function>
                   . <description-of-the-variables> )
       [ <optional-default-method> ]   )
 
-<description-of-the-variables> 
+<description-of-the-variables>
     ::= ( <variable-name>     . <description-of-the-variables> )
      |  ( ( <variable-name> ) . <description-of-the-variables> )
      |  <variable-name>
@@ -66,9 +66,9 @@ Quick reference card
                  . <description-of-the-variables> )
       <body-of-the-method> )
 
-<description-of-the-variables> 
+<description-of-the-variables>
     ::= ( <variable-name> . <description-of-the-variables> )
-     |  ( ( <variable-name> <class-name> ) 
+     |  ( ( <variable-name> <class-name> )
           . <description-of-the-variables> )
      |  <variable-name>
 
@@ -107,7 +107,7 @@ Quick reference card
 (field-value object poly-field index)   -> value
 
 (set-field-value! object value mono-field)
-(set-field-value! object value poly-field index)   
+(set-field-value! object value poly-field index)
 
 (field-length object poly-field)       -> length
 
@@ -127,7 +127,7 @@ Predefined classes are defined as:
 
 (define-class Class Object (name number fields superclass subclass-numbers))
         number is an integer associated to each classs
-        
+
 (define-class Generic Object (name default dispatch-table signature))
 
 (define-class Field Object (name defining-class-number))
@@ -140,11 +140,11 @@ Predefined classes are defined as:
 
 (number->class number)                  -> class
 
-These classes can be obtained as values of the global variables Object-class, 
+These classes can be obtained as values of the global variables Object-class,
 Class-class etc.
 
 
-Differences wrt Meroon V2.23 
+Differences wrt Meroon V2.23
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 *** No concept of anomalies: errors are not reported in a
@@ -183,7 +183,7 @@ be extended.
 initial hierarchy and accessors are hand-built.
 
 *** symbol->class is renamed into ->Class while symbol->generic is
-renamed into ->Generic. 
+renamed into ->Generic.
 
 *** Classes are accessible through a global variable whose name is formed
 on the name of the class suffixed with -class.

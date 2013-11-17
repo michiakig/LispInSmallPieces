@@ -14,24 +14,24 @@
   (syntax-rules ()
     ((delay expression) (lambda () expression)) ) )
 
-(define (force promise) (promise)) 
+(define (force promise) (promise))
 
 (define (print x)
-  (display x) 
-  x ) 
+  (display x)
+  x )
 
-;;; prints 66 
+;;; prints 66
 (let ((p (delay (print (* 2 3)))))
   (list (force p) (force p)) )
 
 (define-syntax memo-delay
   (syntax-rules ()
-    ((memo-delay expression) 
+    ((memo-delay expression)
      (let ((already-computed? #f)
            (value 'wait) )
-       (lambda () 
+       (lambda ()
          (if (not already-computed?)
-             (begin 
+             (begin
                (set! value expression)
                (set! already-computed? #t) ) )
          value ) ) ) ) )
@@ -40,7 +40,7 @@
 (let ((p (memo-delay (print (* 2 3)))))
   (list (force p) (force p)) )
 
-;;; CPS 
+;;; CPS
 
 (define (cps e)
   (if (pair? e)
@@ -61,13 +61,13 @@
   (lambda (k)
     ((cps form)
      (lambda (a)
-       (k `(set! ,variable ,a)) ) ) ) ) 
+       (k `(set! ,variable ,a)) ) ) ) )
 
 (define (cps-if bool form1 form2)
   (lambda (k)
     ((cps bool)
      (lambda (b)
-       `(if ,b ,((cps form1) k) 
+       `(if ,b ,((cps form1) k)
                ,((cps form2) k) ) ) ) ) )
 
 (define (cps-begin e)
@@ -92,7 +92,7 @@
         ((cps-terms e)
          (lambda (t*)
            (let ((d (gensym)))
-             `(,(car t*) (lambda (,d) ,(k d)) 
+             `(,(car t*) (lambda (,d) ,(k d))
                          . ,(cdr t*) ) ) ) ) ) ) )
 
 (define primitives '( cons car cdr list * + - = pair? eq? ))
@@ -103,7 +103,7 @@
         ((cps (car e*))
          (lambda (a)
            ((cps-terms (cdr e*))
-            (lambda (a*) 
+            (lambda (a*)
               (k (cons a a*)) ) ) ) ) )
       (lambda (k) (k '())) ) )
 
@@ -112,7 +112,7 @@
     (k (let ((c (gensym "cont")))
             `(lambda (,c . ,variables)
                ,((cps body)
-                 (lambda (a) `(,c ,a)) ) ) )) ) ) 
+                 (lambda (a) `(,c ,a)) ) ) )) ) )
 
 (pp ((cps '(set! fact (lambda (n)
                         (if (= n 1) 1

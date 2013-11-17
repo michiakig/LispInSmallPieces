@@ -3,43 +3,43 @@
  (lambda (make-toplevel make-flambda flambda? flambda-apply)
    (set! make-toplevel
          (lambda (prompt-in prompt-out)
-           (call/cc 
+           (call/cc
             (lambda (exit)
               (monitor (lambda (c b) (exit b))
-                ((lambda (it extend error global-env 
+                ((lambda (it extend error global-env
                           toplevel eval evlis eprogn reference )
                    (set! extend
                          (lambda (env names values)
                            (if (pair? names)
                                (if (pair? values)
                                    ((lambda (newenv)
-                                      (begin 
-                                        (set-variable-value! 
+                                      (begin
+                                        (set-variable-value!
                                          (car names) newenv (car values) )
-                                        (extend newenv (cdr names) 
+                                        (extend newenv (cdr names)
                                                 (cdr values) ) ) )
                                     (enrich env (car names)) )
                                    (error "Too few arguments" names) )
                                (if (symbol? names)
                                    ((lambda (newenv)
-                                      (begin 
-                                        (set-variable-value! 
+                                      (begin
+                                        (set-variable-value!
                                          names newenv values )
                                         newenv ) )
                                     (enrich env names) )
                                    (if (null? names)
                                        (if (null? values)
                                            env
-                                           (error "Too much arguments" 
+                                           (error "Too much arguments"
                                                   values ) )
                                        env ) ) ) ) )
                    (set! error (lambda (msg hint)
                                  (exit (list msg hint)) ))
                    (set! toplevel
-                         (lambda (genv) 
+                         (lambda (genv)
                            (set! global-env genv)
                            (display prompt-in)
-                           ((lambda (result) 
+                           ((lambda (result)
                               (set! it result)
                               (display prompt-out)
                               (display result)
@@ -52,7 +52,7 @@
                            (toplevel global-env) ) )
                    (set! eval
                          (lambda (e r)
-                           (if (pair? e) 
+                           (if (pair? e)
                                ((lambda (f)
                                   (if (flambda? f)
                                       (flambda-apply f r (cdr e))
@@ -72,7 +72,7 @@
                                (begin (eval (car e+) r)
                                       (eprogn (cdr e+) r) )
                                (eval (car e+) r) ) ) )
-                   (set! reference 
+                   (set! reference
                          (lambda (name r)
                            (if (variable-defined? name r)
                                (variable-value name r)
@@ -81,14 +81,14 @@
                                    (error "No such variable" name) ) ) ) )
                    ((lambda (quote if set! lambda flambda monitor)
                       (toplevel (the-environment)) )
-                    (make-flambda 
+                    (make-flambda
                      (lambda (r quotation) quotation) )
                     (make-flambda
                      (lambda (r condition then else)
                        (eval (if (eval condition r) then else) r) ) )
                     (make-flambda
                      (lambda (r name form)
-                       ((lambda (v) 
+                       ((lambda (v)
                           (if (variable-defined? name r)
                               (set-variable-value! name r v)
                               (if (variable-defined? name global-env)
@@ -103,17 +103,17 @@
                      (lambda (r variables . body)
                        (make-flambda
                         (lambda (rr . parameters)
-                          (eprogn body 
-                                  (extend r variables 
+                          (eprogn body
+                                  (extend r variables
                                           (cons rr parameters) ) ) ) ) ) )
                     (make-flambda
                      (lambda (r handler . body)
                        (monitor (eval handler r)
                                 (eprogn body r) ) ) ) ) )
-                 'it 'extend 'error 'global-env 
-                 'toplevel 'eval 'evlis 'eprogn 'reference ) ) ) ) ) ) 
+                 'it 'extend 'error 'global-env
+                 'toplevel 'eval 'evlis 'eprogn 'reference ) ) ) ) ) )
    (make-toplevel "?? " "== ") )
- 'make-toplevel 
+ 'make-toplevel
  ((lambda (flambda-tag)
     (list (lambda (behavior) (cons flambda-tag behavior))
           (lambda (o) (if (pair? o) (= (car o) flambda-tag) #f))

@@ -11,7 +11,7 @@
 
 ;;; This is a little test for the port of syntax-caseV2.0. What is tested
 ;;; is that a compiled syntax-case linked into a Bigloo-based
-;;; interpreter is correct. 
+;;; interpreter is correct.
 
 ;;; test on a predefined syntaxes
 
@@ -28,7 +28,7 @@
 
 (define-syntax funcall
   (syntax-rules ()
-    ((funcall function arguments ...) 
+    ((funcall function arguments ...)
      (function arguments ...) ) ) )
    ---
 (let ((f (lambda (x) (funcall cons x x))))
@@ -51,7 +51,7 @@
 
 (define env.global '())
    ---
-(define-syntax definitial 
+(define-syntax definitial
   (syntax-rules ()
     ((definitial name)
      (begin (set! env.global (cons (cons 'name 'void) env.global))
@@ -63,14 +63,14 @@
 (definitial t #t)
    ---
 env.global
-   ((t . #t)) 
+   ((t . #t))
 
 ;;; Testing define-abbreviation.
 
 (define-abbreviation (foo a b)
   `(quote (,a foo ,b)) )
    ---
-(foo 2 3) 
+(foo 2 3)
    (2 foo 3)
 (foo (+ 1 2) 3)
    ((+ 1 2) foo 3)
@@ -94,7 +94,7 @@ env.global
    (3 4)
 
 ;;; Some additional functions are required
-(atom? 'foo) 
+(atom? 'foo)
    #t
 (atom? (cons 1 2))
    #f

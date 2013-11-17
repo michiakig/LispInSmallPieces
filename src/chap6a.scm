@@ -29,7 +29,7 @@
   (and (pair? r)
        (let scan ((names (car r))
                   (j 0) )
-         (cond ((pair? names) 
+         (cond ((pair? names)
                 (if (eq? n (car names))
                     `(local ,i . ,j)
                     (scan (cdr names) (+ 1 j)) ) )
@@ -45,7 +45,7 @@
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Representation of local environments, they contain the values of
 ;;; the local variables (but global and predefined variables).
-;;; Runtime environment or, activation frames, are represented by 
+;;; Runtime environment or, activation frames, are represented by
 ;;; vectors (named v*). They have the following structure:
 ;;;           +------------+
 ;;;           | next       |  ---> next V*
@@ -57,10 +57,10 @@
 ;;; The number of arguments can be extracted from the size of the
 ;;; activation frame.
 
-;;; A direct implementation with inlined vectors is approximatively 
+;;; A direct implementation with inlined vectors is approximatively
 ;;; 7 times faster under sci.
 
-(define-class environment Object 
+(define-class environment Object
   ( next ) )
 
 (define-class activation-frame environment
@@ -86,7 +86,7 @@
 
 ;;; R is the static representation of the runtime local environment.
 ;;; It is represented by a list of list of variables (the classical
-;;; rib cage). 
+;;; rib cage).
 
 (define (r-extend* r n*)
   (cons n* r) )
@@ -98,7 +98,7 @@
 ;;; initially completely empty and can be extended by the user.
 ;;; It actually tolerates only 100 new global variables.
 
-;;; G.CURRENT represents the `static' user-defined global environment. 
+;;; G.CURRENT represents the `static' user-defined global environment.
 ;;; It is represented by the list of the symbols naming these global
 ;;; variables. Their values are held in the SG.CURRENT vector.
 
@@ -184,7 +184,7 @@
 (define (get-description name)
   (let ((p (assq name desc.init)))
     (and (pair? p) (cdr p)) ) )
-        
+
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; The threaded interpreter.
 
@@ -195,7 +195,7 @@
       (case (car e)
         ((quote)  (meaning-quotation (cadr e) r))
         ((lambda) (meaning-abstraction (cadr e) (cddr e) r))
-        ((if)     (meaning-alternative 
+        ((if)     (meaning-alternative
                    (cadr e) (caddr e) (cadddr e) r ))
         ((begin)  (meaning-sequence (cdr e) r))
         ((set!)   (meaning-assignment (cadr e) (caddr e) r))
@@ -246,7 +246,7 @@
       (m1 sr (lambda (v)
                ((if v m2 m3) sr k) )) ) ) )
 
-(define (meaning-assignment n e r) 
+(define (meaning-assignment n e r)
   (let ((m (meaning e r))
         (kind (compute-kind r n)) )
     (if kind
@@ -257,7 +257,7 @@
              (if (= i 0)
                  (lambda (sr k)
                    (m sr (lambda (v)
-                           (k (set-activation-frame-argument! 
+                           (k (set-activation-frame-argument!
                                sr j v )) )) )
                  (lambda (sr k)
                    (m sr (lambda (v)
@@ -278,7 +278,7 @@
           (meaning*-single-sequence (car e+) r) )
       (static-wrong "Illegal syntax: (begin)") ) )
 
-(define (meaning*-single-sequence e r) 
+(define (meaning*-single-sequence e r)
   (meaning e r) )
 
 (define (meaning*-multiple-sequence e e+ r)
@@ -294,7 +294,7 @@
     (cond
      ((pair? n*) (parse (cdr n*) (cons (car n*) regular)))
      ((null? n*) (meaning-fix-abstraction nn* e+ r))
-     (else (meaning-dotted-abstraction 
+     (else (meaning-dotted-abstraction
             (reverse regular) n* e+ r )) ) ) )
 
 (define (meaning-fix-abstraction n* e+ r)
@@ -335,7 +335,7 @@
 ;;; Application meaning.
 
 (define (meaning-application e e* r)
-  (cond 
+  (cond
    ((and (symbol? e)
          (let ((kind (compute-kind r e)))
            (and (pair? kind)
@@ -360,16 +360,16 @@
     (let parse ((n* nn*)
                 (e* ee*)
                 (regular '()) )
-      (cond ((pair? n*) 
+      (cond ((pair? n*)
              (if (pair? e*)
                  (parse (cdr n*) (cdr e*) (cons (car n*) regular))
                  (static-wrong "Too less arguments" e ee*) ) )
             ((null? n*)
              (if (null? e*)
-                 (meaning-fix-closed-application 
+                 (meaning-fix-closed-application
                   nn* (cddr e) ee* r )
                  (static-wrong "Too much arguments" e ee*) ) )
-            (else (meaning-dotted-closed-application 
+            (else (meaning-dotted-closed-application
                    (reverse regular) n* (cddr e) ee* r )) ) ) ) )
 
 (define (meaning-fix-closed-application n* body e* r)
@@ -397,23 +397,23 @@
          (size (length e*)) )
     (case size
       ((0) (lambda (sr k) (k (address))))
-      ((1) 
+      ((1)
        (let ((m1 (meaning (car e*) r)))
-         (lambda (sr k) 
-           (m1 sr (lambda (v) 
+         (lambda (sr k)
+           (m1 sr (lambda (v)
                     (k (address v)) )) ) ) )
-      ((2) 
+      ((2)
        (let ((m1 (meaning (car e*) r))
              (m2 (meaning (cadr e*) r)) )
-         (lambda (sr k) 
+         (lambda (sr k)
            (m1 sr (lambda (v1)
                     (m2 sr (lambda (v2)
                              (k (address v1 v2)) )) )) ) ) )
-      ((3) 
+      ((3)
        (let ((m1 (meaning (car e*) r))
              (m2 (meaning (cadr e*) r))
              (m3 (meaning (caddr e*) r)) )
-         (lambda (sr k) 
+         (lambda (sr k)
            (m1 sr (lambda (v1)
                     (m2 sr (lambda (v2)
                              (m3 sr (lambda (v3)
@@ -472,9 +472,9 @@
         (lambda (sr k)
           (m sr (lambda (v)
                   (m* sr (lambda (v*)
-                           (set-activation-frame-argument! 
+                           (set-activation-frame-argument!
                             v* arity
-                            (cons v (activation-frame-argument 
+                            (cons v (activation-frame-argument
                                      v* arity )) )
                            (k v*) )) )) ) ) ) )
 
@@ -507,21 +507,21 @@
     ((defprimitive name value 0) (defprimitive0 name value))
     ((defprimitive name value 1) (defprimitive1 name value))
     ((defprimitive name value 2) (defprimitive2 name value))
-    ((defprimitive name value 3) (defprimitive3 name value)) ) )    
+    ((defprimitive name value 3) (defprimitive3 name value)) ) )
 
 (define-syntax defprimitive0
   (syntax-rules ()
     ((defprimitive0 name value)
      (definitial name
        (letrec ((arity+1 (+ 0 1))
-                (behavior 
+                (behavior
                  (lambda (v* k)
                    (if (= arity+1 (activation-frame-argument-length v*))
                        (k (value))
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value))
          behavior ) ) ) ) )
-  
+
 (define-syntax defprimitive1
   (syntax-rules ()
     ((defprimitive1 name value)
@@ -534,7 +534,7 @@
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a))
          behavior ) ) ) ) )
-  
+
 (define-syntax defprimitive2
   (syntax-rules ()
     ((defprimitive2 name value)
@@ -543,18 +543,18 @@
                 (behavior
                  (lambda (v* k)
                    (if (= arity+1 (activation-frame-argument-length v*))
-                       (k (value (activation-frame-argument v* 0) 
+                       (k (value (activation-frame-argument v* 0)
                                  (activation-frame-argument v* 1) ))
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a b))
          behavior ) ) ) ) )
-  
+
 (define-syntax defprimitive3
   (syntax-rules ()
     ((defprimitive3 name value)
      (definitial name
        (letrec ((arity+1 (+ 3 1))
-                (behavior 
+                (behavior
                  (lambda (v* k)
                    (if (= (activation-frame-argument-length v*)
                           arity+1 )
@@ -605,7 +605,7 @@
       (if (= arity+1 (activation-frame-argument-length v*))
           ((activation-frame-argument v* 0)
            (let ((frame (allocate-activation-frame (+ 1 1))))
-             (set-activation-frame-argument! 
+             (set-activation-frame-argument!
               frame 0
               (lambda (values kk)
                 (if (= (activation-frame-argument-length values)
@@ -626,7 +626,7 @@
                 (let* ((args-number
                         (- (activation-frame-argument-length v*) 1) )
                        ;; fresh cells
-                       (result (append (activation-frame-argument 
+                       (result (append (activation-frame-argument
                                         v* (- args-number 1) )
                                        '() )) )
                   (do ((i (- args-number 2) (- i 1)))
@@ -649,7 +649,7 @@
           (result '()) )
       (do ((i args-number (- i 1)))
           ((= i 0))
-        (set! result (cons (activation-frame-argument v* (- i 1)) result)) ) 
+        (set! result (cons (activation-frame-argument v* (- i 1)) result)) )
       (k result) ) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -681,9 +681,9 @@
   (toplevel) )
 
 (define (scheme6a)
-  (interpreter 
-   "Scheme? "  
-   "Scheme= " 
+  (interpreter
+   "Scheme? "
+   "Scheme= "
    #t
    (lambda (read print error)
      (set! wrong error)
@@ -693,9 +693,9 @@
                (lambda (v) v) ) ) ) ) ) )
 
 (define (test-scheme6a file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)
@@ -706,7 +706,7 @@
                (lambda (v) v) ) ) ) )
    equal? ) )
 
-(set! static-wrong 
+(set! static-wrong
       (lambda (message . culprits)
         (display `(*static-error* ,message . ,culprits))(newline)
         (lambda (sr k)
@@ -719,7 +719,7 @@
         (m (meaning e r.init)) )
     (let loop ((factor factor))
       (m sr.init
-         (lambda (v) 
+         (lambda (v)
            (let ((duration (- (get-internal-run-time) start)))
              (when (<= factor 1)
                (display (list duration v))

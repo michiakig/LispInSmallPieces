@@ -50,48 +50,48 @@
 ;;; Combinators
 
 (define (SHALLOW-ARGUMENT-REF j)
-  (lambda () 
+  (lambda ()
     (set! *val* (activation-frame-argument *env* j)) ) )
 
 (define (PREDEFINED i)
-  (lambda ()  
+  (lambda ()
     (set! *val* (predefined-fetch i)) ) )
 
 (define (DEEP-ARGUMENT-REF i j)
-  (lambda () 
+  (lambda ()
     (set! *val* (deep-fetch *env* i j)) ) )
 
 (define (SHALLOW-ARGUMENT-SET! j m)
-  (lambda () 
+  (lambda ()
     (m)
     (set-activation-frame-argument! *env* j *val*) ) )
 
 (define (DEEP-ARGUMENT-SET! i j m)
-  (lambda () 
+  (lambda ()
     (m)
     (deep-update! *env* i j *val*) ) )
 
 (define (GLOBAL-REF i)
-  (lambda () 
+  (lambda ()
     (set! *val* (global-fetch i)) ) )
 
 (define (CHECKED-GLOBAL-REF i)
-  (lambda () 
+  (lambda ()
     ((GLOBAL-REF i))
     (when (eq? *val* undefined-value)
       (wrong "Uninitialized variable") ) ) )
 
 (define (GLOBAL-SET! i m)
-  (lambda () 
+  (lambda ()
     (m)
     (global-update! i *val*) ) )
 
 (define (CONSTANT value)
-  (lambda ()  
+  (lambda ()
     (set! *val* value) ) )
 
 (define (ALTERNATIVE m1 m2 m3)
-  (lambda () 
+  (lambda ()
     (m1)
     (if *val* (m2) (m3)) ) )
 
@@ -112,16 +112,16 @@
     (set! *env* (activation-frame-next *env*)) ) )
 
 (define (CALL0 address)
-  (lambda ()  
+  (lambda ()
     (set! *val* (address)) ) )
 
 (define (CALL1 address m1)
-  (lambda ()  
+  (lambda ()
     (m1)
     (set! *val* (address *val*)) ) )
 
 (define (CALL2 address m1 m2)
-  (lambda ()  
+  (lambda ()
     (m1)
     (stack-push *val*)
     (m2)
@@ -129,7 +129,7 @@
     (set! *val* (address *arg1* *val*)) ) )
 
 (define (CALL3 address m1 m2 m3)
-  (lambda ()  
+  (lambda ()
     (m1)
     (stack-push *val*)
     (m2)
@@ -154,14 +154,14 @@
     (lambda ()
       (define (the-function sr)
         (if (>= (activation-frame-argument-length *val*) arity+1)
-            (begin 
+            (begin
               (listify! *val* arity)
               (set! *env* (sr-extend* sr *val*))
               (m+) )
             (wrong "Incorrect arity") ) )
       (set! *val* (make-closure the-function *env*)) ) ) )
 
-(define (TR-REGULAR-CALL m m*) 
+(define (TR-REGULAR-CALL m m*)
   (lambda ()
     (m)
     (stack-push *val*)
@@ -192,7 +192,7 @@
     (m)
     (stack-push *val*)
     (m*)
-    (set-activation-frame-argument! 
+    (set-activation-frame-argument!
      *val* arity (cons (stack-pop)
                        (activation-frame-argument *val* arity) ) ) ) )
 
@@ -230,7 +230,7 @@
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a))
          (make-closure behavior sr.init) ) ) ) ) )
-  
+
 (define-syntax defprimitive2
   (syntax-rules ()
     ((defprimitive2 name value)
@@ -239,8 +239,8 @@
                 (behavior
                  (lambda (sr)
                    (if (= arity+1 (activation-frame-argument-length *val*))
-                       (set! *val* 
-                             (value (activation-frame-argument *val* 0) 
+                       (set! *val*
+                             (value (activation-frame-argument *val* 0)
                                     (activation-frame-argument *val* 1) ) )
                        (wrong "Incorrect arity" 'name) ) ) ) )
          (description-extend! 'name `(function ,value a b))
@@ -267,7 +267,7 @@
 
 ;;; Must redefine this one with the new combinators.
 
-(definitial list 
+(definitial list
   (begin ((NARY-CLOSURE (SHALLOW-ARGUMENT-REF 0) 0))
          *val* ) )
 
@@ -282,7 +282,7 @@
               (let ((f (activation-frame-argument *val* 0))
                     (frame (allocate-activation-frame (+ 1 1)))
                     (stack-copy (save-stack)) )
-                (set-activation-frame-argument! 
+                (set-activation-frame-argument!
                  frame 0
                  (make-closure
                   (lambda (sr)
@@ -311,7 +311,7 @@
                   (frame (allocate-activation-frame size)) )
              (do ((i 1 (+ i 1)))
                  ((= i last-arg-index))
-               (set-activation-frame-argument! 
+               (set-activation-frame-argument!
                 frame (- i 1) (activation-frame-argument *val* i) ) )
              (do ((i (- last-arg-index 1) (+ i 1))
                   (last-arg last-arg (cdr last-arg)) )
@@ -326,7 +326,7 @@
 
 (define install-regular-combinators
   (let ((originals (map eval combinator-names)))
-    (lambda () 
+    (lambda ()
       (for-each (lambda (old-value name)
                   (eval `(set! ,name ',old-value)) )
                 originals
@@ -357,9 +357,9 @@
       (m) ) ) )
 
 (define (test-scheme7b file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)

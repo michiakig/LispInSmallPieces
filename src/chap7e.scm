@@ -96,7 +96,7 @@
     (ESCAPER m+) ) )
 
 (define (ESCAPER m+)
-  (append (PUSH-ESCAPER (+ 1 (length m+))) 
+  (append (PUSH-ESCAPER (+ 1 (length m+)))
           m+ (RETURN) (POP-ESCAPER) ) )
 
 (define (POP-ESCAPER) (list 250))
@@ -159,7 +159,7 @@
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Errors.
-;;; The initial code segment starts with 
+;;; The initial code segment starts with
 ;;;    (NON-CONT-ERR) (FINISH) (RESTORE-ENV) (RETURN) start-pc
 ;;; The initial stack contains the initial error handler
 ;;;     stack[0] = 1                  (next error handler (the same))
@@ -184,7 +184,7 @@
           (else (stack-push 0))  )      ; pc for (NON-CONT-ERR)
     (set! *errenv* (vector-ref *stack* (- index 1)))
     (invoke handler #t) ) )
- 
+
 (define (base-error-handler)
   (show-registers "Panic error: content of registers:")
   (wrong "Abort") )
@@ -212,7 +212,7 @@
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
 (define (show-registers message)
-  (when *debug* 
+  (when *debug*
     (format #t "~%----------------~A" message)
     (format #t "~%ENV  = ") (show *env*)
     (format #t "~%DYN  = ") (show *dynenv*)
@@ -220,7 +220,7 @@
     (format #t "~%VAL  = ") (show *val*)
     (format #t "~%FUN  = ") (show *fun*)
     (show-stack (save-stack))
-    (format #t "~%(PC  = ~A), next INSTR to be executed = ~A~%" 
+    (format #t "~%(PC  = ~A), next INSTR to be executed = ~A~%"
             *pc* (instruction-decode *code* *pc*) ) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -236,7 +236,7 @@
       (run-machine start-pc code constants global-names dynamics)
       (display *val*)
       (toplevel) ) )
-  (toplevel) ) 
+  (toplevel) )
 
 (define (stand-alone-producer7e e)
   (set! g.current (original.g.current))
@@ -278,7 +278,7 @@
   (set! run-machine
         (lambda (pc code constants global-names dynamics)
           (when *debug*                     ; DEBUG
-            (format #t "Code= ~A~%" (disassemble code)) )         
+            (format #t "Code= ~A~%" (disassemble code)) )
           (native-run-machine pc code constants global-names dynamics) ) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -286,8 +286,8 @@
 
 (define (scheme7e)
   (interpreter
-   "Scheme? "  
-   "Scheme= " 
+   "Scheme? "
+   "Scheme= "
    #t
    (lambda (read print error)
      (setup-wrong-functions error)
@@ -296,9 +296,9 @@
        (print *val*) ) ) ) )
 
 (define (test-scheme7e file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)

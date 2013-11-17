@@ -19,7 +19,7 @@
 /* Identify this library.
  */
 
-static char *rcsid = 
+static char *rcsid =
   "@(#)$Id: schemelib.c,v 4.0 1995/07/10 06:52:32 queinnec Exp $";
 
 /* Global constants
@@ -57,7 +57,7 @@ SCM_DefinePredefinedFunctionVariable(CONS,"CONS",2,SCM_cons);
 
 SCM_DefinePredefinedFunctionVariable(PRINT,"PRINT",1,SCM_print);
 
-/* Apply is special, it takes at least two arguments. It is invoked as 
+/* Apply is special, it takes at least two arguments. It is invoked as
  * an nary subr. List has a similar structure.
  */
 

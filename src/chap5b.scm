@@ -23,7 +23,7 @@
   (r n) )
 
 (define ((L-meaning-abstraction n e) r)
-  (lambda (v) 
+  (lambda (v)
     ((L-meaning e) (extend r n v)) ) )
 
 (define ((L-meaning-combination e1 e2) r)
@@ -58,12 +58,12 @@
 (set! r.init (extend r.init '* (lambda (x)
                                  (lambda (y) (* x y)) )))
 (set! r.init (extend r.init '= (lambda (x)
-                                 (lambda (y) 
+                                 (lambda (y)
                                    (if (= x y)
                                        (lambda (x) (lambda (y) x))
                                        (lambda (x) (lambda (y) y)) ) ) ) ) )
 
-;;; Testing 
+;;; Testing
 
 (define (test-L file)
   (suite-test
@@ -73,7 +73,7 @@
    #t
    (lambda (read check error)
      (set! wrong error)
-     (lambda () 
+     (lambda ()
        (check ((L-meaning (read))
                r.init ) ) ) )
    equal? ) )

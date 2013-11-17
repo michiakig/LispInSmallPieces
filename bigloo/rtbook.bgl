@@ -21,7 +21,7 @@
         ;(include "bigloo/others/init.ss")
         ;(include "bigloo/others/expand.bb")
         ;(include "bigloo/others/macro-defs.bb")
-        ;; second, meroonet (preceded by a small hack that also 
+        ;; second, meroonet (preceded by a small hack that also
         ;; defines the define-abbreviation macro)
         (include "bigloo/hack.bgl")
         (include "meroonet/meroonet.scm")
@@ -36,7 +36,7 @@
                 (list* . args)
                 (syntax-case-load file)
                 (start options) )
-        ;; exported from syntax-case but no longer exported since 
+        ;; exported from syntax-case but no longer exported since
         ;; expand-syntax is already present in Bigloo1.9d
         ;(export expand-syntax
         ;        void
@@ -73,7 +73,7 @@
                 (register-class name super-name own-field-descriptions)
                 (Class-initialize! class name super own-field-descriptions)
                 (Field-defining-class field)
-                Class? 
+                Class?
                 Generic?
                 Field?
                 Mono-Field?
@@ -88,7 +88,7 @@
                 set-Class-superclass!
                 Class-subclass-numbers
                 set-Class-subclass-numbers!
-                make-Class 
+                make-Class
                 allocate-Class
                 make-Generic
                 allocate-Generic
@@ -116,7 +116,7 @@
 ;(display "[rtbook.bgl...")(newline) ; DEBUG
 
 ;;; Include an eval so exported global variables can also appear as symbols.
-(eval ''hack) 
+(eval ''hack)
 
 ;;;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Defines specific error handlers for meroonet.scm and tester.scm
@@ -125,7 +125,7 @@
 
 (define tester-error 'wait)
 
-;(set! tester-call/cc 
+;(set! tester-call/cc
 ;      (lambda (f)
 ;        (bind-exit (k) (f k)) ) )
 
@@ -182,7 +182,7 @@
       (display file)
       (newline)
       (let loop ((e (read in)))
-        (if (eof-object? e) 
+        (if (eof-object? e)
             file
             (let ;((r (eval (expand-syntax e))))
                 ;; no longer needed in Bigloo1.9d

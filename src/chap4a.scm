@@ -15,7 +15,7 @@
 ;;; Variable names
 ;;; Program       e et ef ec
 ;;; Environment   r
-;;; Store         s ss sss ssss 
+;;; Store         s ss sss ssss
 ;;; Continuation  k kk
 ;;; Value         v vv
 ;;; Identifier    n
@@ -23,7 +23,7 @@
 ;;; starred variables represent list of what represent the variables.
 
 (define (evaluate e r s k)
-  (if (atom? e) 
+  (if (atom? e)
       (if (symbol? e) (evaluate-variable e r s k)
           (evaluate-quote e r s k) )
       (case (car e)
@@ -39,24 +39,24 @@
     (lambda (v ss)
       (evaluate ((v 'boolify) et ef) r ss k) ) ) )
 
-;;; This amnesic alternative forgets about the store after the condition 
-;;; is evaluated and revert to the store that was active when the 
+;;; This amnesic alternative forgets about the store after the condition
+;;; is evaluated and revert to the store that was active when the
 ;;; alternative was entered.
 (define (evaluate-amnesic-if ec et ef r s k)
   (evaluate ec r s
     (lambda (v ss)
       (evaluate ((v 'boolify) et ef) r s   ;\relax{\tt s} $\not=$ {\tt ss}!
-                k ) ) ) ) 
+                k ) ) ) )
 
 (define (evaluate-begin e* r s k)
   (if (pair? (cdr e*))
-      (evaluate (car e*) r s 
+      (evaluate (car e*) r s
         (lambda (void ss)
           (evaluate-begin (cdr e*) r ss k) ) )
       (evaluate (car e*) r s k) ) )
 
 (define (evaluate-variable n r s k)
-  (k (s (r n)) s) ) 
+  (k (s (r n)) s) )
 
 (define (evaluate-set! n e r s k)
   (evaluate e r s
@@ -87,7 +87,7 @@
         (k '() s) ) )
   (evaluate e r s
     (lambda (f ss)
-      (evaluate-arguments e* r ss 
+      (evaluate-arguments e* r ss
         (lambda (v* sss)
           (if (eq? (f 'type) 'function)
               ((f 'behavior) v* sss k)
@@ -96,13 +96,13 @@
 (define (evaluate-lambda n* e* r s k)
   (allocate 1 s
     (lambda (a* ss)
-      (k (create-function 
+      (k (create-function
           (car a*)
           (lambda (v* s k)
             (if (= (length n*) (length v*))
                 (allocate (length n*) s
                  (lambda (a* ss)
-                   (evaluate-begin e*  
+                   (evaluate-begin e*
                                    (update* r n* a*)
                                    (update* ss a* v*)
                                    k ) ) )
@@ -113,11 +113,11 @@
 (define (evaluate-ftn-lambda n* e* r s k)
   (allocate (+ 1 (length n*)) s
     (lambda (a* ss)
-      (k (create-function 
+      (k (create-function
           (car a*)
           (lambda (v* s k)
             (if (= (length n*) (length v*))
-                (evaluate-begin e*  
+                (evaluate-begin e*
                                 (update* r n* (cdr a*))
                                 (update* s (cdr a*) v*)
                                 k )
@@ -132,29 +132,29 @@
           ((null? n*) 0)
           (else       1) ) )
   (define (update-environment r n* a*)
-    (cond 
-     ((pair? n*) 
+    (cond
+     ((pair? n*)
       (update-environment (update r (car n*) (car a*))
                           (cdr n*)
                           (cdr a*) ) )
      ((null? n*) r)
      (else (update r n* (car a*))) ) )
   (define (update-store s a* v* n*)
-    (cond ((pair? n*) 
+    (cond ((pair? n*)
            (update-store (update s (car a*) (car v*))
                          (cdr a*) (cdr v*) (cdr n*) ) )
           ((null? n*) s)
-          (else (allocate-list v* s (lambda (v ss) 
+          (else (allocate-list v* s (lambda (v ss)
                                       (update ss (car a*) v) ))) ) )
   (allocate 1 s
     (lambda (a* ss)
       (k (create-function
-          (car a*) 
+          (car a*)
           (lambda (v* s k)
             (if (compatible-arity? n* v*)
                 (allocate (arity n*) s
                  (lambda (a* ss)
-                   (evaluate-begin e*  
+                   (evaluate-begin e*
                                    (update-environment r n* a*)
                                    (update-store ss a* v* n*)
                                    k ) ) )
@@ -162,7 +162,7 @@
          ss ) ) ) )
 
 (define (compatible-arity? n* v*)
-  (cond ((pair? n*) (and (pair? v*) 
+  (cond ((pair? n*) (and (pair? v*)
                          (compatible-arity? (cdr n*) (cdr v*)) ))
         ((null? n*) (null? v*))
         ((symbol? n*) #t) ) )
@@ -187,7 +187,7 @@
                   (expand-store a s)
                   (lambda (a* ss)
                     (q (cons a a*) ss) ) ) )
-      (q '() s) ) ) 
+      (q '() s) ) )
 
 (define (expand-store high-location s)
   (update s 0 high-location) )
@@ -205,7 +205,7 @@
 (define (chapter4-interpreter)
   (define (toplevel s)
     (evaluate (read)
-              r.global 
+              r.global
               s
               (lambda (v ss)
                 (display (transcode-back v ss))
@@ -224,7 +224,7 @@
           (k (cdr couple) s)
           (transcode c s (lambda (v ss)
                            (set! *shared-memo-quotations*
-                                 (cons (cons c v) 
+                                 (cons (cons c v)
                                        *shared-memo-quotations* ) )
                            (k v ss) )) ) ) ) )
 
@@ -236,11 +236,11 @@
   (cond
    ((null? c)    (q the-empty-list s))
    ((pair? c)
-    (immutable-transcode 
+    (immutable-transcode
      (car c) s (lambda (a ss)
-                 (immutable-transcode 
+                 (immutable-transcode
                   (cdr c) ss (lambda (d sss)
-                               (allocate-immutable-pair 
+                               (allocate-immutable-pair
                                 a d sss q ) ) ) ) ) )
    ((boolean? c) (q (create-boolean c) s))
    ((symbol? c)  (q (create-symbol c) s))
@@ -259,7 +259,7 @@
 
 (define (allocate-immutable-pair a d s q)
   (allocate 2 s
-   (lambda (a* ss) 
+   (lambda (a* ss)
      (q (create-immutable-pair (car a*) (cadr a*))
         (update (update ss (car a*) a) (cadr a*) d) ) ) ) )
 
@@ -278,13 +278,13 @@
    ((string? c)  (q (create-string c) s))
    ((number? c)  (q (create-number c) s))
    ((pair? c)
-    (transcode (car c) 
+    (transcode (car c)
                s
                (lambda (a ss)
                  (transcode (cdr c)
                             ss
                             (lambda (d sss)
-                              (allocate-pair a d sss q) ) ) ) ) ) ) ) 
+                              (allocate-pair a d sss q) ) ) ) ) ) ) )
 
 (define (create-function tag behavior)
   (lambda (msg)
@@ -346,7 +346,7 @@
 
 (define (allocate-pair a d s q)
   (allocate 2 s
-   (lambda (a* ss) 
+   (lambda (a* ss)
      (q (create-pair (car a*) (cadr a*))
         (update (update ss (car a*) a) (cadr a*) d) ) ) ) )
 
@@ -370,7 +370,7 @@
 (define-syntax definitial
   (syntax-rules ()
    ((definitial name value)
-    (allocate 1 s.global 
+    (allocate 1 s.global
      (lambda (a* ss)
        (set! r.global (update r.global 'name (car a*)))
        (set! s.global (update ss (car a*) value)) ) ) ) ) )
@@ -389,13 +389,13 @@
        (lambda (a* ss)
          (set! s.global (expand-store (car a*) ss))
          (create-function
-          (car a*) 
+          (car a*)
           (lambda (v* s k)
             (if (= arity (length v*))
                 (value v* s k)
                 (wrong "Incorrect arity" 'name) ) ) ) ) ) ) ) ) )
 
-(defprimitive < 
+(defprimitive <
   (lambda (v* s k)
     (if (and (eq? ((car v*) 'type) 'number)
              (eq? ((cadr v*) 'type) 'number) )
@@ -415,7 +415,7 @@
   (lambda (v* s k)
     (if (and (eq? ((car v*) 'type) 'number)
              (eq? ((cadr v*) 'type) 'number) )
-        (k (create-boolean (<= ((car v*) 'value) 
+        (k (create-boolean (<= ((car v*) 'value)
                                ((cadr v*) 'value) ))
            s )
         (wrong "<= require numbers") ) )
@@ -459,7 +459,7 @@
   (lambda (v* s k)
     (if (and (eq? ((car v*) 'type) 'number)
              (eq? ((cadr v*) 'type) 'number) )
-        (k (create-number 
+        (k (create-number
             (remainder ((car v*) 'value) ((cadr v*) 'value)) ) s)
         (wrong "remainder require numbers") ) )
   2 )
@@ -472,16 +472,16 @@
 (defprimitive car
   (lambda (v* s k)
     (if (eq? ((car v*) 'type) 'pair)
-        (k (s ((car v*) 'car)) s) 
+        (k (s ((car v*) 'car)) s)
         (wrong "Not a pair" (car v*)) ) )
-  1 ) 
+  1 )
 
 (defprimitive cdr
   (lambda (v* s k)
     (if (eq? ((car v*) 'type) 'pair)
-        (k (s ((car v*) 'cdr)) s) 
+        (k (s ((car v*) 'cdr)) s)
         (wrong "Not a pair" (car v*)) ) )
-  1 ) 
+  1 )
 
 (defprimitive set-car!
   (lambda (v* s k)
@@ -530,8 +530,8 @@
                (= ((car v*) 'tag) ((cadr v*) 'tag)) )
               (else #f) )
             #f ) )
-       s ) ) 
-  2 ) 
+       s ) )
+  2 )
 
 ;;; Note: In fact, symbols and strings should be allocated (ie given a
 ;;; tag representing an address) and compared with their address. This
@@ -560,8 +560,8 @@
                (= ((car v*) 'tag) ((cadr v*) 'tag)) )
               (else #f) )
             #f ) )
-       s ) ) 
-  2 ) 
+       s ) )
+  2 )
 
 (definitial apply
   (create-function
@@ -577,7 +577,7 @@
                '() ) )
          (if (>= (length v*) 2)
              (if (eq? ((car v*) 'type) 'function)
-                 (((car v*) 'behavior) 
+                 (((car v*) 'behavior)
                   (append (first-pairs (cdr v*))
                           (terms-of (car (last-pair (cdr v*))) s) )
                   s k )
@@ -594,7 +594,7 @@
              (if (eq? ((car v*) 'type) 'function)
                  (allocate 1 s
                   (lambda (a* ss)
-                    (((car v*) 'behavior) 
+                    (((car v*) 'behavior)
                      (list (create-function
                             (car a*)
                             (lambda (vv* sss kk)

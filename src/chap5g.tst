@@ -22,7 +22,7 @@ zlurp
    (define zixxy (* 2 2)) )
  3 )
    ---
-zixxy 
+zixxy
    4
 
 ;;; end of chap5g.tst

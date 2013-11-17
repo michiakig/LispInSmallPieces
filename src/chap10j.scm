@@ -24,7 +24,7 @@
 
 (define (compile->C e out)
   (set! g.current '())
-  (let ((prg (extract-things! 
+  (let ((prg (extract-things!
               (lift! (initialization-analyze! (Sexp->object e))) )))
     (gather-temporaries! (closurize-main! prg))
     (generate-C-program out e prg) ) )
@@ -73,7 +73,7 @@
         (else (format out "SCM_CheckedGlobal")
               (between-parentheses out
                 (variable->C v out) ) ) ) )
-        
+
 ;;; Trace
 
 (define (inian-warning msg gv)

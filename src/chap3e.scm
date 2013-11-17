@@ -16,19 +16,19 @@
       (set! n ( - n 1))
       (if (= n 1) r (k k)) ) ) )
 
-(define-syntax catch 
+(define-syntax catch
   (syntax-rules
     ((catch tag . body)
      (let ((saved-catchers *active-catchers*))
-       (unwind-protect 
+       (unwind-protect
          (block label
-           (set! *active-catchers* 
+           (set! *active-catchers*
                  (cons (cons tag (lambda (x) (return-from label x)))
                        *active-catchers* ) )
            . body )
          (set! *active-catchers* saved-catchers) ) ) ) ) )
 
-(define-syntax let/cc 
+(define-syntax let/cc
   (syntax-rules ()
     ((let/cc variable . body)
      (block variable

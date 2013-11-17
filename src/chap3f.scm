@@ -33,7 +33,7 @@
 
 (define-class full-env environment (others name))
 
-(define-class variable-env full-env (value)) 
+(define-class variable-env full-env (value))
 
 (define-generic (invoke (f) v* r k)
   (wrong "not a function" f r k) )
@@ -54,13 +54,13 @@
 (define-class if-cont continuation (et ef r))
 
 (define (evaluate-if ec et ef r k)
-  (evaluate ec r (make-if-cont k 
-                               et 
-                               ef 
+  (evaluate ec r (make-if-cont k
+                               et
+                               ef
                                r )) )
 
 (define-method (resume (k if-cont) v)
-  (evaluate (if v (if-cont-et k) (if-cont-ef k)) 
+  (evaluate (if v (if-cont-et k) (if-cont-ef k))
             (if-cont-r k)
             (if-cont-k k) ) )
 
@@ -74,12 +74,12 @@
     (resume k empty-begin-value) ) )
 
 (define-method (resume (k begin-cont) v)
-  (evaluate-begin (cdr (begin-cont-e* k)) 
-                  (begin-cont-r k) 
+  (evaluate-begin (cdr (begin-cont-e* k))
+                  (begin-cont-r k)
                   (begin-cont-k k) ) )
 
 (define (evaluate-variable n r k)
-  (lookup r n k) ) 
+  (lookup r n k) )
 
 (define-method (lookup (r null-env) n k)
   (wrong "Unknown variable" n r k) )
@@ -124,8 +124,8 @@
     (evaluate-begin (function-body f) env k) ) )
 
 (define (extend-env env names values)
-  (cond ((and (pair? names) (pair? values))      
-         (make-variable-env  
+  (cond ((and (pair? names) (pair? values))
+         (make-variable-env
           (extend-env env (cdr names) (cdr values))
           (car names)
           (car values) ) )
@@ -159,7 +159,7 @@
 (define no-more-arguments '())
 
 (define-method (resume (k argument-cont) v)
-  (evaluate-arguments (cdr (argument-cont-e* k)) 
+  (evaluate-arguments (cdr (argument-cont-e* k))
                       (argument-cont-r k)
                       (make-gather-cont (argument-cont-k k) v)) )
 
@@ -167,7 +167,7 @@
   (resume (gather-cont-k k) (cons (gather-cont-v k) v*)) )
 
 (define-method (resume (k apply-cont) v)
-  (invoke (apply-cont-f k) 
+  (invoke (apply-cont-f k)
           v
           (apply-cont-r k)
           (apply-cont-k k) ) )
@@ -189,8 +189,8 @@
 
 (define (chapter3-interpreter)
   (define (toplevel)
-    (evaluate (read) 
-              r.init 
+    (evaluate (read)
+              r.init
               (make-bottom-cont 'void display) )
     (toplevel) )
   (toplevel) )
@@ -200,7 +200,7 @@
 
 (define r.init (make-null-env))
 
-(define-syntax definitial 
+(define-syntax definitial
   (syntax-rules ()
     ((definitial name)
      (definitial name 'void) )
@@ -208,17 +208,17 @@
      (begin (set! r.init (make-variable-env r.init 'name value))
             'name ) ) ) )
 
-(define-syntax defprimitive 
+(define-syntax defprimitive
   (syntax-rules ()
     ((defprimitive name value arity)
-     (definitial name 
-       (make-primitive 
-        'name (lambda (v* r k) 
+     (definitial name
+       (make-primitive
+        'name (lambda (v* r k)
                 (if (= arity (length v*))
                     (resume k (apply value v*))
                     (wrong "Incorrect arity" 'name v*) ) ) ) ) ) ) )
 
-(define-syntax defpredicate 
+(define-syntax defpredicate
   (syntax-rules ()
     ((defpredicate name value arity)
      (defprimitive name
@@ -265,16 +265,16 @@
 (defprimitive remainder remainder 2)
 (defprimitive display display 1)
 
-(definitial call/cc 
-  (make-primitive 
+(definitial call/cc
+  (make-primitive
    'call/cc
-   (lambda (v* r k) 
+   (lambda (v* r k)
      (if (= 1 (length v*))
          (invoke (car v*) (list k) r k)
          (wrong "Incorrect arity" 'call/cc v*) ) ) ) )
 
 (definitial apply
-  (make-primitive 
+  (make-primitive
    'apply
    (lambda (v* r k)
      (if (>= (length v*) 2)
@@ -285,8 +285,8 @@
                            (cons (car args) (flat (cdr args))) ) )) )
            (invoke f args r k) )
          (wrong "Incorrect arity" 'apply) ) ) ) )
-             
-(definitial list 
+
+(definitial list
   (make-primitive
    'list
    (lambda (v* r k) (resume k v*)) ) )

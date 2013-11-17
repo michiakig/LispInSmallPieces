@@ -45,15 +45,15 @@
          (cond ((member e *tests-to-skip*)
                 (evaluate-error "Test to skip") )
                ((appear? 'call/cc e)
-                (check (test-expression 
+                (check (test-expression
                         `((lambda (call/cc) ,e) call/ep) )) )
-               (else 
+               (else
                 (check (test-expression e)) ) ) ) ) )
    naive-match ) )
 
 (define *tests-to-skip*
   '( (SET! XYZZY 3)
-     ) )     
+     ) )
 
 (define (test-expression e)
   ;;(set! objectify-error (lambda a (error 'test-expression "~A~%" a)))
@@ -74,7 +74,7 @@
 (define (compile-and-run Cfile)
   (let* ((log (string-append *a.out* ".log"))
          (dir (string-append test-dir "${HOSTTYPE}"))
-         (cmd (string-append 
+         (cmd (string-append
                "cd " dir "; "
                *cc+cflags* " -I../../src/c "
                (string-append "../" Cfile)
@@ -82,10 +82,10 @@
          (status (system cmd)) )
     (unless (= status 0)
       (evaluate-error "C compilation aborted.") )
-    (set! status 
+    (set! status
           (system (string-append "cd " dir "; "
                                  *a.out* " > /tmp/ttlog " )) )
-    (system (string-append 
+    (system (string-append
              "sed -e 's:#<:\<:g' -e 's:@::g' < /tmp/ttlog >" log) )
     (unless (= status 0)
       (evaluate-error "C execution arborted" status) )
@@ -96,7 +96,7 @@
 ;;; This function may act as an application entry point with options
 ;;; being the list of options given on the Un*x command.  Compile a
 ;;; file to C and possibly to a stand-alone.
-;;;    LiSP.book.cc file.scm [-o a.out] [-C file.c] 
+;;;    LiSP.book.cc file.scm [-o a.out] [-C file.c]
 
 (define (compiler-entry-point options)
   (let ((file #f)
@@ -105,20 +105,20 @@
         (verbose #f) )
     (let scan-options ((options options))
       (if (pair? options)
-          (cond ((equal? (car options) "-o") 
+          (cond ((equal? (car options) "-o")
                  (if (pair? (cdr options))
                      (begin (set! ofile (cadr options))
                             (scan-options (cddr options)) )
                      (compiler-option-error "Missing file.o" options) ))
-                ((equal? (car options) "-C") 
+                ((equal? (car options) "-C")
                  (if (pair? (cdr options))
                      (begin (set! cfile (cadr options))
                             (scan-options (cddr options)) )
                      (compiler-option-error "Missing file.c" options) ))
-                ((equal? (car options) "-v") 
+                ((equal? (car options) "-v")
                  (set! verbose #t)
                  (scan-options (cdr options)) )
-                (else (if file 
+                (else (if file
                           (compiler-option-error "Too much file.scm" options)
                           (begin (set! file (car options))
                                  (scan-options (cdr options)) ) )) ) ) )
@@ -129,7 +129,7 @@
       (call-with-output-file cfile
         (lambda (out) (compile->C e out)) ) )
     (when verbose (display "Calling C compiler...")(newline))
-    (let* ((cmd (string-append 
+    (let* ((cmd (string-append
                  *cc+cflags* " -I" *h-dir* " " cfile
                  (if ofile (string-append " -o " ofile) "")
                  " -copt " *rtbook-library* ))

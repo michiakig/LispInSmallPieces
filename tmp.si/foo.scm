@@ -15,8 +15,8 @@
 
 (set! foo '(a b))
 
-(set! bar 
-      (lambda (x) 
+(set! bar
+      (lambda (x)
         (cons x (dynamic x)) ) )
 
 (set! hux (dynamic-let (x '(c d))

@@ -9,7 +9,7 @@
 ;;; Check the README file before using this file.
 ;;;(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 
-(define-syntax throw 
+(define-syntax throw
   (syntax-rules ()
     ((throw tag value)
      (let* ((label tag)                                 ; compute once
@@ -18,15 +18,15 @@
            ((cdr escape) value)
            (wrong "No associated catch to" label) ) ) ) ) )
 
-(define-syntax catch 
+(define-syntax catch
   (syntax-rules ()
     ((catch tag . body)
      (block label
-       (dynamic-let ((*active-catchers* 
-                      (cons (cons tag (lambda (x) 
+       (dynamic-let ((*active-catchers*
+                      (cons (cons tag (lambda (x)
                                         (return-from label x) ))
                             (dynamic *active-catchers*) ) ))
-           . body ) ) ) ) )  
+           . body ) ) ) ) )
 
 (define (find-symbol id tree)
   (define (find tree)

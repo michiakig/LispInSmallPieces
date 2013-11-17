@@ -21,7 +21,7 @@
 
 (define book-interpreter-support 'scheme2c)
 
-;;; Define macros for compiling the syntax-case package.  
+;;; Define macros for compiling the syntax-case package.
 
 ;;; expand.ss is transformed (from ../../bigloo/others/expand.bb) into
 ;;; expand.sc so that it uses s2c-if instead.
@@ -135,12 +135,12 @@
   (define (meroonet-make-expander call body g x)
     `(begin
        ;; define the Dybvig expander as a regular function:
-       (define ,g 
+       (define ,g
          (lambda (,x)
            ;; x receives a syntax-object and not a form
            (define (strip x) (vector-ref x 1))
            ;; Don't check arity, apply directly
-           (apply (lambda ,(cdr call) . ,body) 
+           (apply (lambda ,(cdr call) . ,body)
                   (cdr (strip ,x)) ) ) )
        ;; register the Dybvig macro at load-time:
        (expand-syntax
@@ -167,12 +167,12 @@
   (define (meroonet-make-expander call body g x)
     `(begin
        ;; define the Dybvig expander as a regular function:
-       (define ,g 
+       (define ,g
          (lambda (,x)
            ;; x receives a syntax-object and not a form
            (define (strip x) (vector-ref x 1))
            ;; Don't check arity, apply directly
-           (apply (lambda ,(cdr call) . ,body) 
+           (apply (lambda ,(cdr call) . ,body)
                   (cdr (strip ,x)) ) ) )
        ;; register the Dybvig macro at load-time:
        (expand-syntax
@@ -184,7 +184,7 @@
 ;;; there. To define them hygienically with syntax-case and since
 ;;; syntax-case is not available at that time, they are left interpreted.
 
-(eval 
+(eval
  (expand-syntax
   '(begin
      (define-syntax unless
@@ -217,7 +217,7 @@
      (set! meroonet-error err)
      (set! tester-error    err)
      (lambda ()
-       (let ((r (catch-error (lambda () 
+       (let ((r (catch-error (lambda ()
                                (check (eval (expand-syntax (read)))) ))))
          (if (pair? r) (car r) (err 'internal-error r)) ) ) )
    equal? ) )
@@ -259,12 +259,12 @@
     (cond ((null? o*) #t)
           ((atom? o*) (display " . " stream)
                       (display o* stream) )
-          ((pair? o*) 
+          ((pair? o*)
            (print (car o*) len (+ dep 1))
            (if (pair? (cdr o*)) (display " " stream))
            (print-list (cdr o*) (+ len 1) dep) ) ) )
   (define (print o len dep)
-    (cond ((object? o) 
+    (cond ((object? o)
            (display "#<" stream)
            (display (Class-name (object->class o)) stream)
            (display ">" stream) )
@@ -306,7 +306,7 @@
       (display file)
       (newline)
       (let loop ((e (read in)))
-        (if (eof-object? e) 
+        (if (eof-object? e)
             file
             (let ((r (eval (expand-syntax e))))
               (display ";= ")
@@ -325,7 +325,7 @@
      (set! tester-error   err)
      (set! meroonet-error err)
      (lambda ()
-       (let ((r (catch-error 
+       (let ((r (catch-error
                  (lambda () (print (eval (expand-syntax (read))))) )))
          (if (pair? r) (car r) (err 'internal-error r)) ) ) ) )
   (display " Ite LiSP est.")

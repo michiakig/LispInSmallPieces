@@ -42,7 +42,7 @@ Class
    #f
 (Object? (vector 'a 'b 'c))
    #f
-   
+
 ;;; testing Class?
 (Class? (->Class 'Class))
    #t
@@ -114,16 +114,16 @@ Class
    5
 (ColoredPoint-color the-Point)
    white
-(begin (set-ColoredPoint-color! the-Point 'black) 
+(begin (set-ColoredPoint-color! the-Point 'black)
        (ColoredPoint-color the-Point) )
    black
 
-;;; Testing vectorship 
+;;; Testing vectorship
 (define-class NamedColoredPoint ColoredPoint ((* names)))
    ---
-(set! the-Point 
-      (make-NamedColoredPoint 
-       2 44 'pink 
+(set! the-Point
+      (make-NamedColoredPoint
+       2 44 'pink
             3 'joe 'jill 'jack ) )
    ---
 (NamedColoredPoint-names-length the-Point)
@@ -172,7 +172,7 @@ Class
    5
 (ColoredPoint-color the-Point)
    pink
-(begin (set-ColoredPoint-color! the-Point 'black) 
+(begin (set-ColoredPoint-color! the-Point 'black)
        (ColoredPoint-color the-Point) )
    black
 (set! the-Point (make-NamedColoredPoint 1 33 'pink 0))
@@ -228,12 +228,12 @@ Class
 
 
 
-;;; Testing vectorship inheritance 
+;;; Testing vectorship inheritance
 (define-class NickNamedColoredPoint NamedColoredPoint ((* nicknames)))
    ---
-(set! the-Point 
-      (make-NickNamedColoredPoint 
-       2 44 'pink 
+(set! the-Point
+      (make-NickNamedColoredPoint
+       2 44 'pink
             3 'joe 'jill 'jack
             2 'adam 'eve ) )
    ---
@@ -301,7 +301,7 @@ Class
    33
 (begin (set-ColoredPoint-y! the-Point 5) (Point-y the-Point))
    5
-(begin (set-ColoredPoint-color! the-Point 'black) 
+(begin (set-ColoredPoint-color! the-Point 'black)
        (ColoredPoint-color the-Point) )
    black
 (set! the-Point (make-NickNamedColoredPoint 1 33 'pink 0 0))
@@ -341,11 +341,11 @@ Class
 (define-class extra-NickNamedColoredPoint NickNamedColoredPoint
   (extra1 extra2) )
    ---
-(set! the-Point 
-      (make-extra-NickNamedColoredPoint 
-       2 44 'pink 
+(set! the-Point
+      (make-extra-NickNamedColoredPoint
+       2 44 'pink
             3 'joe 'jill 'jack
-            2 'adam 'eve 
+            2 'adam 'eve
             'apiali 'docious ) )
    ---
 (extra-NickNamedColoredPoint-extra2 the-Point)
@@ -412,7 +412,7 @@ Class
    33
 (begin (set-ColoredPoint-y! the-Point 5) (Point-y the-Point))
    5
-(begin (set-ColoredPoint-color! the-Point 'black) 
+(begin (set-ColoredPoint-color! the-Point 'black)
        (ColoredPoint-color the-Point) )
    black
 (set! the-Point (make-NickNamedColoredPoint 1 33 'pink 0 0))
@@ -443,10 +443,10 @@ Class
 (make-extra-NickNamedColoredPoint 3 2 1 2 'foo 'bar 2 'hux 'bar 'wrek 'quux)
    ---
 ; not checked in Meroonet
-;(make-extra-NickNamedColoredPoint 3 2 1 2 'foo 'bar 
+;(make-extra-NickNamedColoredPoint 3 2 1 2 'foo 'bar
 ; 2 'hux 'bar 'wrek 'quux 55)
 ;   *** ; too much
-  
+
 
 ;;; generic functions
 ; not defined in Meroonet
@@ -477,7 +477,7 @@ Class
 ;   #t
 ;(clone 3) ; 3 is not an instance
 ;   ***
-   
+
 ;;; generic with default method, discriminating on the second variable
 (define-generic (foo x (y) z)
   (list x y z) )
@@ -487,8 +487,8 @@ Class
 (length (foo 3 the-Point 4))
    3
 (foo 3 4 5) ; 4 is not an instance but there is a default method
-   (3 4 5) 
-   
+   (3 4 5)
+
 ;;; Adding methods
 (define-method (foo x (o ColoredPoint) z)
   (ColoredPoint-x o) )
@@ -538,7 +538,7 @@ Class
    ***
 (define-method (foo x (y) z . others) 5)
    ***
-   
+
 (define-class Point-3d Point (z))
    ---
 
@@ -571,7 +571,7 @@ Class
    point
 ;(generic-trace (->Generic 'foo)
 ;               (lambda (x y z) (set! foo-args `call))
-;               (lambda (result) 
+;               (lambda (result)
 ;                 `(return ,result) ) )
 ;   ---
 ;(set! foo-args 'void)
@@ -616,7 +616,7 @@ Class
    (point 4 5 6)
 ;(generic-trace (->Generic 'foo)
 ;               (lambda (x y . z) (set! foo-args `call))
-;               (lambda (result) 
+;               (lambda (result)
 ;                 `(return ,result) ) )
 ;   ---
 ;(set! foo-args 'void)
@@ -676,7 +676,7 @@ Class
    *** ; redefinition of X
 
 ;;; Testing mutability of fields     (Not in Meroonet)
-;(define-class Immutable-Point Object 
+;(define-class Immutable-Point Object
 ;  ((= x :immutable)
 ;   (= y :immutable) ) )
 ;   Immutable-Point
@@ -698,12 +698,12 @@ Class
 ;(define-class Colored-Immutable-Point Immutable-Point
 ;  (color) )
 ;   Colored-Immutable-Point
-;(map Mutable-Mono-Field? 
+;(map Mutable-Mono-Field?
 ;     (Class-fields (->Class 'Colored-Immutable-Point)) )
 ;   (#f #f #t)
 
 ;;; Testing immutability of a class and carelessness
-;(define-class Other-Immutable-Point Object 
+;(define-class Other-Immutable-Point Object
 ;  (x y) :immutable :careless )
 ;   Other-Immutable-Point
 ;(set! the-Point (make-Other-Immutable-Point 2 44))
@@ -718,18 +718,18 @@ Class
 ;   #t
 ;(Class? the-Point)
 ;   #f
-;(map Mutable-Mono-Field? 
+;(map Mutable-Mono-Field?
 ;     (Class-fields (->Class 'Other-Immutable-Point)) )
 ;   (#f #f)
 ;;; Testing immutability conservation by inheritance
 ;(define-class Colored-Other-Immutable-Point Other-Immutable-Point
 ;  (color) )
 ;   Colored-Other-Immutable-Point
-;(map Mutable-Mono-Field? 
+;(map Mutable-Mono-Field?
 ;     (Class-fields (->Class 'Colored-Other-Immutable-Point)) )
 ;   (#f #f #t)
 ;;; Testing Mutable-Field? generic function
-;(map Mutable-Field? 
+;(map Mutable-Field?
 ;     (Class-fields (->Class 'Other-Immutable-Point)) )
 ;   (#f #f)
 ;;; testing care(ful,less)
@@ -962,9 +962,9 @@ Class
 ;  (call-next-method)
 ;  (set-Counting-Class-counter! o 0)
 ;  (let ((original-maker (Class-maker o)))
-;    (set-Counting-Class-maker! 
+;    (set-Counting-Class-maker!
 ;     o (lambda args
-;         (set-Counting-Class-counter! o (+ 1 (Counting-Class-counter o))) 
+;         (set-Counting-Class-counter! o (+ 1 (Counting-Class-counter o)))
 ;         (apply original-maker args) ) ) )
 ;  o )
 ;   ---
@@ -1004,7 +1004,7 @@ Class
 ;(define-class C A ((* z)))
 ;   ---
 ;(begin (set! the-Point (make-C (make-B 'wait)
-;                               3 (make-C 11 0) 
+;                               3 (make-C 11 0)
 ;                                 (make-B 22)
 ;                                 (make-B 33) ))
 ;       (set-B-y! (A-x the-Point) the-Point)

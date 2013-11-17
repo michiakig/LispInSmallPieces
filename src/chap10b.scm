@@ -98,11 +98,11 @@
     (evaluate-error "Wrong arity" f args) )
   (evaluate (RunTime-Procedure-body f)
             (sr-extend (RunTime-Procedure-environment f)
-                       (RunTime-Procedure-variables f) 
+                       (RunTime-Procedure-variables f)
                        args ) ) )
 
 (define-method (invoke (f RunTime-Primitive) args)
-  (unless ((RunTime-Primitive-comparator f) 
+  (unless ((RunTime-Primitive-comparator f)
            (length args) (RunTime-Primitive-arity f) )
     (evaluate-error "Wrong arity" f args) )
   (apply (RunTime-Primitive-address f) args) )
@@ -119,7 +119,7 @@
               (cons (cons (car variables) (car values))
                     (sr-extend sr (cdr variables) (cdr values)) )
               (evaluate-error "Not enough values" variables) ) )
-      (if (null? values) 
+      (if (null? values)
           sr
           (evaluate-error "Too much values" values) ) ) )
 
@@ -130,7 +130,7 @@
 
 (define-method (evaluate (e Fix-Let) sr)
   (let ((args (evaluate (Fix-Let-arguments e) sr)))
-    (evaluate (Fix-Let-body e) 
+    (evaluate (Fix-Let-body e)
               (sr-regular-extend sr (Fix-Let-variables e) args) ) ) )
 
 ;;; (assume (every? Regular-Variable? variables))
@@ -175,48 +175,48 @@
 (define-syntax defprimitive
   (syntax-rules (>=0 >=2)
     ((defprimitive name value 0)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description = 0 "") ))
            (f (make-RunTime-Primitive value = 0)) )
        (set! g.init (cons v g.init))
        (set! sg.init (cons (cons v f) sg.init))
        'name ) )
     ((defprimitive name value 1)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description = 1 "") ))
            (f (make-RunTime-Primitive value = 1)) )
        (set! g.init (cons v g.init))
        (set! sg.init (cons (cons v f) sg.init))
        'name ) )
     ((defprimitive name value 2)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description = 2 "") ))
            (f (make-RunTime-Primitive value = 2)) )
        (set! g.init (cons v g.init))
        (set! sg.init (cons (cons v f) sg.init))
        'name ) )
     ((defprimitive name value 3)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description = 3 "") ))
            (f (make-RunTime-Primitive value = 3)) )
        (set! g.init (cons v g.init))
        (set! sg.init (cons (cons v f) sg.init))
        'name ) )
     ((defprimitive name value >=0)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description >= 0 "") ))
            (f (make-RunTime-Primitive value >= 0)) )
        (set! g.init (cons v g.init))
        (set! sg.init (cons (cons v f) sg.init))
        'name ) )
     ((defprimitive name value >=2)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Functional-Description >= 2 "") ))
            (f (make-RunTime-Primitive value >= 2)) )
        (set! g.init (cons v g.init))
        (set! sg.init (cons (cons v f) sg.init))
        'name ) ) ) )
-  
+
 ;;; Define a location in the user global environment.
 
 (define-syntax defvariable
@@ -270,7 +270,7 @@
 
 (defprimitive list
   (lambda args args)
-  >=0 )    
+  >=0 )
 
 (defvariable a)
 (defvariable foo)

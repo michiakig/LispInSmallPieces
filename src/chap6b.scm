@@ -15,7 +15,7 @@
 ;;; before evaluation-time. The problem is that at compile-time, we
 ;;; must compile (sic) so we must associate an index to any global
 ;;; variable so this index must be known by the compiler so the
-;;; variable must be created by the compiler. 
+;;; variable must be created by the compiler.
 
 (define (compute-kind r n)
   (or (local-variable? r 0 n)
@@ -54,9 +54,9 @@
 ;;; global environment. Some of them appear in scheme-tests.scm.
 
 (define (test-scheme6b file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)
@@ -77,5 +77,5 @@
      (set! xyzzy 3)
      ((lambda (x y) xyzzy) 1 2)
     ) )
-                
+
 ;;; end of chap6b.scm

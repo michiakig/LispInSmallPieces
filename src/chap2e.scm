@@ -13,7 +13,7 @@
 ;;; variable handling.
 
 (define (df.evaluate e env fenv denv)
-  (if (atom? e) 
+  (if (atom? e)
       (cond ((symbol? e) (cl.lookup e env denv))
             ((or (number? e) (string? e) (char? e)
                  (boolean? e) (vector? e) )
@@ -25,15 +25,15 @@
                   (df.evaluate (caddr e) env fenv denv)
                   (df.evaluate (cadddr e) env fenv denv) ))
         ((begin) (df.eprogn (cdr e) env fenv denv))
-        ((set!) (cl.update! (cadr e) 
-                            env 
+        ((set!) (cl.update! (cadr e)
+                            env
                             denv
                             (df.evaluate (caddr e) env fenv denv) ))
         ((function)
          (cond ((symbol? (cadr e))
                 (f.lookup (cadr e) fenv) )
                ((and (pair? (cadr e)) (eq? (car (cadr e)) 'lambda))
-                (df.make-function 
+                (df.make-function
                  (cadr (cadr e)) (cddr (cadr e)) env fenv ) )
                (else (wrong "Incorrect function" (cadr e))) ) )
         ((dynamic) (lookup (cadr e) denv))
@@ -42,15 +42,15 @@
                     (special-extend env             ;\modified
                                     (map car (cadr e)) )
                     fenv
-                    (extend denv 
+                    (extend denv
                             (map car (cadr e))
-                            (map (lambda (e) 
+                            (map (lambda (e)
                                    (df.evaluate e env fenv denv) )
                                  (map cadr (cadr e)) ) ) ) )
-        (else (df.evaluate-application 
-               (car e) 
+        (else (df.evaluate-application
+               (car e)
                (df.evlis (cdr e) env fenv denv)
-               env 
+               env
                fenv
                denv )) ) ) )
 

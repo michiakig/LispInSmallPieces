@@ -1,4 +1,4 @@
-;;; $Id: chap10ex.scm,v 4.0 1995/07/10 06:50:39 queinnec Exp $ 
+;;; $Id: chap10ex.scm,v 4.0 1995/07/10 06:50:39 queinnec Exp $
 
 ;;;(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 ;;; This file is part of the files that accompany the book:
@@ -18,9 +18,9 @@
   ((lambda (cnter . tmp)
       (set! tmp (cnter (lambda (i) (lambda x (cons i x)))))
       (if cnter (cnter tmp) index) )
-   (lambda (f) 
+   (lambda (f)
      (set! index (+ 1 index))
      (f index) )
-   'foo ) ) 
+   'foo ) )
 
 ;;; end of chap10ex.scm

@@ -15,7 +15,7 @@
   `(define-pervasive-macro . ,parms) )
    ---
 
-(with-gensym (a b c) 
+(with-gensym (a b c)
   (list a b c) )
    ---
 

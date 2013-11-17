@@ -12,7 +12,7 @@
 ;;; Scheme + introduction of let, letrec, label (added to chap1.scm)
 
 (define (evaluate e env)
-  (if (atom? e) 
+  (if (atom? e)
       (cond ((symbol? e) (lookup e env))
             ((or (number? e) (string? e) (char? e) (boolean? e) (vector? e))
              e )
@@ -40,12 +40,12 @@
                                     (car binding) ) )
                               (cadr e) )
                          (map (lambda (binding)
-                                (if (symbol? binding) 
+                                (if (symbol? binding)
                                     the-non-initialized-marker
                                     (evaluate (cadr binding) env) ) )
                               (cadr e) ) ) ) )
         ((letrec)
-         (let ((new-env (extend env 
+         (let ((new-env (extend env
                                 (map car (cadr e))
                                 (map (lambda (binding) the-non-initialized-marker)
                                      (cadr e) ) )))
@@ -59,7 +59,7 @@
                           (evlis (cdr e) env) )) ) ) )
 
 
-(define the-non-initialized-marker (cons 'non 'initialized)) 
+(define the-non-initialized-marker (cons 'non 'initialized))
 
 (define (lookup id env)
   (if (pair? env)

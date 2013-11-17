@@ -61,7 +61,7 @@ Notes
         the "hooks" in hooks.ss
         the "build-" procedures in output.ss
         expand-syntax (the expander)
-        
+
     The syntax of define has been extended to allow "(define id)",
     which assigns id to some unspecified value.
 

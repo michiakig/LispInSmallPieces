@@ -13,7 +13,7 @@
 ;;; Addition of flet, labels, function, funcall
 
 (define (f.evaluate e env fenv)
-  (if (atom? e) 
+  (if (atom? e)
       (cond ((symbol? e) (lookup e env))
             ((or (number? e) (string? e) (char? e)
                  (boolean? e) (vector? e) )
@@ -25,15 +25,15 @@
                       (f.evaluate (caddr e) env fenv)
                       (f.evaluate (cadddr e) env fenv) ))
         ((begin)  (f.eprogn (cdr e) env fenv))
-        ((set!)   (update! (cadr e) 
-                           env 
+        ((set!)   (update! (cadr e)
+                           env
                            (f.evaluate (caddr e) env fenv) ))
         ((lambda) (f.make-function (cadr e) (cddr e) env fenv))
         ((function)
          (cond ((symbol? (cadr e))
                 (f.lookup (cadr e) fenv) )
                ((and (pair? (cadr e)) (eq? (car (cadr e)) 'lambda))
-                (f.make-function 
+                (f.make-function
                  (cadr (cadr e)) (cddr (cadr e)) env fenv ) )
                (else (wrong "Incorrect function" (cadr e))) ) )
         ((flet)
@@ -42,26 +42,26 @@
                    (extend fenv
                            (map car (cadr e))
                            (map (lambda (def)
-                                  (f.make-function (cadr def) 
+                                  (f.make-function (cadr def)
                                                    (cddr def)
                                                    env fenv ) )
                                 (cadr e) ) ) ) )
         ((labels)
          (let ((new-fenv (extend fenv
                                  (map car (cadr e))
-                                 (map (lambda (def) 'void) 
+                                 (map (lambda (def) 'void)
                                       (cadr e) ) )))
            (for-each (lambda (def)
                        (update! (car def)
                                 new-fenv
-                                (f.make-function (cadr def) 
-                                                 (cddr def) 
+                                (f.make-function (cadr def)
+                                                 (cddr def)
                                                  env new-fenv ) ) )
                      (cadr e) )
            (f.eprogn (cddr e) env new-fenv ) ) )
-        (else     (f.evaluate-application (car e) 
+        (else     (f.evaluate-application (car e)
                                           (f.evlis (cdr e) env fenv)
-                                          env 
+                                          env
                                           fenv )) ) ) )
 
 (define (f.evaluate-application fn args env fenv)
@@ -79,7 +79,7 @@
           (cdar fenv)
           (f.lookup id (cdr fenv)) )
       (lambda (values)
-        (wrong "No such functional binding" id) ) ) )  
+        (wrong "No such functional binding" id) ) ) )
 
 (definitial-function funcall
   (lambda (args)

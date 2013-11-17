@@ -30,11 +30,11 @@
       (case (car e)
         ((quote)  (meaning-quotation (cadr e) r tail?))
         ((lambda) (meaning-abstraction (cadr e) (cddr e) r tail?))
-        ((if)     (meaning-alternative (cadr e) (caddr e) (cadddr e) 
+        ((if)     (meaning-alternative (cadr e) (caddr e) (cadddr e)
                                        r tail? ))
         ((begin)  (meaning-sequence (cdr e) r tail?))
         ((set!)   (meaning-assignment (cadr e) (caddr e) r tail?))
-        (else     
+        (else
          (meaning-application (car e) (cdr e) r tail?) ) ) ) )
 
 (define (meaning-reference n r tail?)
@@ -78,7 +78,7 @@
       (m1 (lambda (v)
             ((if v m2 m3) k) )) ) ) )
 
-(define (meaning-assignment n e r tail?) 
+(define (meaning-assignment n e r tail?)
   (let ((m (meaning e r #f))
         (kind (compute-kind r n)) )
     (if kind
@@ -109,7 +109,7 @@
           (meaning*-single-sequence (car e+) r tail?) )
       (static-wrong "Illegal syntax: (begin)") ) )
 
-(define (meaning*-single-sequence e r tail?) 
+(define (meaning*-single-sequence e r tail?)
   (meaning e r tail?) )
 
 (define (meaning*-multiple-sequence e e+ r tail?)
@@ -125,7 +125,7 @@
     (cond
      ((pair? n*) (parse (cdr n*) (cons (car n*) regular)))
      ((null? n*) (meaning-fix-abstraction nn* e+ r tail?))
-     (else       (meaning-dotted-abstraction 
+     (else       (meaning-dotted-abstraction
                   (reverse regular) n* e+ r tail? )) ) ) )
 
 (define (meaning-fix-abstraction n* e+ r tail?)
@@ -181,16 +181,16 @@
                 (e* ee*)
                 (regular '()) )
       (cond
-       ((pair? n*) 
+       ((pair? n*)
         (if (pair? e*)
             (parse (cdr n*) (cdr e*) (cons (car n*) regular))
             (static-wrong "Too less arguments" e ee*) ) )
        ((null? n*)
         (if (null? e*)
-            (meaning-fix-closed-application 
+            (meaning-fix-closed-application
              nn* (cddr e) ee* r tail? )
             (static-wrong "Too much arguments" e ee*) ) )
-       (else (meaning-dotted-closed-application 
+       (else (meaning-dotted-closed-application
               (reverse regular) n* (cddr e) ee* r tail? )) ) ) ) )
 
 (define (meaning-fix-closed-application n* body e* r tail?)
@@ -236,23 +236,23 @@
          (size (length e*)) )
     (case size
       ((0) (lambda (k) (k (address))))
-      ((1) 
+      ((1)
        (let ((m1 (meaning (car e*) r tail?)))
-         (lambda (k) 
-           (m1 (lambda (v) 
+         (lambda (k)
+           (m1 (lambda (v)
                  (k (address v)) )) ) ) )
-      ((2) 
+      ((2)
        (let ((m1 (meaning (car e*) r #f))
              (m2 (meaning (cadr e*) r tail?)) )
-         (lambda (k) 
+         (lambda (k)
            (m1 (lambda (v1)
                  (m2 (lambda (v2)
                        (k (address v1 v2)) )) )) ) ) )
-      ((3) 
+      ((3)
        (let ((m1 (meaning (car e*) r #f))
              (m2 (meaning (cadr e*) r #f))
              (m3 (meaning (caddr e*) r tail?)) )
-         (lambda (k) 
+         (lambda (k)
            (m1 (lambda (v1)
                  (m2 (lambda (v2)
                        (m3 (lambda (v3)
@@ -277,7 +277,7 @@
                (if (procedure? f)
                    (m* (lambda (v*)
                          (let ((sr *env*))         ; save environment
-                           (f v* (lambda (v) 
+                           (f v* (lambda (v)
                                    (set! *env* sr) ; restore environment
                                    (k v) )) ) ))
                    (wrong "Not a function" f) ) )) ) ) ) )
@@ -315,7 +315,7 @@
         (lambda (k)
           (m (lambda (v)
                (m* (lambda (v*)
-                     (set-activation-frame-argument! 
+                     (set-activation-frame-argument!
                       v* arity
                       (cons v (activation-frame-argument v* arity)) )
                      (k v*) )) )) ) ) ) )
@@ -357,9 +357,9 @@
   (toplevel) )
 
 (define (scheme6c)
-  (interpreter 
-   "Scheme? "  
-   "Scheme= " 
+  (interpreter
+   "Scheme? "
+   "Scheme= "
    #t
    (lambda (read print error)
      (set! wrong error)
@@ -370,9 +370,9 @@
         print ) ) ) ) )
 
 (define (test-scheme6c file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)
@@ -391,7 +391,7 @@
         (m (meaning e r.init #t)) )
     (let loop ((factor factor))
       (set! *env* sr.init)
-      (m (lambda (v) 
+      (m (lambda (v)
            (let ((duration (- (get-internal-run-time) start)))
              (when (<= factor 1)
                (display (list duration v))

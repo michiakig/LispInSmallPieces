@@ -4,7 +4,7 @@
 	the new French edition that is printed on a slightly less larger
 	paper.
 
-	* fixed some years ago a bug in cps-begin visible in the first 
+	* fixed some years ago a bug in cps-begin visible in the first
 	Edition (French or English): the order of evaluation was wrong.
 	Thanks to Luc Moreau do have discovered it.
 
@@ -15,7 +15,7 @@ Mon Jan 29 20:49:07 1996  Christian Queinnec  <queinnec@blaye.inria.fr>
         syntax-case with Gambit and don't use -l in Elk since you loose
         top-level-environment at that time (so you have to load
         "elk/book.elk" by hand).
-        
+
         * Many files: Changed slightly many files for names, presentation,
         comments etc to ease the English translation.
 
@@ -117,8 +117,8 @@ Sat Aug 27 09:36:08 1994  Christian Queinnec  (queinnec@blaye.inria.fr)
 
         * src/chap7d.scm (*exit*): Missing definitions for registers and
         other global variables. an old defmacro changed into a
-        define-abbrevation. 
-        (decode-clause): To use hygienic macros made the reference to 
+        define-abbrevation.
+        (decode-clause): To use hygienic macros made the reference to
         fetch-byte to be global instead of being the local function of
         instrunction-decode.
 
@@ -147,7 +147,7 @@ Fri Aug 26 19:05:41 1994  Christian Queinnec  (queinnec@blaye.inria.fr)
         * src/chap6a.scm (static-wrong): Moved this variable to rtbook+.bgl
 
         * Test.mkf (rtbook+): Split the runtime library of the book
-        interpreter for bigloo in two parts; this was due to the lack of pp, 
+        interpreter for bigloo in two parts; this was due to the lack of pp,
         format and other things (taken from the Scheme Repository).
 
         * bigloo/compapp.scm: Introduced that file to automatize

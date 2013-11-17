@@ -39,7 +39,7 @@
 
 (let ((name "Nemo"))
   (set! winner (lambda () name))
-  (set! set-winner! (lambda (new-name) 
+  (set! set-winner! (lambda (new-name)
                       (set! name new-name) name )) )
    ---
 (winner)
@@ -54,7 +54,7 @@
    ---
 (let ((name "Nemo"))
   (set! set-winner! (lambda (new-name) (set! name new-name)
-                                       name )) ) 
+                                       name )) )
    ---
 (winner)
   "Nemo"
@@ -84,11 +84,11 @@
 (let ((name (make-box "Nemo")))
   (set! winner (lambda () (box-ref name)))
   (set! set-winner! (lambda (new-name) (box-set! name new-name)
-                                       (box-ref name) )) ) 
+                                       (box-ref name) )) )
    ---
 (winner)
    "Nemo"
-(set-winner! "Me") 
+(set-winner! "Me")
    "Me"
 (winner)
    "Me"
@@ -192,7 +192,7 @@
    ---
 (pair-eq? p1 p1)
    #t
-p1 
+p1
    (a . b)
 
 (qar (qons 1 2))

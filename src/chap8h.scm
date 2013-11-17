@@ -75,7 +75,7 @@
          (let ((name (car d))
                (type (car (cadr d))) )
            (case type
-             ((local checked-local) 
+             ((local checked-local)
               (let* ((addr (cadr d))
                      (i (cadr addr))
                      (j (cddr addr)) )
@@ -127,7 +127,7 @@
              (PREDEFINED i) ) ) )
         (static-wrong "No such variable" n) ) ) )
 
-(define (meaning-assignment n e r tail?) 
+(define (meaning-assignment n e r tail?)
   (let ((m (meaning e r #f))
         (kind (compute-kind r n)) )
     (if kind
@@ -149,13 +149,13 @@
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; The special form export
-;;; (export) exports all the local environment 
+;;; (export) exports all the local environment
 ;;; while (export n...) only exports these variables.
 
 (define (meaning-export n* r tail?)
   (unless (every? symbol? n*)
           (static-wrong "Incorrect variables" n*) )
-  (append (CONSTANT (extract-addresses n* r)) 
+  (append (CONSTANT (extract-addresses n* r))
           (CREATE-1ST-CLASS-ENV) ) )
 
 (define (create-first-class-environment r sr)
@@ -179,11 +179,11 @@
              (if (program? exp)
                  (if (reified-environment? env)
                      (compile-and-evaluate exp env)
-                     (signal-exception 
+                     (signal-exception
                       #t (list "Not an environment" env) ) )
-                 (signal-exception 
+                 (signal-exception
                   #t (list "Illegal program" exp) ) ) )
-           (signal-exception 
+           (signal-exception
             #t (list "Incorrect arity" 'eval/b) ) ) ) ) ) )
 
 (define (compile-and-evaluate v env)
@@ -212,7 +212,7 @@
 ;;;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Enrich an environment. This is a function that yields a new environment.
 
-(definitial enrich 
+(definitial enrich
   (let* ((arity 1)
          (arity+1 (+ arity 1)) )
     (make-primitive
@@ -222,35 +222,35 @@
              (listify! *val* 1)
              (if (reified-environment? env)
                  (let* ((names (activation-frame-argument *val* 1))
-                        (len (- (activation-frame-argument-length 
-                                 *val* ) 
+                        (len (- (activation-frame-argument-length
+                                 *val* )
                                 2 ))
                         (r (reified-environment-r env))
                         (sr (reified-environment-sr env))
-                        (frame (allocate-activation-frame 
+                        (frame (allocate-activation-frame
                                 (length names) )) )
                    (set-activation-frame-next! frame sr)
                    (do ((i (- len 1) (- i 1)))
                        ((< i 0))
-                     (set-activation-frame-argument! 
+                     (set-activation-frame-argument!
                       frame i undefined-value ) )
                    (unless (every? symbol? names)
-                     (signal-exception 
+                     (signal-exception
                       #f (list "Incorrect variable names" names ) ) )
-                   (set! *val* (make-reified-environment 
-                                frame 
+                   (set! *val* (make-reified-environment
+                                frame
                                 (checked-r-extend* r names) ))
                    (set! *pc* (stack-pop)) )
-                 (signal-exception 
+                 (signal-exception
                   #t (list "Not an environment" env) ) ) )
-           (signal-exception 
+           (signal-exception
             #t (list "Incorrect arity" 'enrich) ) ) ) ) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;; Access an environment. Pay attention not to use compute-kind since
 ;;; it automatically creates variables.
 
-(definitial variable-value 
+(definitial variable-value
   (let* ((arity 2)
          (arity+1 (+ arity 1)) )
     (make-primitive
@@ -262,18 +262,18 @@
                  (if (symbol? name)
                      (let* ((r (reified-environment-r env))
                             (sr (reified-environment-sr env))
-                            (kind 
+                            (kind
                              (or (let ((var (assq name r)))
                                    (and (pair? var) (cadr var)) )
                                  (global-variable? g.current name)
                                  (global-variable? g.init name) ) ) )
                        (variable-value-lookup kind sr)
                        (set! *pc* (stack-pop)) )
-                     (signal-exception 
+                     (signal-exception
                       #f (list "Not a variable name" name) ) )
-                 (signal-exception 
+                 (signal-exception
                   #t (list "Not an environment" env) ) ) )
-           (signal-exception #t (list "Incorrect arity" 
+           (signal-exception #t (list "Incorrect arity"
                                       'variable-value )) ) ) ) ) )
 
 (define (variable-value-lookup kind sr)
@@ -284,7 +284,7 @@
                (j (cddr kind)) )
            (set! *val* (deep-fetch sr i j))
            (when (eq? *val* undefined-value)
-             (signal-exception 
+             (signal-exception
               #t (list "Uninitialized local variable") ) ) ) )
         ((local)
          (let ((i (cadr kind))
@@ -300,7 +300,7 @@
          (let ((i (cdr kind)))
            (set! *val* (global-fetch i))
            (when (eq? *val* undefined-value)
-             (signal-exception #t 
+             (signal-exception #t
                (list "Uninitialized global variable") ) ) ) )
         ((predefined)
          (let ((i (cdr kind)))
@@ -328,7 +328,7 @@
                        (set! *pc* (stack-pop)) )
                      (signal-exception #f (list "Not a variable name" name)) )
                  (signal-exception #t (list "Not an environment" env)) ) )
-           (signal-exception #t (list "Incorrect arity" 
+           (signal-exception #t (list "Incorrect arity"
                                       'set-variable-value! )) ) ) ) ) )
 
 (define (variable-value-update! kind sr value)
@@ -369,18 +369,18 @@
                  (if (symbol? name)
                      (let* ((r (reified-environment-r env))
                             (sr (reified-environment-sr env)) )
-                       (set! *val* 
+                       (set! *val*
                              (if (or (let ((var (assq name r)))
                                        (and (pair? var) (cadr var)) )
                                      (global-variable? g.current name)
                                      (global-variable? g.init name) )
                                  #t #f ) )
                        (set! *pc* (stack-pop)) )
-                     (signal-exception 
+                     (signal-exception
                       #f (list "Not a variable name" name) ) )
-                 (signal-exception 
+                 (signal-exception
                   #t (list "Not an environment" env) ) ) )
-           (signal-exception #t (list "Incorrect arity" 
+           (signal-exception #t (list "Incorrect arity"
                                       'variable-defined? )) ) ) ) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -395,16 +395,16 @@
            (let ((proc (activation-frame-argument *val* 0)))
              (if (closure? proc)
                  (let* ((pc (closure-code proc))
-                        (r (vector-ref 
+                        (r (vector-ref
                             *constants*
                             (vector-ref *code* (- pc 1)) )) )
-                   (set! *val* (make-reified-environment 
+                   (set! *val* (make-reified-environment
                                 (closure-closed-environment proc)
                                 r ))
                    (set! *pc* (stack-pop)) )
-                 (signal-exception 
+                 (signal-exception
                   #f (list "Not a procedure" proc) ) ) )
-           (signal-exception 
+           (signal-exception
             #t (list "Incorrect arity" 'enrich) ) ) ) ) ) )
 
 (definitial procedure->definition
@@ -416,13 +416,13 @@
            (let ((proc (activation-frame-argument *val* 0)))
              (if (closure? proc)
                  (let ((pc (closure-code proc)))
-                   (set! *val* (vector-ref 
+                   (set! *val* (vector-ref
                                 *constants*
                                 (vector-ref *code* (- pc 3)) ))
                    (set! *pc* (stack-pop)) )
-                 (signal-exception 
+                 (signal-exception
                   #f (list "Not a procedure" proc) ) ) )
-           (signal-exception 
+           (signal-exception
             #t (list "Incorrect arity" 'enrich) ) ) ) ) ) )
 
 ;;; Analyzers must now preserve the compile-time lexical environment
@@ -446,9 +446,9 @@
 (define (REFLECTIVE-FIX-CLOSURE m+ arity definition r)
   (let* ((the-function (append (ARITY=? (+ arity 1)) (EXTEND-ENV)
                                m+  (RETURN) ))
-         (the-env (append (EXPLICIT-CONSTANT definition) 
+         (the-env (append (EXPLICIT-CONSTANT definition)
                           (EXPLICIT-CONSTANT r) ))
-         (the-goto (GOTO (+ (length the-env) 
+         (the-goto (GOTO (+ (length the-env)
                             (length the-function) ))) )
     (append (CREATE-CLOSURE (+ (length the-goto) (length the-env)))
             the-goto the-env the-function ) ) )
@@ -456,7 +456,7 @@
 (define (REFLECTIVE-NARY-CLOSURE m+ arity definition r)
   (let* ((the-function (append (ARITY>=? (+ arity 1)) (PACK-FRAME! arity)
                                (EXTEND-ENV) m+ (RETURN) ))
-         (the-env (append (EXPLICIT-CONSTANT definition) 
+         (the-env (append (EXPLICIT-CONSTANT definition)
                           (EXPLICIT-CONSTANT r) ))
          (the-goto (GOTO (+ (length the-env) (length the-function)))) )
     (append (CREATE-CLOSURE (+ (length the-goto) (length the-env)))

@@ -10,7 +10,7 @@
 ;;;(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 
 (define (find-symbol id tree)
-  (call/cc 
+  (call/cc
    (lambda (exit)
      (define (find tree)
        (if (pair? tree)

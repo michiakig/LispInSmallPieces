@@ -58,7 +58,7 @@
   (set! run-machine
         (lambda (pc code constants global-names dynamics)
           (when *debug*                     ; DEBUG
-            (format #t "Code= ~A~%" (disassemble code)) )         
+            (format #t "Code= ~A~%" (disassemble code)) )
           (native-run-machine pc code constants global-names dynamics) ) ) )
 
 ;;; end of chap7i.scm

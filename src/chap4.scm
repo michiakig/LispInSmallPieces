@@ -50,7 +50,7 @@
                     (k (min mina mind)
                        (max maxa maxd) ) ) ) ) )
         (k tree tree) ) )
-  (mm tree list) ) 
+  (mm tree list) )
 
 (define enumerate
   (let ((n -1))
@@ -65,16 +65,16 @@
   (set! set-winner! (lambda (new-name) (set! name new-name)
                                        name ))
   (set-winner! "Me")
-  (winner) ) 
+  (winner) )
 
 (let ((name "Nemo"))
   (set! winner (lambda () name))
   (winner) )
 
 (let ((name "Nemo"))
-  (set! set-winner! (lambda (new-name) (set! name new-name) 
+  (set! set-winner! (lambda (new-name) (set! name new-name)
                                        name ))
-  (set-winner! "Me") ) 
+  (set-winner! "Me") )
 
 (define (make-box value)
   (lambda (msg)
@@ -86,7 +86,7 @@
   (box 'get) )
 
 (define (box-set! box new-value)
-  ((box 'set!) new-value) ) 
+  ((box 'set!) new-value) )
 
 
 (define (other-make-box value)
@@ -121,10 +121,10 @@
   (pair 'cdr) )
 
 (define (set-kar! pair value)
-  ((pair 'set-car!) value) ) 
+  ((pair 'set-car!) value) )
 
 (define (set-kdr! pair value)
-  ((pair 'set-cdr!) value) ) 
+  ((pair 'set-cdr!) value) )
 
 
 (define (make-named-box name value)
@@ -140,7 +140,7 @@
     (lambda (name value)
      (let ((name-closure  (lambda () name))
            (value-closure (lambda () value))
-           (set-closure   (lambda (new-value) 
+           (set-closure   (lambda (new-value)
                             (set! value new-value) )) )
        (lambda (msg)
          (case msg
@@ -172,17 +172,17 @@
 (let ((foo (lambda () quote38)))
   (eq? (foo) (foo)) )
 
-(define vowel<= 
+(define vowel<=
   (let ((vowels '(#\a #\e #\i #\o #\u)))
     (lambda (c1 c2)
       (memq c2 (memq c1 vowels)) ) ) )
 
-(define vowel1<= 
+(define vowel1<=
   (let ((vowels '(#\a #\e)))
     (lambda (c1 c2)
       (memq c2 (memq c1 vowels)) ) ) )
 
-(define vowel2<= 
+(define vowel2<=
   (lambda (c1 c2)
     (case c1
      ((#\a) (memq c2 '(#\a #\e #\i #\o #\u)))
@@ -197,7 +197,7 @@
 (define quote80 (cons #\i quote81))
 (define quote79 (cons #\e quote80))
 (define quote78 (cons #\a quote79))
-(define vowel3<= 
+(define vowel3<=
   (lambda (c1 c2)
     (case c1
      ((#\a) (memq c2 quote78))
@@ -226,7 +226,7 @@
       result ) ) )
 
 (define (new-evaluate e r s k)
-  (if (atom? e) 
+  (if (atom? e)
       (if (symbol? e) (evaluate-variable e r s k)
           (evaluate-quote e r s k) )
       (case (car e)
@@ -246,7 +246,7 @@
 
 (define (qons a d) (lambda (msg) (msg a d)))
 
-(define (qar pair) (pair (lambda (a d) a))) 
+(define (qar pair) (pair (lambda (a d) a)))
 
 (define (qdr pair) (pair (lambda (a d) d)))
 

@@ -15,16 +15,16 @@
 (define (invoke fn args)
   (if (procedure? fn)
       (apply fn args)
-      (wrong "Not a function" fn) ) ) 
+      (wrong "Not a function" fn) ) )
 
 (define (make-function variables body env)
   (lambda values
      (eprogn body (extend env variables values)) ) )
 
-(define-syntax defprimitive 
+(define-syntax defprimitive
   (syntax-rules ()
     ((defprimitive name value arity)
-     (definitial name 
+     (definitial name
         (lambda values
           (if (= arity (length values))
               (apply value values)
@@ -52,7 +52,7 @@
 (defprimitive remainder remainder 2)
 (defprimitive display display 1)
 
-(defprimitive call/cc 
+(defprimitive call/cc
   (lambda (f)
     (call/cc (lambda (k)
                (f (lambda values
@@ -61,7 +61,7 @@
                         (wrong "Incorrect arity" k) ) )) )) )
   1 )
 
-(definitial apply 
+(definitial apply
   (lambda values
     (if (>= (length values) 2)
         (let ((f (car values))
@@ -74,7 +74,7 @@
 
 (definitial list list)
 
-(definitial eval 
+(definitial eval
   (lambda values
     (if (= (length values) 1)
         (let ((v (car values)))

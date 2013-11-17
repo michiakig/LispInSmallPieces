@@ -12,28 +12,28 @@
 ;;; This is a restricted version of Meroon intended to be only
 ;;; pedagogical. The main differences with Meroon are:
 ;;; -- Less features than in Meroon V3 (no option in Meroonet macros).
-;;; -- Less Meta-Object features. The autodescription of Meroonet 
+;;; -- Less Meta-Object features. The autodescription of Meroonet
 ;;;    is still there but there is no causal link. It is not possible to
 ;;;    add new types of Field (well it is not easy).
 ;;; -- No user-friendly error notification (most verifications are not
-;;;    done, this will provoke weird behavior if ever tried). The sole 
+;;;    done, this will provoke weird behavior if ever tried). The sole
 ;;;    errors that are caught invoke the meroonet-error function which is
 ;;;    intentionally not defined (this probably invokes the underlying
 ;;;    error system).
-;;; -- No effort for efficiency apart the access to Meroonet instances 
+;;; -- No effort for efficiency apart the access to Meroonet instances
 ;;;    without Poly-Fields.
 ;;; -- No separation between macroexpansion-time, compile-time,
 ;;;    load-time. Every defining form of Meroonet is expected to be
-;;;    immediately executed, one by one, at toplevel.  
+;;;    immediately executed, one by one, at toplevel.
 ;;; -- No predefined library such as clone, show, show-unveiled etc.
 ;;; The documentation of Meroon V2 is entirely appropriate except for
 ;;; the points stated above. Normal usage of Meroon should not see a
 ;;; difference. Consult the `Notice' companion file for more details.
 
-;;; Since the previous list of restrictions may seem sad, here are 
+;;; Since the previous list of restrictions may seem sad, here are
 ;;; the features that still appear in Meroonet:
 ;;; ++ Some efforts for efficiency in some places (fast access to Meroonet
-;;;    instances not using poly-fields, fast (non-consing) allocators for 
+;;;    instances not using poly-fields, fast (non-consing) allocators for
 ;;;    small instances). Meroonet is in fact 20% faster than Meroon V2.
 ;;; ++ unrestricted inheritance in presence of poly-fields.
 ;;; ++ autodescription of Meroonet since classes are Meroonet objects.
@@ -79,7 +79,7 @@
 ;;;==================================================== Additional notes
 ;;; Functions with a `generate-' prefix generates code that will be
 ;;; part of macro expansion, functions with a `make-' prefix actually
-;;; return objects (generally closures). 
+;;; return objects (generally closures).
 ;;; The word `index' is used to specify a particular value in a
 ;;; Poly-Field, the word `offset' is used to speak of the
 ;;; representation of instances.
@@ -92,7 +92,7 @@
 ;;; This vector tabulates classes. Any class can be retrieved by its index.
 (define *classes* (make-vector *maximal-number-of-classes* #f))
 
-;;; Convert a number (taken as an index) into a class. 
+;;; Convert a number (taken as an index) into a class.
 ;;; Restriction: Do not check whether the index is correct.
 (define (number->class n)
   (vector-ref *classes* n) )
@@ -111,7 +111,7 @@
                c (scan (- index 1)) ) ) ) ) )
 
 ;;; Meroonet does not restrict the number of generic functions that
-;;; can be defined. They are all kept in a list. 
+;;; can be defined. They are all kept in a list.
 (define *generics* (list))
 
 ;;; Converts a symbol to a generic instance with such a name. Returns
@@ -141,7 +141,7 @@
 ;;;     +--------------+
 ;;;     + class-number +    representing the Polygon class
 ;;;     +--------------+
-;;;     | value of X   |    <-- *starting-offset* 
+;;;     | value of X   |    <-- *starting-offset*
 ;;;     | value of Y   |
 ;;;     +  # of points +
 ;;;     | point[0]     |
@@ -200,7 +200,7 @@
           ) )
 
 (define Class-class
-  (vector 
+  (vector
    1                                    ; it is also a class
    'Class                               ; name
    1                                    ; class-number
@@ -214,7 +214,7 @@
    '() ) )
 
 (define Generic-class
-  (vector 
+  (vector
    1
    'Generic
    2
@@ -227,7 +227,7 @@
     '() ) )
 
 (define Field-class
-  (vector 
+  (vector
    1
    'Field
    3
@@ -269,7 +269,7 @@
 ;;; Syntax: (define-class <name-of-the-class> <name-of-the-superclass>
 ;;;             ( <name-of-a-Mono-Field>          |
 ;;;               (= <name-of-a-Mono-Field>)      |
-;;;               (* <name-of-a-Poly-Field>)      
+;;;               (* <name-of-a-Poly-Field>)
 ;;;               ... ) )
 
 ;;; The macro call is supposed to be correct: it does not check that
@@ -280,15 +280,15 @@
 ;;; a generic function as in Meroon V3, this would allow to define new
 ;;; metaclass with alternate expansion.
 ;;; Restriction: No class options, nor field options.
-(define-meroonet-macro (define-class name supername 
+(define-meroonet-macro (define-class name supername
                                      own-field-descriptions )
   (set! *last-defined-class* #f)
-  (let ((class (register-class name supername 
+  (let ((class (register-class name supername
                                own-field-descriptions )))
     (set! *last-defined-class* class)
     `(begin
        (if (not *last-defined-class*)
-         (register-class ',name ',supername 
+         (register-class ',name ',supername
                          ',own-field-descriptions ) )
       ,(Class-generate-related-names class) ) ) )
 
@@ -300,12 +300,12 @@
          (predicate-name (symbol-concatenate name '?))
          (maker-name (symbol-concatenate 'make- name))
          (allocator-name (symbol-concatenate 'allocate- name)) )
-    `(begin 
+    `(begin
        (define ,class-variable-name (->Class ',name))
        (define ,predicate-name (make-predicate ,class-variable-name))
        (define ,maker-name (make-maker ,class-variable-name))
        (define ,allocator-name (make-allocator ,class-variable-name))
-       ,@(map (lambda (field) 
+       ,@(map (lambda (field)
                 (Field-generate-related-names field class) )
               (Class-fields class) )
        ',(Class-name class) ) ) )
@@ -317,7 +317,7 @@
                    (is-a? o class) )) )
 
 ;;; Tests if an object is an instance of a class.
-;;; This one is linear but fast since most of the time 
+;;; This one is linear but fast since most of the time
 ;;; (eq? (object->class o) class). It also assumes (Object? o) and
 ;;; (Class? class) are true.
 (define (is-a? o class)
@@ -331,7 +331,7 @@
 (define (check-class-membership o class)
   (if (not (is-a? o class))
     (meroonet-error "Wrong class" o class) ) )
-    
+
 ;;;==================================================== Allocation
 ;;; Create from a class its appropriate allocator. Sizes must be a
 ;;; list of positive integers, fields must only be Mono- or Poly-Fields.
@@ -347,7 +347,7 @@
                         (cond ((Mono-Field? (car fields))
                                (iter (cdr fields) sizes (+ 1 room)) )
                               ((Poly-Field? (car fields))
-                               (iter (cdr fields) (cdr sizes) 
+                               (iter (cdr fields) (cdr sizes)
                                      (+ 1 (car sizes) room) ) ) )
                         room ) )))
         (let ((o (make-vector room #f)))
@@ -357,13 +357,13 @@
                      (sizes sizes)
                      (offset *starting-offset*) )
             (if (pair? fields)
-                (cond ((Mono-Field? (car fields)) 
+                (cond ((Mono-Field? (car fields))
                        (iter (cdr fields) sizes (+ 1 offset)) )
                       ((Poly-Field? (car fields))
                        (vector-set! o offset (car sizes))
-                       (iter (cdr fields) (cdr sizes) 
+                       (iter (cdr fields) (cdr sizes)
                              (+ 1 (car sizes) offset) ) ) )
-                o ) ) ) ) ) ) )           
+                o ) ) ) ) ) ) )
 
 ;;; Create from a class an appropriate maker. The strategy is to create the
 ;;; vector then to check if it has an appropriate skeleton. Improve
@@ -381,12 +381,12 @@
                         (parms parms)
                         (offset *starting-offset*) )
               (if (pair? fields)
-                  (cond ((Mono-Field? (car fields)) 
-                         (check (cdr fields) 
+                  (cond ((Mono-Field? (car fields))
+                         (check (cdr fields)
                                 (cdr parms)
                                 (+ 1 offset) ) )
                         ((Poly-Field? (car fields))
-                         (check (cdr fields) 
+                         (check (cdr fields)
                                 (list-tail (cdr parms) (car parms))
                                 (+ 1 (car parms) offset) ) ) )
                   o ) ) ) ) ) ) )
@@ -416,7 +416,7 @@
 
 ;;;==================================================== Access
 ;;; Generate from a field all the definitions of the related accessors.
-;;; An instance of Field refers to the class that introduced it. Only the 
+;;; An instance of Field refers to the class that introduced it. Only the
 ;;; number of the class is given to avoid circular objects.
 
 ;;; Names are constructed with the current class rather than the
@@ -428,12 +428,12 @@
          (cname-variable (symbol-concatenate cname '-class))
          (reader-name (symbol-concatenate cname '- fname))
          (writer-name (symbol-concatenate 'set- cname '- fname '!)) )
-    `(begin 
-       (define ,reader-name 
-         (make-reader 
+    `(begin
+       (define ,reader-name
+         (make-reader
           (retrieve-named-field ,cname-variable ',fname) ) )
-       (define ,writer-name 
-         (make-writer 
+       (define ,writer-name
+         (make-writer
           (retrieve-named-field ,cname-variable ',fname) ) )
        ,@(if (Poly-Field? field)
              `((define ,(symbol-concatenate cname '- fname '-length)
@@ -465,9 +465,9 @@
                    (check-class-membership o class)
                    (check-index-range i o offset)
                    (vector-ref o (+ offset 1 i)) ) ) )
-          (cond ((Mono-Field? (car fields)) 
+          (cond ((Mono-Field? (car fields))
                  (skip (cdr fields) (+ 1 offset)) )
-                ((Poly-Field? (car fields)) 
+                ((Poly-Field? (car fields))
                  (cond ((Mono-Field? field)
                         (lambda (o)
                           (field-value o field) ) )
@@ -485,11 +485,11 @@
                (offset *starting-offset*) )
       (if (eq? field (car fields))
           offset
-          (cond 
+          (cond
            ((Mono-Field? (car fields))
             (skip (cdr fields) (+ 1 offset)) )
            ((Poly-Field? (car fields))
-            (skip (cdr fields) 
+            (skip (cdr fields)
                   (+ 1 offset (vector-ref o offset)) ) ) ) ) ) ) )
 
 ;;; A general reader. An extra integer is given to access a
@@ -503,7 +503,7 @@
              (vector-ref o offset) )
             ((Poly-Field? field)
              (check-index-range (car i) o offset)
-             (vector-ref o (+ offset 1 (car i))) ) ) ) ) ) 
+             (vector-ref o (+ offset 1 (car i))) ) ) ) ) )
 
 ;;; Create the definition of a field writer.
 (define (make-writer field)
@@ -520,9 +520,9 @@
                    (check-class-membership o class)
                    (check-index-range i o offset)
                    (vector-set! o (+ offset 1 i) v) ) ) )
-          (cond ((Mono-Field? (car fields)) 
+          (cond ((Mono-Field? (car fields))
                  (skip (cdr fields) (+ 1 offset)) )
-                ((Poly-Field? (car fields)) 
+                ((Poly-Field? (car fields))
                  (cond ((Mono-Field? field)
                         (lambda (o v)
                           (set-field-value! o v field) ) )
@@ -561,9 +561,9 @@
           (lambda (o)
             (check-class-membership o class)
             (vector-ref o offset) )
-          (cond ((Mono-Field? (car fields)) 
+          (cond ((Mono-Field? (car fields))
                  (skip (cdr fields) (+ 1 offset)) )
-                ((Poly-Field? (car fields)) 
+                ((Poly-Field? (car fields))
                  (lambda (o) (field-length o field)) ) ) ) ) ) )
 
 ;;; The generic accessor to know the length of a poly-field
@@ -577,25 +577,25 @@
 ;;;==================================================== Class creation
 ;;; Create a class instance and graft it into the inheritance hierarchy.
 (define (register-class name supername own-field-descriptions)
-  (Class-initialize! (allocate-Class) 
+  (Class-initialize! (allocate-Class)
                      name
                      (->Class supername)
                      own-field-descriptions ) )
 
 ;;; Fill all the fields of the bare class and insert it into the
 ;;; inheritance tree.
-(define (Class-initialize! class name superclass 
+(define (Class-initialize! class name superclass
                            own-field-descriptions )
   (set-Class-number! class *class-number*)
   (set-Class-name! class name)
   (set-Class-superclass! class superclass)
   (set-Class-subclass-numbers! class '())
-  (set-Class-fields! 
+  (set-Class-fields!
    class (append (Class-fields superclass)
                  (parse-fields class own-field-descriptions) ) )
   ;; install definitely the class
   (set-Class-subclass-numbers!
-   superclass 
+   superclass
    (cons *class-number* (Class-subclass-numbers superclass)) )
   (vector-set! *classes* *class-number* class)
   (set! *class-number* (+ 1 *class-number*))
@@ -616,16 +616,16 @@
   (define (parse-Poly-Field name)
     (Field-initialize! (allocate-Poly-Field) name) )
   (if (pair? own-field-descriptions)
-      (cons (cond 
+      (cons (cond
              ((symbol? (car own-field-descriptions))
               (parse-Mono-Field (car own-field-descriptions)) )
              ((pair? (car own-field-descriptions))
               (case (caar own-field-descriptions)
-                ((=) (parse-Mono-Field 
+                ((=) (parse-Mono-Field
                       (cadr (car own-field-descriptions)) ))
                 ((*) (parse-Poly-Field
                       (cadr (car own-field-descriptions)) ))
-                (else (meroonet-error 
+                (else (meroonet-error
                        "Erroneous field specification"
                        (car own-field-descriptions) )) ) ) )
             (parse-fields class (cdr own-field-descriptions)) )
@@ -633,7 +633,7 @@
 
 ;;; Tests that no preceding field has the same name.
 (define (check-conflicting-name class fname)
-  (let check ((fields (careless-Class-fields 
+  (let check ((fields (careless-Class-fields
                        (Class-superclass class) )))
     (if (pair? fields)
         (if (eq? (careless-Field-name (car fields)) fname)
@@ -698,7 +698,7 @@
   (make-reader (retrieve-named-field Generic-class 'signature)))
 (define set-Generic-signature!
   (make-writer (retrieve-named-field Generic-class 'signature)))
- 
+
 ;;; Cannot instantiate Field
 ;(define make-Field (make-maker Field-class))
 ;(define allocate-Field (make-allocator Field-class))
@@ -723,33 +723,33 @@
 ;;; A generic function is represented by a closure that encloses an
 ;;; instance of Generic which itself contains a dispatch table. This
 ;;; table is a vector containing methods that are retrieved using the
-;;; number associated to class. 
+;;; number associated to class.
 
 ;;; Syntax: (define-generic ( <name-of-the-generic-function>
 ;;;                           . <description-of-the-variables> )
 ;;;            [ <optional-default-method> ]   )
-;;; <description-of-the-variables> 
+;;; <description-of-the-variables>
 ;;;     ::= ( <variable-name>     . <description-of-the-variables> )
 ;;;      |  ( ( <variable-name> ) . <description-of-the-variables> )
 ;;;      |  <variable-name>
 ;;; The discriminating variable appears within parentheses but without class.
 
-;;; Define a generic function. 
+;;; Define a generic function.
 (define-meroonet-macro (define-generic call . body)
   (parse-variable-specifications
    (cdr call)
    (lambda (discriminant variables)
      (let ((generic (gensym)))          ; make generic hygienic
        `(define ,(car call)
-          (let ((,generic 
-                 (register-generic 
-                  ',(car call) 
+          (let ((,generic
+                 (register-generic
+                  ',(car call)
                   (lambda ,(flat-variables variables)
                     ,(if (pair? body)
                          `(begin . ,body)
-                         `(meroonet-error 
+                         `(meroonet-error
                            "No method" ',(car call)
-                           . ,(flat-variables variables) ) ) ) 
+                           . ,(flat-variables variables) ) ) )
                   ',(cdr call) )))
             (lambda ,variables
               ((determine-method ,generic ,(car discriminant))
@@ -758,7 +758,7 @@
 ;;; Create and register a generic function.
 (define (register-generic generic-name default signature)
   (let* ((dispatch-table (make-vector *maximal-number-of-classes*
-                                      default )) 
+                                      default ))
          (generic (make-Generic generic-name
                                 default
                                 dispatch-table
@@ -767,7 +767,7 @@
     generic ) )
 
 ;;; Parse a list of specifications, extract all the variables and the
-;;; discriminating variable among them. 
+;;; discriminating variable among them.
 ;;; Restriction: Silently ignore if there is more than one
 ;;; discriminant variable ie multi-methods are not implemented.
 (define (parse-variable-specifications specifications k)
@@ -776,9 +776,9 @@
        (cdr specifications)
        (lambda (discriminant variables)
          (if (pair? (car specifications))
-             (k (car specifications) 
+             (k (car specifications)
                 (cons (caar specifications) variables) )
-             (k discriminant (cons (car specifications) 
+             (k discriminant (cons (car specifications)
                                    variables )) ) ) )
       (k #f specifications) ) )
 
@@ -796,25 +796,25 @@
     (for-each (lambda (generic)
                 (vector-set! (Generic-dispatch-table generic)
                              (Class-number class)
-                             (vector-ref 
+                             (vector-ref
                               (Generic-dispatch-table generic)
                               (Class-number superclass) ) ) )
               *generics* ) ) )
-  
+
 ;;;==================================================== Method creation
 ;;; Syntax: (define-method ( <name-of-the-generic-function
 ;;;                          . <description-of-the-variables> )
 ;;;              <body-of-the-method> )
-;;; <description-of-the-variables> 
+;;; <description-of-the-variables>
 ;;;     ::= ( <variable-name> . <description-of-the-variables> )
-;;;      |  ( ( <variable-name> <class-name> ) 
+;;;      |  ( ( <variable-name> <class-name> )
 ;;;           . <description-of-the-variables> )
 ;;;      |  <variable-name>
 ;;; The discriminating variable appears with a class.
 
 ;;; Define a method on a generic function. The dispatch table to
 ;;; update is found via the name of the generic function in the list
-;;; of all generic instances. 
+;;; of all generic instances.
 (define-meroonet-macro (define-method call . body)
   (parse-variable-specifications
    (cdr call)
@@ -826,8 +826,8 @@
            (lambda ,(flat-variables variables)
              (define (call-next-method)
                ((if (Class-superclass ,c)
-                    (vector-ref (Generic-dispatch-table ,g) 
-                                (Class-number 
+                    (vector-ref (Generic-dispatch-table ,g)
+                                (Class-number
                                  (Class-superclass ,c) ) )
                     (Generic-default ,g) )
                 . ,(flat-variables variables) ) )
@@ -843,7 +843,7 @@
          (class (->Class class-name))
          (new-method (pre-method generic class))
          (dispatch-table (Generic-dispatch-table generic))
-         (old-method (vector-ref dispatch-table 
+         (old-method (vector-ref dispatch-table
                                  (Class-number class) )) )
     (check-signature-compatibility generic signature)
     (let propagate ((cn (Class-number class)))
@@ -851,9 +851,9 @@
         (if (eq? content old-method)
             (begin
               (vector-set! dispatch-table cn new-method)
-              (for-each 
+              (for-each
                propagate
-               (Class-subclass-numbers 
+               (Class-subclass-numbers
                 (number->class cn) ) ) ) ) ) ) ) )
 
 ;;; Check signature compatibility between a generic function and a method.
@@ -871,7 +871,7 @@
         (or (and (null? la) (null? lb))
             ;; similar dotted variable
             (and (symbol? la) (symbol? lb)) ) ) )
-  (if (not (coherent-signatures? (Generic-signature generic) 
+  (if (not (coherent-signatures? (Generic-signature generic)
                                  signature ))
     (meroonet-error "Incompatible signatures" generic signature) ) )
 

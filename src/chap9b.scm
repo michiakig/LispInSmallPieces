@@ -24,7 +24,7 @@
 (define-abbreviation (define-inline call . body)
   (let ((name      (car call))
         (variables (cdr call)) )
-    `(begin 
+    `(begin
        (define-abbreviation (,name . arguments)
          (cons (cons 'lambda (cons ',variables ',body))
                arguments ) )
@@ -36,7 +36,7 @@
     ((enumerate e1 e2 ...)
      (begin (display 0) (enumerate-aux e1 (e1) e2 ...) ) ) ) )
 
-(define-syntax enumerate-aux 
+(define-syntax enumerate-aux
   (syntax-rules ()
     ((enumerate-aux e1 len) (begin e1 (display (length 'len))))
     ((enumerate-aux e1 len e2 e3 ...)

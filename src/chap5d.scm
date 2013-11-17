@@ -57,7 +57,7 @@
 (define ((meaning-quotation v) r k s)
   (translate v s k) )
 
-(define (meaning-reference n) 
+(define (meaning-reference n)
   (lambda (r k s)
     (k (s (r n)) s) ) )
 
@@ -68,10 +68,10 @@
 
 (define (boolify v)
   (if (equal? v (inValue #f))
-      (lambda (x y) y) 
+      (lambda (x y) y)
       (lambda (x y) x) ) )
 
-(define (meaning-alternative e1 e2 e3) 
+(define (meaning-alternative e1 e2 e3)
   (let ((m1 (meaning e1))
         (m2 (meaning e2))
         (m3 (meaning e3)) )
@@ -81,7 +81,7 @@
                r k s1 ) )
           s ) ) ) )
 
-(define (meaning-assignment n e) 
+(define (meaning-assignment n e)
   (let ((m (meaning e)))
     (lambda (r k s)
       (m r (lambda (v s1)
@@ -90,7 +90,7 @@
 
 ;;; This denotation does not allow dotted variables.
 
-(define (meaning-abstraction n* e+) 
+(define (meaning-abstraction n* e+)
   (let ((m (meaning*-sequence e+))
         (arity (length n*)) )
     (lambda (r k s)
@@ -108,7 +108,7 @@
 ;;; previous one except that it is written in a form that makes it
 ;;; similar to meaning-dotted-abstraction.
 
-(define (meaning-fix-abstraction n* e+) 
+(define (meaning-fix-abstraction n* e+)
   (let ((m (meaning*-sequence e+))
         (arity (length n*))
         (mrv (meaning-regular-variables n*)) )
@@ -129,7 +129,7 @@
 
 (define ((meaning-variable n) m)
   (lambda (v* r k s)
-    (allocate 
+    (allocate
      s 1 (lambda (s a*)
            (let ((a (car a*)))
              (m (cdr v*) (extend r n a) k (extend s a (car v*))) ) ) ) ) )
@@ -137,7 +137,7 @@
 (define (meaning-possibly-dotted-abstraction n* e+)
   (let parse ((n* n*)
               (regular '()) )
-    (cond 
+    (cond
      ((pair? n*) (parse (cdr n*) (cons (car n*) regular)))
      ((null? n*) (meaning-fix-abstraction (reverse regular) e+))
      (else       (meaning-dotted-abstraction (reverse regular) n* e+)) ) ) )
@@ -157,10 +157,10 @@
 
 (define ((meaning-dotted-variable n) m)
   (lambda (v* r k s)
-    (letrec ((listify 
+    (letrec ((listify
               (lambda (v* s q)
                 (if (pair? v*)
-                    (allocate 
+                    (allocate
                      s 2 (lambda (s a*)
                            (listify (cdr v*)
                                     (extend s (car a*) (car v*))
@@ -172,16 +172,16 @@
                       (allocate s 1
                                 (lambda (s a*)
                                   (let ((a (car a*)))
-                                    (m '() 
+                                    (m '()
                                        (extend r n a)
-                                       k 
+                                       k
                                        (extend s a v) ) ) ) ) )) ) ) )
 
 ;;; Retrofit!
 
 (set! meaning-abstraction meaning-possibly-dotted-abstraction)
 
-(define (meaning-application e e*) 
+(define (meaning-application e e*)
   (let ((m1 (meaning e))
         (m2 (meaning* e*)) )
     (lambda (r k s)
@@ -206,12 +206,12 @@
 ;;; The meaning-single-sequence function can be eta-simplified as well as
 ;;; the meaning-sequence function above.
 
-(define (meaning*-single-sequence e) 
+(define (meaning*-single-sequence e)
   (let ((m (meaning e)))
     (lambda (r k s)
       (m r k s) ) ) )
 
-(define (meaning*-multiple-sequence e e+) 
+(define (meaning*-multiple-sequence e e+)
   (let ((m1 (meaning e))
         (m2 (meaning*-sequence e+)) )
     (lambda (r k s)
@@ -226,7 +226,7 @@
       (meaning-some-arguments (car e*) (cdr e*))
       (meaning-no-argument) ) )
 
-(define (meaning-some-arguments e e*) 
+(define (meaning-some-arguments e e*)
   (let ((m1 (meaning e))
         (m2 (meaning* e*)) )
     (lambda (r k s)
@@ -261,7 +261,7 @@
 ;;; Moreover allocate is not a real function since it allocates new
 ;;; unseen locations each time it is invoked.
 
-(define allocate 
+(define allocate
   (let ((loc 0))
     (lambda (s n q)
       (let loop ((n n)
@@ -273,7 +273,7 @@
 
 ;;; Two macros to define the original environment and store.
 
-(define-syntax definitial 
+(define-syntax definitial
   (syntax-rules ()
     ((definitial name value)
      (allocate s.init 1
@@ -285,9 +285,9 @@
 (define-syntax defprimitive
   (syntax-rules ()
     ((defprimitive name value arity)
-     (definitial name 
-       (inValue 
-        (lambda (v* k s) 
+     (definitial name
+       (inValue
+        (lambda (v* k s)
           (if (= arity (length v*))
               (k (apply value v*) s)
               (wrong "Incorrect arity" 'name) ) ) ) ) ) ) )
@@ -295,65 +295,65 @@
 (define-syntax defarithmetic
   (syntax-rules ()
     ((defprimitive name value arity)
-     (definitial name 
-       (inValue 
-        (lambda (v* k s) 
+     (definitial name
+       (inValue
+        (lambda (v* k s)
           (if (= arity (length v*))
               (k (inValue (apply value (map Value->Integer v*))) s)
               (wrong "Incorrect arity" 'name) ) ) ) ) ) ) )
 
-(definitial cons 
-  (inValue 
+(definitial cons
+  (inValue
    (lambda (v* k s)
      (if (= 2 (length v*))
          (allocate s 2
                    (lambda (s a*) (k (inValue a*) (extend* s a* v*))) )
          (wrong "incorrect arity" 'cons) ) ) ) )
 
-(definitial car 
-  (inValue 
+(definitial car
+  (inValue
    (lambda (v* k s)
      (if (= 1 (length v*))
          (k (s (car (Value->Pair (car v*)))) s)
          (wrong "incorrect arity" 'car) ) ) ) )
 
-(definitial cdr 
-  (inValue 
+(definitial cdr
+  (inValue
    (lambda (v* k s)
      (if (= 1 (length v*))
          (k (s (cadr (Value->Pair (car v*)))) s)
          (wrong "incorrect arity" 'cdr) ) ) ) )
 
-(defprimitive pair? 
+(defprimitive pair?
   (lambda (v) (inValue (cons? (Value-content v))))
   1 )
 
 ;;; Hack
-(defprimitive eq? 
+(defprimitive eq?
   (lambda (v1 v2) (inValue (eq? (Value-content v1)
                                 (Value-content v2) )))
   2 )
 
-(defprimitive symbol? 
+(defprimitive symbol?
   (lambda (v) (inValue (symbol? (Value-content v))))
   1 )
 
-(definitial set-car! 
+(definitial set-car!
   (inValue
    (lambda (v* k s)
      (if (= 2 (length v*))
          (k (car v*)
             (extend s (car (Value->Pair (car v*)))
-                    (cadr v*) ) ) 
+                    (cadr v*) ) )
          (wrong "incorrect arity" 'set-car!) ) ) ) )
 
-(definitial set-cdr! 
+(definitial set-cdr!
   (inValue
    (lambda (v* k s)
      (if (= 2 (length v*))
          (k (car v*)
             (extend s (cadr (Value->Pair (car v*)))
-                    (cadr v*) ) ) 
+                    (cadr v*) ) )
          (wrong "incorrect arity" 'set-cdr!) ) ) ) )
 
 (defarithmetic + + 2)
@@ -368,10 +368,10 @@
 
 (definitial call/cc
   (inValue
-   (lambda (v1* k1 s1) 
+   (lambda (v1* k1 s1)
      (if (= 1 (length v1*))
          ((Value->Function (car v1*))
-          (list (inValue 
+          (list (inValue
                  (lambda (v2* k2 s2)
                    (if (= 1 (length v2*))
                        (k1 (car v2*) s2)
@@ -397,7 +397,7 @@
          (wrong "Incorrect arity" 'apply) ) ) ) )
 
 (definitial list
-  (inValue 
+  (inValue
    (lambda (v* k s)
      (let alloc ((v* v*)
                  (s s)
@@ -457,20 +457,20 @@
     (if (cons? e)
         (cons (conv (Value-content (s (car e))))
               (conv (Value-content (s (cadr e)))) )
-        e ) ) 
+        e ) )
   (conv (Value-content e)) )
 
 (define (translate e s q)
-  (if (pair? e) 
-      (translate 
+  (if (pair? e)
+      (translate
        (car e)
        s
        (lambda (v1 s1)
-         (translate 
+         (translate
           (cdr e)
           s1
           (lambda (v2 s2)
-            (allocate 
+            (allocate
              s2 2 (lambda (s a*)
                     (q (inValue a*)
                        (extend (extend s (car a*) v1)
@@ -480,7 +480,7 @@
 ;;; Run the interpreter with:              (denScheme)
 
 (define (denScheme)
-  (interpreter 
+  (interpreter
    "denScheme? "
    "denScheme= "
    #t
@@ -496,10 +496,10 @@
           s.current ) ) ) ) ) )
 
 (define (test-denScheme file)
-  (suite-test 
+  (suite-test
    file
-   "denScheme? " 
-   "denScheme= " 
+   "denScheme? "
+   "denScheme= "
    #t
    (lambda (read check error)
      (set! wrong error)
@@ -518,9 +518,9 @@
          (start (get-internal-run-time)) )
     ((meaning e)
      r.init
-     (lambda (v s) 
+     (lambda (v s)
        (let ((duration (- (get-internal-run-time) start)))
          (display (list duration (convert v s))) ) )
-     s.init ) ) )     
+     s.init ) ) )
 
 ;;; end of chap5d.scm

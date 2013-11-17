@@ -48,7 +48,7 @@
 
 ;;; use export on local variables
 ((lambda (x env)
-   ((lambda (a b) 
+   ((lambda (a b)
       (set! env (export a x))
       (set! x 2) )
     'aa 'bb )
@@ -154,7 +154,7 @@
    (eval/b '(set! x '(4)) e)
    (eval/b '(car x) e) )
  (export car) 3 cdr )
-   4 
+   4
 ;;; Recursion through an enriched env
 ((lambda (e)
    (set! e (enrich (export) 'fact))
@@ -163,7 +163,7 @@
  'ee )
    120
 ;;; Mutual recursion
-((lambda (e) 
+((lambda (e)
    (set! e (enrich (export car) 'even? 'odd?))
    (eval/b '(set! even? (lambda (n) (if (= n 0) #t (odd? (- n 1))))) e)
    (eval/b '(set! odd? (lambda (n) (if (= n 0) #f (even? (- n 1))))) e)
@@ -227,18 +227,18 @@
 ;;; testing modification
 (set-variable-value! 'car (export) 44)
    ***
-(begin (set-variable-value! 'foo 
+(begin (set-variable-value! 'foo
                             (begin (lambda () foo)
                                    (export) )
                             2 )
        foo )
    2
-((lambda (a) 
+((lambda (a)
    (set-variable-value! 'a (export) 22)
    a )
  11 )
    22
-((lambda (a) 
+((lambda (a)
    (set-variable-value! 'b a 22)
    (variable-value 'b a) )
  (enrich (export) 'b) )

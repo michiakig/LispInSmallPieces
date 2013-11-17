@@ -10,7 +10,7 @@
 ###(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 
 # This Makefile tests Meroonet with various implementations. It gives some
-# examples of how to define the define-meroonet-macro macro for various 
+# examples of how to define the define-meroonet-macro macro for various
 # implementations.
 
 work : test.elk
@@ -18,7 +18,7 @@ work : test.elk
 clean :: cleanMakefile
 	-rm TAGS
 clean.all : clean
-	-rm -rf o meroonet*.tar.Z 
+	-rm -rf o meroonet*.tar.Z
 tags : ;	etags -t meroonet.scm
 TIME	= /usr/local/bin/time
 
@@ -123,7 +123,7 @@ test.sci :
 # be removed from run-time but they are leaved in place so meroonet.o can
 # be used to generate interpreters.
 #CC		= gcc
-CFLAGS          = -O ${SCCsubCFLAGS} 
+CFLAGS          = -O ${SCCsubCFLAGS}
 SCCFLAGS        = -sch 12 ${CFLAGS}
 #SCCDIR is the repertory where are the files needed by scc
 #SCCDIR		= /usr/local/lib/schemetoc
@@ -187,7 +187,7 @@ o/${HOSTTYPE}/test : o/${HOSTTYPE}/test.sc o/${HOSTTYPE}/meroonet.o
 	cd o/${HOSTTYPE} ; scc -o test ${SCCFLAGS} test.sc \
 		meroonet.o ${HOME}/s2c/o/${HOSTTYPE}/libqnc.a
 
-# the call to read-eval-print forces expand and define-macro 
+# the call to read-eval-print forces expand and define-macro
 # to be present at run-time.
 o/${HOSTTYPE}/meroonet.sc : meroonet.scm
 	echo "							\
@@ -224,7 +224,7 @@ clean ::
 	-rm o/${HOSTTYPE}/
 
 ###################################################################### Bigloo
-BIGLOOFLAGS	= -O 
+BIGLOOFLAGS	= -O
 BIGLOO		= bigloo
 #BIGLOO	= /home/cornas/icsla/serrano/prgm/project/bigloo/bin/bigloo
 # Bigloo is available from ftp.inria.fr:INRIA/Projects/icsla
@@ -251,9 +251,9 @@ test.bigloo.i :
 
 test.bigloo.c : mkdir
 	${MAKE} ${MAKEFLAGS} o/${HOSTTYPE}/bgl-test
-	o/${HOSTTYPE}/bgl-test 
+	o/${HOSTTYPE}/bgl-test
 
-o/${HOSTTYPE}/meroonet.bgl : meroonet.scm 
+o/${HOSTTYPE}/meroonet.bgl : meroonet.scm
 	( echo "						\
 (module meroonet						\
   (export meroonet-error *last-defined-class*			\
@@ -311,7 +311,7 @@ o/${HOSTTYPE}/bgl-test : o/${HOSTTYPE}/test.bgl \
 	cd o/${HOSTTYPE} ; ${BIGLOO} -o bgl-test ${BIGLOOFLAGS} test.bgl \
 		bgl-meroonet.o ../../../../bigloo/o/${HOSTTYPE}/tester.o
 
-o/${HOSTTYPE}/test.bgl : 
+o/${HOSTTYPE}/test.bgl :
 	echo "							\
 (module test (main start) 					\
    (import (meroonet \"meroonet.bgl\")				\
@@ -388,11 +388,11 @@ test.siod :
 (test-oo \"oo-tests.scm\")"		| ${TIME} siod -h20000
 
 ################################################## short comparison of times
-timing : 
+timing :
 	${MAKE} ${MAKEFLAGS} test.elk test.sci test.bigloo.i \
 		2>timing
 	cat timing
-	
+
 
 ######################################################################## Gambit
 test.gambit :
@@ -470,7 +470,7 @@ Variant(variante1)
 Variant(variante2)
 Variant(variante3)
 
-# an error is found since it allows methods to be defined on non 
+# an error is found since it allows methods to be defined on non
 # preexisting generic functions.
 Variant(variante4)
 

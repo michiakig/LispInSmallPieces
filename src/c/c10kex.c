@@ -1,4 +1,4 @@
-/* Compiler to C $Revision: 1.23 $ 
+/* Compiler to C $Revision: 1.23 $
 (BEGIN
   (SET! INDEX 1)
   ((LAMBDA
@@ -28,7 +28,7 @@ SCM_DefineClosure(function_0, SCM I; );
 SCM_DeclareFunction(function_0) {
   SCM_DeclareLocalVariable(v_25,0);
   SCM_DeclareLocalDottedVariable(X,1);
-  SCM v_27; SCM v_26; 
+  SCM v_27; SCM v_26;
   return (v_26=SCM_Free(I),
           (v_27=X,
            SCM_invoke1(v_25,
@@ -49,7 +49,7 @@ SCM_DefineClosure(function_2, SCM v_15; SCM CNTER; SCM TMP; );
 
 SCM_DeclareFunction(function_2) {
   SCM_DeclareLocalVariable(v_21,0);
-  SCM v_20; SCM v_19; SCM v_18; SCM v_17; 
+  SCM v_20; SCM v_19; SCM v_18; SCM v_17;
   return (v_17=(SCM_Content(SCM_Free(TMP))=v_21),
           (v_18=SCM_Free(CNTER),
            ((v_18 != SCM_false)
@@ -68,7 +68,7 @@ SCM_DeclareFunction(function_3) {
   SCM_DeclareLocalVariable(v_15,0);
   SCM_DeclareLocalVariable(CNTER,1);
   SCM_DeclareLocalVariable(TMP,2);
-  SCM v_23; SCM v_22; SCM v_16; 
+  SCM v_23; SCM v_22; SCM v_16;
   return (v_16=TMP= SCM_allocate_box(TMP),
           (v_22=CNTER,
            (v_23=SCM_close(function_1,2,0),
@@ -82,7 +82,7 @@ SCM_DefineClosure(function_4, );
 SCM_DeclareFunction(function_4) {
   SCM_DeclareLocalVariable(v_8,0);
   SCM_DeclareLocalVariable(F,1);
-  SCM v_11; SCM v_10; SCM v_9; SCM v_12; SCM v_14; SCM v_13; 
+  SCM v_11; SCM v_10; SCM v_9; SCM v_12; SCM v_14; SCM v_13;
   return (v_13=thing1,
           (v_14=SCM_CheckedGlobal(INDEX),
            (v_12=SCM_Plus(v_13,
@@ -105,7 +105,7 @@ SCM_DeclareFunction(function_5) {
 SCM_DefineClosure(function_6, );
 
 SCM_DeclareFunction(function_6) {
-  SCM v_5; SCM v_7; SCM v_6; SCM v_4; SCM v_3; SCM v_2; SCM v_28; 
+  SCM v_5; SCM v_7; SCM v_6; SCM v_4; SCM v_3; SCM v_2; SCM v_28;
   return (v_28=thing0,
           (v_2=(INDEX=v_28),
            (v_3=SCM_close(function_3,3,0),

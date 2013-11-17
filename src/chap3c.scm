@@ -9,7 +9,7 @@
 ;;; Check the README file before using this file.
 ;;;(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 
-(define-syntax block 
+(define-syntax block
   (syntax-rules ()
     ((block label . body)
      (let ((label (list 'label)))
@@ -26,7 +26,7 @@
                      (if (pair? tree)
                          (or (find (car tree))
                              (find (cdr tree)) )
-                         (if (eq? id tree) (return-from find #t) 
+                         (if (eq? id tree) (return-from find #t)
                              #f ) ) )))
       (find tree) ) ) )
 

@@ -53,9 +53,9 @@
     (generate-related-names class) ) )
 
 (define (register-ReflectiveClass name super-name own-field-descriptions)
-  (initialize! (allocate-ReflectiveClass) 
+  (initialize! (allocate-ReflectiveClass)
                name
-               (->Class super-name) 
+               (->Class super-name)
                own-field-descriptions ) )
 
 ;;; Test a little the previous metaclass

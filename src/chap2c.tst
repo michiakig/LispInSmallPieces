@@ -11,7 +11,7 @@
 
 33
    33
-xyy 
+xyy
    *** ; unexistant
 'foo
    foo
@@ -28,7 +28,7 @@ xyy
 ((lambda (x y) (cons x y))
  1 2 )
    (1 . 2)
-cons 
+cons
    *** ; cons not a variable
 ((lambda (f) (f 1 2))
  cons )
@@ -62,7 +62,7 @@ cons
          (dynamic foo) ) )
    (25 16)
 
-   
+
 
 
 ;;; end of chap2c.tst

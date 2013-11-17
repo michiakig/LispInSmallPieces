@@ -30,7 +30,7 @@
 
 (define *active-catchers* '())
 
-(define-syntax throw 
+(define-syntax throw
   (syntax-rules ()
     ((throw tag value)
      (let* ((label tag)                ; compute once
@@ -40,14 +40,14 @@
            ((cdr escape) value)
            (wrong "No associated catch to" label) ) ) ) ) )
 
-(define-syntax catch 
+(define-syntax catch
   (syntax-rules ()
     ((catch tag . body)
      (let* ((saved-catchers *active-catchers*)
             (result (block label
-                      (set! *active-catchers* 
-                            (cons (cons tag 
-                                        (lambda (x) 
+                      (set! *active-catchers*
+                            (cons (cons tag
+                                        (lambda (x)
                                           (return-from label x) ) )
                                   *active-catchers* ) )
                       . body )) )

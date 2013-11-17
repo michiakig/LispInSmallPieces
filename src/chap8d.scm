@@ -35,7 +35,7 @@
     (EVAL/CE m r) ) )
 
 (define (EVAL/CE m r)
-  (append (PRESERVE-ENV) (CONSTANT r) (PUSH-VALUE) 
+  (append (PRESERVE-ENV) (CONSTANT r) (PUSH-VALUE)
           m (COMPILE-RUN) (RESTORE-ENV) ) )
 
 (define (COMPILE-RUN) (list 255))
@@ -54,7 +54,7 @@
   (set! *dynamic-variables* *dynamic-variables*)
   (let ((code (apply vector (append (meaning v r #f) (RETURN)))))
     (set! sg.current.names (map car (reverse g.current)))
-    (let ((v (make-vector (length sg.current.names) 
+    (let ((v (make-vector (length sg.current.names)
                           undefined-value )))
       (vector-copy! sg.current v 0 (vector-length sg.current))
       (set! sg.current v) )

@@ -16,9 +16,9 @@
 (define *runtime-functions* '())
 
 (define-method (evaluate (o Flattened-Program) sr)
-  (set! *runtime-functions* 
+  (set! *runtime-functions*
         (apply vector (reverse (Flattened-Program-definitions o))) )
-  (set! sg.global 
+  (set! sg.global
         (append (map (lambda (qv) (cons qv (Quotation-Variable-value qv)))
                      (Flattened-Program-quotations o) )
                 sg.global ) )
@@ -26,12 +26,12 @@
 
 (define-method (evaluate (e Closure-Creation) sr)
   (let ((def (vector-ref *runtime-functions* (Closure-Creation-index e))))
-    (make-RunTime-Procedure 
+    (make-RunTime-Procedure
      (Function-Definition-body def)
      (Function-Definition-variables def)
      (evaluate (Closure-Creation-free e) sr) ) ) )
 
-(define-method (evaluate (e No-Free) sr) 
+(define-method (evaluate (e No-Free) sr)
   '() )
 
 (define-method (evaluate (e Free-Environment) sr)

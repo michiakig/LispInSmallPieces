@@ -20,16 +20,16 @@
 ((block foo (lambda (x) (return-from foo x)))
  3 )
    *** ; obsolete block foo
-((block a 
+((block a
    (* 2 (block b (return-from a (lambda (x) (return-from b x))))) )
  3 )
    *** ; obsolete block b
-((block a 
+((block a
    (* 2 (block b (return-from a (lambda (x) (return-from a x))))) )
  3 )
    *** ; obsolete block a
 ; scope of block labels
-(block foo 
+(block foo
   ((lambda (exit)
     (* 2 (block foo
             (* 3 (exit 5)) )) )
@@ -46,11 +46,11 @@
    11
 (catch 'bar (* 2 (throw 'bar 5)))
    5
-((lambda (f) 
+((lambda (f)
    (catch 'bar (* 2 (f 5))) )
  (lambda (x) (throw 'bar x)) )
    5
-((lambda (f) 
+((lambda (f)
    (catch 'bar (* 2 (catch 'bar (* 3 (f 5))))) )
  (lambda (x) (throw 'bar x)) )
    10
@@ -105,11 +105,11 @@
    11
 (catch 'bar (* 2 (funcall throw 'bar 5)))
    5
-((lambda (f) 
+((lambda (f)
    (catch 'bar (* 2 (f 5))) )
  (lambda (x) (funcall throw 'bar x)) )
    5
-((lambda (f) 
+((lambda (f)
    (catch 'bar (* 2 (catch 'bar (* 3 (f 5))))) )
  (lambda (x) (funcall throw 'bar x)) )
    10

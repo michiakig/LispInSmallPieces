@@ -13,7 +13,7 @@
 /* The scheme.h header associated to the chap10[ek].scm compilers.
  */
 
-/* Prevent double inclusion 
+/* Prevent double inclusion
  */
 
 #ifndef SCHEME_H
@@ -37,14 +37,14 @@
  */
 
 #define SCM_STACK_HIGHER <=
- 
+
 /* No other (known) machine dependences.
  */
 
 
 /* Error codes.
  * All errors are uniformly signalled. The line number appears as well to
- * ease finding additional informations on the error. 
+ * ease finding additional informations on the error.
  */
 
 #define SCM_error(code) SCM_signal_error(code,__LINE__,__FILE__)
@@ -88,7 +88,7 @@
  *       while checking that it is initialized.
  * SCM_Free(variable) extracts the value of a free variable from a closure.
  * SCM_Content(box) extracts the content of a box.
- * 
+ *
  * Functions are declared with SCM_DeclareFunction(variable) while
  * variables are mentioned with SCM_DeclareLocalVariable or
  * SCM_DeclareLocalDottedVariable along with their rank. If a function does
@@ -96,7 +96,7 @@
  * Many of the previous macros use the names self_, size_ and arguments_;
  * since these names cannot be generated they cannot clash with other Scheme
  * names translated to C.
- * 
+ *
  * A combination may use SCM_invokeN to improve reading. They are actually
  * trivially defined but could be associated to specialized invokers.
  */
@@ -138,7 +138,7 @@
  * checked whether it is a fixed number: attention, the result is a C
  * boolean not a Scheme one. If it is a fixnum then it can be
  * converted into a C integer back and forth but no overflow detection
- * is done! 
+ * is done!
  */
 
 #define SCM_FixnumP(x)    ((unsigned long)(x) & (unsigned long)1)
@@ -148,14 +148,14 @@
 /* Scheme values are received through a SCM pointer. If this pointer has
  * a lower bit set to one then it is a fixnum that can be interpreted with
  * the previous macros. If the lower bit is a zero (as for a real C pointer)
- * then it is a pointer to a wrapped object ie a pointer that designates the 
+ * then it is a pointer to a wrapped object ie a pointer that designates the
  * first interesting field of an object right after its type. The type or
  * tag can be obtained with SCM_2tag, two coercers allow to transform a
  * reference to a wrapped object into a reference to an unwrapped object
  * and back. We use pointer arithmetic for that; note that it is a static
- * translation. 
+ * translation.
  *
- * SCM refers to wrapped objects or fixnums while SCMref refers to 
+ * SCM refers to wrapped objects or fixnums while SCMref refers to
  * unwrapped objects ie to a memory zone starting with a tag. Users should
  * probably only use SCM types.
  */
@@ -186,7 +186,7 @@ typedef union SCM_object           *SCM;
 #define SCM_DefineGlobalVariable(Cname,string) \
   SCM_DefineInitializedGlobalVariable(Cname,string,&SCM_undefined_object)
 
-/* Define a named cons cell. 
+/* Define a named cons cell.
  */
 
 #define SCM_DefinePair(pair,car,cdr) \
@@ -199,7 +199,7 @@ typedef union SCM_object           *SCM;
 #define SCM_DefineSymbol(symbol,pname) \
   static struct SCM_unwrapped_symbol symbol = {{SCM_SYMBOL_TAG}, pname }
 
-/* Define a string. They are implemented as C strings to ease coercions 
+/* Define a string. They are implemented as C strings to ease coercions
  * from and to C.
  */
 
@@ -212,7 +212,7 @@ typedef union SCM_object           *SCM;
 
 /* Define the structure of a closure. It is a regular object that can be
  * cast to SCM_object. It has a behavior (a reference to a C function),
- * an arity (filled when created) and additional fields holding closed 
+ * an arity (filled when created) and additional fields holding closed
  * values.
  */
 
@@ -254,7 +254,7 @@ typedef union SCM_object           *SCM;
 #define SCM_StringP(x) ( (! SCM_FixnumP(x) ) && (SCM_2tag(x)==SCM_STRING_TAG) )
 #define SCM_EqP(x,y)   ((x)==(y))
 
-/* Macros to perform usual arithmetic. 
+/* Macros to perform usual arithmetic.
  * They can be largely improved due to the specific tagging scheme which is
  * adopted here. These macros are independent of the representations.
  */
@@ -315,11 +315,11 @@ struct SCM_jmp_buf {
 /* Boxed Scheme objects.
  * They are represented by a struct whose first item is a tag specifying
  * their type. The value of the tag is specified to ease debug. To force
- * the tag to have the same length a pointer has, wrap the tag into an 
+ * the tag to have the same length a pointer has, wrap the tag into an
  * union.
  */
 
-enum SCM_tag { 
+enum SCM_tag {
   SCM_NULL_TAG		=0xaaa0,
   SCM_PAIR_TAG		=0xaaa1,
   SCM_BOOLEAN_TAG	=0xaaa2,
@@ -331,7 +331,7 @@ enum SCM_tag {
   SCM_ESCAPE_TAG	=0xaaa8
 };
 
-union SCM_header { 
+union SCM_header {
   enum SCM_tag tag;
   SCM ignored;
 };
@@ -378,7 +378,7 @@ union SCM_unwrapped_object {
     union SCM_header header;
     struct SCM_jmp_buf *stack_address;
   } escape;
-};  
+};
 
 /* This is what SCM refers to:
  */
@@ -409,11 +409,11 @@ union SCM_object {
   struct SCM_escape {
     struct SCM_jmp_buf *stack_address;
   } escape;
-};  
+};
 
 /* The global (pseudo or not) values that are needed for the compilation.
  * These are: true, false, (), undefined, etc. Don't confuse the object
- * itself and its address. Since objects are seldom used, their name is 
+ * itself and its address. Since objects are seldom used, their name is
  * more complex.
  */
 
@@ -449,9 +449,9 @@ extern SCM SCM_apply (unsigned long number, va_list arguments);
 #define SCM_DeclareSubr0(var,Cname) \
   SCM_DeclareConstant(var); extern SCM Cname (void)
 #define SCM_DeclareSubr1(var,Cname) \
-  SCM_DeclareConstant(var); extern SCM Cname (SCM x) 
+  SCM_DeclareConstant(var); extern SCM Cname (SCM x)
 #define SCM_DeclareSubr2(var,Cname) \
-  SCM_DeclareConstant(var); extern SCM Cname (SCM x, SCM y) 
+  SCM_DeclareConstant(var); extern SCM Cname (SCM x, SCM y)
 #define SCM_DeclareSubr3(var,Cname) \
   SCM_DeclareConstant(var); extern SCM Cname (SCM x, SCM y, SCM z)
 

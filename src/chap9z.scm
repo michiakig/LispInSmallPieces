@@ -19,7 +19,7 @@
   (really-prepare (macroexpand expression)) )
 
 (define-abbreviation (while condition . body)         \[\hfill\em{LOOP}\]
-  `(if ,condition (begin (begin . ,body) 
+  `(if ,condition (begin (begin . ,body)
                          (while ,condition . ,body) )) )
 
 (define-abbreviation (incredible x)               \[\hfill\em{BAD TASTE}\]

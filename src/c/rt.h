@@ -10,8 +10,8 @@
  *(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
  */
 
-/* The C header describing the run-time of chap6f 
- * Scheme objects representation. 
+/* The C header describing the run-time of chap6f
+ * Scheme objects representation.
  * All objects are boxed for simplicity.			        */
 
 /* Prevent double inclusion */
@@ -52,7 +52,7 @@ typedef size_t SIZE_T ;
 #ifdef __STDC__
 #define SCM_CONC(name1,name2) name1##name2
 #else
-#define SCM_CONC(name1,name2) name1/**/name2 
+#define SCM_CONC(name1,name2) name1/**/name2
 #endif
 
 /* This macro computes the address which separates two ordered addresses.
@@ -67,11 +67,11 @@ typedef size_t SIZE_T ;
  * to take effect.							*/
 
 /* This constant controls whether some dynamic checks are performed or
- * not. For example whether the last argument of apply is a real list.	
- *                  1 means true, 0 means false.	
+ * not. For example whether the last argument of apply is a real list.
+ *                  1 means true, 0 means false.
  * If you set it to false, the associated tests will become dead code.
  * Usual compilers are able to remove it automatically.			*/
-#define SCM_CAREFUL 1 
+#define SCM_CAREFUL 1
 
 /* This constant defines the characters that are predefined and prestored
  * in an array. 256 corresponds to ISO_Latin1 code size and 128 is also
@@ -86,11 +86,11 @@ typedef size_t SIZE_T ;
  * fixnums. 								*/
 #define SCM_SMALL_FIXNUM_LIMIT 1024
 
-/* This constant defines the maximal number of arguments a function 
+/* This constant defines the maximal number of arguments a function
  * called by apply can take. Actually the interface for functions with
  * large number of variables allows any number of arguments. Due to the
- * actual implementation of apply, there is a limit which might be 
- * removed in future releases. 
+ * actual implementation of apply, there is a limit which might be
+ * removed in future releases.
  * 256 is a good choice but you can enlarge it if you consider having
  * functions with more than 256 actual arguments.			*/
 #define SCM_MAX_APPLY_ARGUMENTS 256
@@ -99,7 +99,7 @@ typedef size_t SIZE_T ;
  * that will be allocated. 						*/
 #define SCM_ZONE_SIZE 1024
 
-/* This constant is the ratio of the size of a space to the occupied 
+/* This constant is the ratio of the size of a space to the occupied
  * size. Appel says that 8 is correct ie a stop-and-copy works well
  * when there is 8 more space than the total space used.		*/
 #define SCM_GC_EXTENSION_THRESHOLD 8
@@ -109,11 +109,11 @@ typedef size_t SIZE_T ;
  * The C functions that will become the behavior of Scheme functions
  * ie have the correct signature, have a second capitalized name. For
  * example SCM_Cons. Predicates have a P suffix like SCM_EqP.
- * There is a lot of macros or small functions like SCM_cons which 
+ * There is a lot of macros or small functions like SCM_cons which
  * implements the effect associated to their name. They exist for internal
  * use and are generally unsafe. Their name (apart the SCM_ prefix) only
  * contains small letters. Scheme global variables are in uppercase
- * and prefixed with SCM_V_. Legal characters of Scheme that are illegal 
+ * and prefixed with SCM_V_. Legal characters of Scheme that are illegal
  * for C are mapped on legal C characters. For instance, pair? becomes
  * SCM_V_PAIRP while symbol->string becomes SCM_V_SYMBOL2STRING.
 
@@ -123,12 +123,12 @@ typedef size_t SIZE_T ;
  * Usually regular functions just use references everywhere so
  * SCM_reference is aliased to SCM as a shorthand which allows one
  * to believe that only objects are handled.				*/
-   
+
 typedef union SCM_object *SCM_reference ;
 typedef SCM_reference    SCM	        ;
 
 /***********************************************************************
- * All allocated objects have a header containing a tag from which 
+ * All allocated objects have a header containing a tag from which
  * their type can be derived. This tag is an unsigned int rather than
  * an enum type since it might be extended dynamically.			*/
 
@@ -170,7 +170,7 @@ typedef unsigned int SCM_TAG ;
 /***********************************************************************
   Scheme objects							*/
 
-typedef struct { 
+typedef struct {
   SCM_TAG tag ;
   SCM link ; /* for a stop and copy GC */
   } SCM_object_header ;
@@ -199,7 +199,7 @@ union SCM_object {
   struct SCM_primitive {
     SCM_object_header header ;
     /* A pointer to a function that returns a Scheme value */
-    SCM (*behavior)() ; 
+    SCM (*behavior)() ;
     int arity ;
     SCM name ;           /* for debug purposes, primitives have names */
   } primitive ;
@@ -278,12 +278,12 @@ union SCM_object {
 } ;
 
 /***********************************************************************
- * Arity is coded as a positive integer if fixed (ie the arity of cons is 2) 
+ * Arity is coded as a positive integer if fixed (ie the arity of cons is 2)
  * and as a negative integer if a minimal arity exists. The arity
  * of list is -1 (ie at least zero argument).				*/
 
 /***********************************************************************
- * Prototypes of library functions or macros that might appear in 
+ * Prototypes of library functions or macros that might appear in
  * generated C.								*/
 
 extern SCM SCM_allocate(SCM_TAG tag, SIZE_T size) ;
@@ -292,7 +292,7 @@ extern SCM SCM_allocate(SCM_TAG tag, SIZE_T size) ;
 #define SCM_eqp(x,y)         ((void*)(x)==(void*)(y))
 /* while this compares pointers to C functions */
 #define SCM_Cfunctions_eqp(x,y) ((void(*)())(x)==(void(*)())(y))
-/* Compare addresses rather than tags. 
+/* Compare addresses rather than tags.
  * Note: This imposes a unique undef object.				*/
 #define SCM_undeterminedp(x) (SCM_eqp(x,SCM_undef))
 /* Convert a C boolean value to a Scheme boolean value			*/
@@ -344,7 +344,7 @@ extern SCM SCM_allocate_string (SIZE_T size) ;
 
 extern struct SCM_char SCM_characters[] ;
 #define SCM_charp(x)          (SCM_CHAR_TAG==SCM_tag_of(x))
-/* returns a C int instead of a SCM int.			
+/* returns a C int instead of a SCM int.
  * #define SCM_char2int(x)       ((int)((x)->character).C_char)	*/
 #define SCM_int2char(x)       ((SCM) &(SCM_characters[x]))
 #define SCM_char2int(x)       (((struct SCM_char*)(x))-SCM_characters)
@@ -398,7 +398,7 @@ extern SCM SCM_stdin, 		/* stdin */
   SCM_stdout, 			/* stdout */
   SCM_stderr ;			/* stderr */
 extern SCM SCM_options ;	/* the list of options for the command */
-extern void *SCM_Cstack_bottom ;	/* the address of the bottom 
+extern void *SCM_Cstack_bottom ;	/* the address of the bottom
                                            of the stack (useful to copy
                                            stack slices). */
 
@@ -531,7 +531,7 @@ extern SCM SCM_error (unsigned int code) ;
 extern SCM SCM_report_error(unsigned int code, char *file, unsigned int line);
 
 /* Run-time utilities.
- * This initializes the heap as well as all the predefined objects. 
+ * This initializes the heap as well as all the predefined objects.
  * The first function is independent of VTS style while the second
  * deals with continuation-specific resources. 				*/
 
@@ -543,11 +543,11 @@ extern void SCM_report_usage () ;
  *    SCM foo (SCM self,x,y,z,t)
  * Otherwise they are represented by SCM foo (int num, SCM args[]).
  * Nary functions have no more than 4 mandatory variables:
- *    SCM bar (SCM x,y, int number, SCM args[]) 
+ *    SCM bar (SCM x,y, int number, SCM args[])
  * Otherwise they are represented by SCM bar (int num, SCM args[]).
  *
- * Same for primitives which are closures without environment ie 
- * without SELF variable. 
+ * Same for primitives which are closures without environment ie
+ * without SELF variable.
  * SCM_first_invokation is the first invoker to begin with. It sets up
  * some global variables.						*/
 

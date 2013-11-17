@@ -21,10 +21,10 @@
              (if (program? v)
                  (compile-and-run v r.init #t)
                  (signal-exception #t (list "Illegal program" v)) ) )
-           (signal-exception 
+           (signal-exception
             #t (list "Incorrect arity" 'eval) ) ) ) ) ) )
 
-;;; same as in chap8d.scm 
+;;; same as in chap8d.scm
 
 (define (compile-and-run v r tail?)
   (set! g.current '())

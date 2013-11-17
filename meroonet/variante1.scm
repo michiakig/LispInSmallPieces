@@ -17,9 +17,9 @@
 ;;; created at macroexpansion time and grafted to the inheritance tree
 ;;; at that same time. The version in Meroonet is safer.
 
-(define-meroonet-macro (define-class name super-name 
+(define-meroonet-macro (define-class name super-name
                                      own-field-descriptions )
-  (let ((class (register-class name super-name 
+  (let ((class (register-class name super-name
                                own-field-descriptions )))
     (Class-generate-related-names class) ) )
 

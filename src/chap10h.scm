@@ -17,10 +17,10 @@
 (define-syntax defprimitive
   (syntax-rules ()
     ((defprimitive name Cname arity)
-     (let ((v (make-Predefined-Variable 
-               'name (make-Functional-Description 
-                      = arity 
-                      (make-predefined-application-generator 
+     (let ((v (make-Predefined-Variable
+               'name (make-Functional-Description
+                      = arity
+                      (make-predefined-application-generator
                        'Cname ) ) )))
        (set! g.init (cons v g.init))
        'name ) ) ) )
@@ -38,7 +38,7 @@
 (defprimitive integer? "SCM_fixnump" 1)
 (defprimitive procedure? "SCM_procedurep" 1)
 
-;;; Use macros instead of calling functions. 
+;;; Use macros instead of calling functions.
 
 (defprimitive + "SCM_Plus" 2)
 (defprimitive - "SCM_Minus" 2)
@@ -64,7 +64,7 @@
 (define-syntax definitial
   (syntax-rules ()
     ((definitial name value)
-     (let ((v (make-Predefined-Variable 
+     (let ((v (make-Predefined-Variable
                'name (make-Constant-Description value) )))
        (set! g.init (cons v g.init))
        'name ) ) ) )
@@ -77,7 +77,7 @@
 ;;; subr.  It is not inlined.
 
 (begin
-  (set! g.init (append (map (lambda (name) 
+  (set! g.init (append (map (lambda (name)
                               (make-Predefined-Variable name #f) )
                             '(list apply call/cc) )
                        g.init ))
@@ -89,9 +89,9 @@
 (define-syntax defforeignprimitive
   (syntax-rules (int string)
     ((defforeignprimitive name int (Cname string) arity)
-     (let ((v (make-Predefined-Variable 
-               'name (make-Functional-Description 
-                      = arity 
+     (let ((v (make-Predefined-Variable
+               'name (make-Functional-Description
+                      = arity
                       (lambda (e out)
                         (format out "SCM_Int2fixnum")
                         (between-parentheses out
@@ -133,7 +133,7 @@
 ;                       (format out "SCM_DeclareSubr~A("
 ;                               (Functional-Description-arity desc) )
 ;                       (variable->C gv out)
-;                       (format out ",~A);~%" 
+;                       (format out ",~A);~%"
 ;                               (Functional-Description-Cname desc) ) )
 ;                      ((Constant-Description? desc)
 ;                       (format out "SCM_DeclareConstant(")

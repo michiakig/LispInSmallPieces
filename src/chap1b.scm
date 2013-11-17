@@ -26,7 +26,7 @@
 ;;; The complete one.
 
 (define (d.evaluate e env)
-  (if (atom? e) 
+  (if (atom? e)
       (cond ((symbol? e) (lookup e env))
             ((or (number? e)(string? e)(char? e)(boolean? e)(vector? e))
              e )
@@ -44,7 +44,7 @@
                         env )) ) ) )           ; current environment
 
 (define (d.invoke fn args env)
-  (if (procedure? fn) 
+  (if (procedure? fn)
       (fn args env)
       (wrong "Not a function" fn) ) )
 

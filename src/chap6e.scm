@@ -9,7 +9,7 @@
 ;;; Check the README file before using this file.
 ;;;(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
 
-;;;       A small bytecode compiler 
+;;;       A small bytecode compiler
 ;;;   (in fact `byte' is a unappropriate word since it is more alike a
 ;;;    vectorized encoding). Most of the code comes from chap6d.scm
 ;;;    Changed sections have this comment ;;;oooooNEW as header.
@@ -125,7 +125,7 @@
 (define (NARY-CLOSURE m+ arity)
   (bytes-emit 19 m+ (+ 1 arity)) )
 
-(define (TR-REGULAR-CALL m m*) 
+(define (TR-REGULAR-CALL m m*)
   (bytes-emit 20 m m*) )
 
 (define (REGULAR-CALL m m*)
@@ -158,7 +158,7 @@
   (define arity (- arity+1 1))
   (define (the-function v* sr)
     (if (>= (activation-frame-argument-length v*) arity+1)
-        (begin 
+        (begin
           (listify! v* arity)
           (set! *env* (sr-extend* sr v*))
           (byte-eval m+) )
@@ -234,7 +234,7 @@
          (let ((sr *env*))
            (set! *env* (sr-extend* *env* (byte-eval m*)))
            (let ((result (byte-eval m+)))
-             (set! *env* sr) 
+             (set! *env* sr)
              result ) ) ) )
       ((14) ; CALL0
        (let* ((address (vector-ref *byte-vector* (+ pc 1))))
@@ -293,7 +293,7 @@
               (arity (vector-ref *byte-vector* (+ pc 3))) )
          (let* ((v (byte-eval m))
                 (v* (byte-eval m*)) )
-           (set-activation-frame-argument! 
+           (set-activation-frame-argument!
             v* arity (cons v (activation-frame-argument v* arity)) )
            v* ) ) )
       ((25) ; ALLOCATE-DOTTED-FRAME
@@ -301,16 +301,16 @@
               (v* (allocate-activation-frame (+ arity 1))) )
          (set-activation-frame-argument! v* arity '())
          v* ) )
-      (else 
+      (else
        (wrong "Unknown byte-code" byte) ) ) ) )
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooNEW
 ;;; Testing
 
 (define (scheme6e)
-  (interpreter 
-   "Scheme? "  
-   "Scheme= " 
+  (interpreter
+   "Scheme? "
+   "Scheme= "
    #t
    (lambda (read print error)
      (set! wrong error)
@@ -321,9 +321,9 @@
          (print (byte-eval ep)) ) ) ) ) )
 
 (define (test-scheme6e file)
-  (suite-test 
-   file 
-   "Scheme? " 
+  (suite-test
+   file
+   "Scheme? "
    "Scheme= "
    #t
    (lambda (read check error)
@@ -345,7 +345,7 @@
 
 (define (bench6e factor e)
   (let ((start (get-internal-run-time))
-        (ep (byte-compile e)) )             
+        (ep (byte-compile e)) )
     (let loop ((factor factor))
       (set! *env* r.init)
       (let ((v (byte-eval ep)))

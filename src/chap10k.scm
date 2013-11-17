@@ -34,7 +34,7 @@
 
 (define (cpsify e)
   (let ((v (new-Variable)))
-    (->CPS e (make-Continuation (list v) 
+    (->CPS e (make-Continuation (list v)
                                 (make-Local-Reference v) )) ) )
 
 (define new-Variable
@@ -51,7 +51,7 @@
 (define-method (variable->C (variable Pseudo-Variable) out)
   (format out "v_~A" (Pseudo-Variable-name variable)) )
 
-;;; For tests, use another library. CONS now has a ternary function as 
+;;; For tests, use another library. CONS now has a ternary function as
 ;;; value even if SCM_cons is still binary.
 
 (set! *libraries* " scheme.o schemeklib.o ")
@@ -69,8 +69,8 @@
          (let ((v (new-Variable)))
            (make-Continuation
             (list v) (convert2Regular-Application
-                      k (make-Box-Write 
-                         (Box-Write-reference e) 
+                      k (make-Box-Write
+                         (Box-Write-reference e)
                          (make-Local-Reference v) ) ) ) ) ) )
 
 ;;; The alternative duplicates continuations
@@ -78,7 +78,7 @@
 (define-method (->CPS (e Alternative) k)
   (->CPS (Alternative-condition e)
          (let ((v (new-Variable)))
-           (make-Continuation 
+           (make-Continuation
             (list v) (make-Alternative
                       (make-Local-Reference v)
                       (->CPS (Alternative-consequent e) k)
@@ -94,10 +94,10 @@
   (let* ((args (Predefined-Application-arguments e))
          (vars (let name ((args args))
                  (if (Arguments? args)
-                     (cons (new-Variable) 
+                     (cons (new-Variable)
                            (name (Arguments-others args)) )
-                     '() ) )) 
-         (application 
+                     '() ) ))
+         (application
           (convert2Regular-Application
            k
            (make-Predefined-Application
@@ -111,7 +111,7 @@
       (->CPS (Arguments-first args)
              (make-Continuation
               (list (car vars))
-              (arguments->CPS (Arguments-others args) 
+              (arguments->CPS (Arguments-others args)
                               (cdr vars)
                               appl ) ) )
       appl ) )
@@ -122,14 +122,14 @@
          (varfun (new-Variable))
          (vars (let name ((args args))
                  (if (Arguments? args)
-                     (cons (new-Variable) 
+                     (cons (new-Variable)
                            (name (Arguments-others args)) )
-                     '() ) )) 
-         (application 
+                     '() ) ))
+         (application
           (make-Regular-Application
            (make-Local-Reference varfun)
-           (make-Arguments 
-            k (convert2arguments 
+           (make-Arguments
+            k (convert2arguments
                (map make-Local-Reference vars) ) ) ) ) )
     (->CPS fun (make-Continuation
                 (list varfun)
@@ -144,21 +144,21 @@
 (define-method (->CPS (e Global-Assignment) k)
   (->CPS (Global-Assignment-form e)
          (let ((v (new-Variable)))
-           (make-Continuation 
-            (list v) (convert2Regular-Application 
+           (make-Continuation
+            (list v) (convert2Regular-Application
                       k (make-Global-Assignment
-                         (Global-Assignment-variable e) 
+                         (Global-Assignment-variable e)
                          (make-Local-Reference v) ) ) ) ) ) )
 
 (define-method (->CPS (e Function) k)
   (convert2Regular-Application
    k (let ((k (new-Variable)))
        (make-Function (cons k (Function-variables e))
-                      (->CPS (Function-body e) 
+                      (->CPS (Function-body e)
                              (make-Local-Reference k) ) ) ) ) )
 
 ;;;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-;;; Tests 
+;;; Tests
 
 (define (test-scheme10k file)
   (suite-test
@@ -173,7 +173,7 @@
        (let ((e (read)))
          (cond ((member e *tests-to-skip*)
                 (evaluate-error "Test to skip") )
-               (else 
+               (else
                 (check (test-expression e)) ) ) ) ) )
    naive-match ) )
 

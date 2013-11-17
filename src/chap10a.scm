@@ -11,7 +11,7 @@
 
 ;;; This file converts a Sexp into a Program object. This object will
 ;;; be later used by different analyzes all done with oo-technology
-;;; married with code-walking technology. 
+;;; married with code-walking technology.
 
 ;;; Variables are not Programs! They represent bindings.
 
@@ -25,7 +25,7 @@
 
 ;;; Descriptions
 
-(define-class Functional-Description Object 
+(define-class Functional-Description Object
   (comparator arity generator) )
 
 (define-class Constant-Description Object (value))
@@ -81,7 +81,7 @@
   (if (atom? e)
       (if (symbol? e)
           (objectify-reference e r)
-          (objectify-quotation e r) ) 
+          (objectify-quotation e r) )
       (case (car e)
         ((quote)  (objectify-quotation (cadr e) r))
         ((if)     (objectify-alternative (cadr e) (caddr e) (cadddr e) r))
@@ -110,9 +110,9 @@
 (define (objectify-application f e* r)
   (let ((ff  (objectify f r))
         (ee* (convert2arguments (map (lambda (e) (objectify e r)) e*))) )
-    (cond ((Function? ff)  
+    (cond ((Function? ff)
            (process-closed-application ff ee*) )
-          ((Predefined-Reference? ff) 
+          ((Predefined-Reference? ff)
            (let* ((fvf (Predefined-Reference-variable ff))
                   (desc (Predefined-Variable-description fvf)) )
              (if (Functional-Description? desc)
@@ -127,7 +127,7 @@
   (let ((v* (Function-variables f))
         (b  (Function-body f)) )
     (if (and (pair? v*) (Local-Variable-dotted? (car (last-pair v*))))
-        (process-nary-closed-application f e*) 
+        (process-nary-closed-application f e*)
         (if (= (number-of e*) (length v*))
             (make-Fix-Let v* e* b)
             (objectify-error "Incorrect regular arity" f e*) ) ) ) )
@@ -135,31 +135,31 @@
 (define (process-nary-closed-application f e*)
    (let* ((v* (Function-variables f))
           (b  (Function-body f))
-          (o (make-Fix-Let 
+          (o (make-Fix-Let
               v*
               (let gather ((e* e*) (v* v*))
                 (if (Local-Variable-dotted? (car v*))
-                    (make-Arguments 
+                    (make-Arguments
                      (let pack ((e* e*))
                        (if (Arguments? e*)
                            (make-Predefined-Application
                             (find-variable? 'cons g.init)
-                            (make-Arguments 
-                             (Arguments-first e*) 
-                             (make-Arguments 
-                              (pack (Arguments-others e*)) 
+                            (make-Arguments
+                             (Arguments-first e*)
+                             (make-Arguments
+                              (pack (Arguments-others e*))
                               (make-No-Argument) ) ) )
                            (make-Constant '()) ) )
                      (make-No-Argument) )
                     (if (Arguments? e*)
-                        (make-Arguments (Arguments-first e*) 
-                                        (gather (Arguments-others e*) 
+                        (make-Arguments (Arguments-first e*)
+                                        (gather (Arguments-others e*)
                                                 (cdr v*) ) )
                         (objectify-error "Incorrect dotted arity" f e*) ) ) )
               b )) )
      (set-Local-Variable-dotted?! (car (last-pair v*)) #f)
      o ) )
- 
+
 (define (convert2arguments e*)
   (if (pair? e*)
       (make-Arguments (car e*) (convert2arguments (cdr e*)))
@@ -189,7 +189,7 @@
 
 ;;; It is important that the body is objectified first, so mutability
 ;;; of local variables is known and they can be appropriately handled
-;;; in objectify-variables-list. 
+;;; in objectify-variables-list.
 ;;; All variables are considered immutable at the beginning.
 
 (define (objectify-function names body r)
@@ -240,9 +240,9 @@
   (for-each (lambda (field)
               (let ((vf (field-value o field)))
                 (when (Program? vf)
-                  (let ((v (if (null? args) (g vf) 
+                  (let ((v (if (null? args) (g vf)
                                (apply g vf args) )))
-                    (set-field-value! o v field) ) ) ) )                  
+                    (set-field-value! o v field) ) ) ) )
             (Class-fields (object->class o)) )
   o )
 
@@ -251,7 +251,7 @@
 
 (define-method (insert-box! (o Local-Reference))
   (if (Local-Variable-mutable? (Local-Reference-variable o))
-      (make-Box-Read o) 
+      (make-Box-Read o)
       o ) )
 
 (define-method (insert-box! (o Local-Assignment))
@@ -264,27 +264,27 @@
 
 (define-method (insert-box! (o Fix-Let))
   (set-Fix-Let-arguments! o (insert-box! (Fix-Let-arguments o)))
-  (set-Fix-Let-body! 
+  (set-Fix-Let-body!
    o (insert-box!
-      (boxify-mutable-variables (Fix-Let-body o) 
+      (boxify-mutable-variables (Fix-Let-body o)
                                 (Fix-Let-variables o) ) ) )
   o )
 
 (define-method (insert-box! (o Function))
   (set-Function-body!
    o (insert-box!
-      (boxify-mutable-variables (Function-body o) 
+      (boxify-mutable-variables (Function-body o)
                                 (Function-variables o) ) ) )
-  o ) 
+  o )
 
 (define (boxify-mutable-variables form variables)
   (if (pair? variables)
       (if (Local-Variable-mutable? (car variables))
-          (make-Sequence 
+          (make-Sequence
            (make-Box-Creation (car variables))
            (boxify-mutable-variables form (cdr variables)) )
           (boxify-mutable-variables form (cdr variables)) )
-      form ) )  
+      form ) )
 
 ;;; Second pass. Use the collected information on mutability of
 ;;; variables to update all Local-References to pass through a box to

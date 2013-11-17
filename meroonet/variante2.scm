@@ -35,24 +35,24 @@
 
 (define-class CountingClass Class (counter))
 
-(define-meroonet-macro (define-CountingClass name super-name 
+(define-meroonet-macro (define-CountingClass name super-name
                                              own-field-descriptions )
   (let ((class (register-CountingClass
                 name super-name own-field-descriptions )))
     (generate-related-names class) ) )
 
-(define (register-CountingClass name super-name 
+(define (register-CountingClass name super-name
                                 own-field-descriptions )
-  (initialize! (allocate-CountingClass) 
+  (initialize! (allocate-CountingClass)
                name
-               (->Class super-name) 
+               (->Class super-name)
                own-field-descriptions ) )
 
 ;;; Initialize the counter to zero before everything.
 
 (define-method (initialize! (class CountingClass) . args)
   (set-CountingClass-counter! class 0)
-  (call-next-method) ) 
+  (call-next-method) )
 
 ;;; This is the new generation of accompanying functions. The better
 ;;; would be to have individual generic functions to generate makers,
@@ -70,14 +70,14 @@
     `(begin ,(call-next-method)
             (set! ,alloc-name           ; patch the allocator
                   (let ((old ,alloc-name))
-                    (lambda sizes 
-                      (set-CountingClass-counter! 
+                    (lambda sizes
+                      (set-CountingClass-counter!
                        ,cname (+ 1 (CountingClass-counter ,cname)) )
                       (apply old sizes) ) ) )
-            (set! ,make-name            ; patch the maker            
+            (set! ,make-name            ; patch the maker
                   (let ((old ,make-name))
                     (lambda args
-                      (set-CountingClass-counter! 
+                      (set-CountingClass-counter!
                        ,cname (+ 1 (CountingClass-counter ,cname)) )
                       (apply old args) ) ) ) ) ) )
 

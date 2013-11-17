@@ -25,7 +25,7 @@
            name ) ) ) ) )
 
 (define (expand-handle-location name)
-  `(lambda (value) 
+  `(lambda (value)
      (if (pair? value)
          (set! ,name (car value))
          ,name )) )
@@ -58,8 +58,8 @@
                  (set-top-level-value! name (car value))
                  (top-level-value name) )) ) ) )
 
-(define-syntax the-environment 
-  (syntax-rules () 
+(define-syntax the-environment
+  (syntax-rules ()
     ((the-environment)
      (capture-the-environment make-toplevel make-flambda flambda?
       flambda-behavior prompt-in prompt-out exit it extend error
@@ -154,7 +154,7 @@
     (if (pair? names)
         (enrich (make-Envir (car names) undefined env) (cdr names))
         env ) ) )
-  
+
 (define (variable-defined? name env)
   (if (Envir? env)
       (or (eq? name (Envir-name env))
@@ -184,7 +184,7 @@
 
 ;;; Put the code of the reflective interpreter in this variable. This
 ;;; will be used by tests.
-(define reflisp-code '())  
+(define reflisp-code '())
 
 ;;; Put the code which will be evaluated by the underlying Scheme evaluator
 ;;; here for debug purposes.

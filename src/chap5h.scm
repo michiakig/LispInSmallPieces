@@ -55,19 +55,19 @@
   (case (length exps)
     ((0) '())
     ((1) (unordered list (evaluate (car exps) env)))
-    ((2) (unordered list 
+    ((2) (unordered list
                     (evaluate (car exps) env)
                     (evaluate (cadr exps) env) ))
-    ((3) (unordered list 
+    ((3) (unordered list
                     (evaluate (car exps) env)
                     (evaluate (cadr exps) env)
                     (evaluate (caddr exps) env) ))
-    ((4) (unordered list 
+    ((4) (unordered list
                     (evaluate (car exps) env)
                     (evaluate (cadr exps) env)
                     (evaluate (caddr exps) env)
                     (evaluate (cadddr exps) env) ))
-    (else (unordered cons 
+    (else (unordered cons
                      (evaluate (car exps) env)
                      (evlis (cdr exps) env) )) ) )
 ;;; Test: (test-scheme1 "src/scheme.tst")

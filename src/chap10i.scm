@@ -18,7 +18,7 @@
 
 (define (generate-functions out definitions)
   (format out "~%/* Functions: */~%")
-  (for-each (lambda (def) 
+  (for-each (lambda (def)
               (generate-closure-structure out def)
               (generate-direct-definition out def)
               (generate-general-definition out def) )
@@ -35,9 +35,9 @@
     (let loop ((free (Function-Definition-free definition)))
       (when (Free-Environment? free)
         (format out "~%SCM ")
-        (let ((freevarname 
-               (Variable-name 
-                (Reference-variable 
+        (let ((freevarname
+               (Variable-name
+                (Reference-variable
                  (Free-Environment-first free) ) ) ))
           (format out "~A;" freevarname) )
         (loop (Free-Environment-others free)) ) )
@@ -95,7 +95,7 @@
             (Function-Definition-index definition) ) )
   (format out ") {~%")
   (let ((temps (With-Temp-Function-Definition-temporaries definition)))
-    (when (pair? temps) 
+    (when (pair? temps)
       (generate-local-temporaries temps out)
       (format out "~%") ) )
   (format out "return ")
