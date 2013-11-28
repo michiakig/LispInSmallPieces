@@ -1,4 +1,3 @@
-#lang racket
 ;;; $Id: chap1.scm,v 4.4 2006/11/27 09:01:48 queinnec Exp $
 
 ;;;(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
@@ -13,14 +12,25 @@
 ;;;                      Programs of chapter 1.
 ;;; This is a naive evaluator for Scheme written in naive Scheme.
 
-(require "tester.scm")
+(define (evaluate e env)
+  (if (atom? e)
+      (cond ((symbol? e) (lookup e env))
+            ((or (number? e) (string? e) (char? e)
+                 (boolean? e) (vector? e) )
+             e )
+            (else (wrong "Cannot evaluate" e)) )
+      (case (car e)
+        ((quote)  (cadr e))
+        ((if)     (if (evaluate (cadr e) env)
+                      (evaluate (caddr e) env)
+                      (evaluate (cadddr e) env) ))
+        ((begin)  (eprogn (cdr e) env))
+        ((set!)   (update! (cadr e) env (evaluate (caddr e) env)))
+        ((lambda) (make-function (cadr e) (cddr e) env))
+        (else     (invoke (evaluate (car e) env)
+                          (evlis (cdr e) env) )) ) ) )
 
 ;;; New version of evaluate taking care of interpreted booleans
-
-(define (atom? x)
-  (and (not (pair? x)) (not (null? x))))
-
-(define wrong error)
 
 (define the-false-value (cons "false" "boolean"))
 
@@ -65,7 +75,7 @@
 (define (update! id env value)
   (if (pair? env)
       (if (eq? (caar env) id)
-          (begin (set-mcdr! (car env) value)
+          (begin (set-cdr! (car env) value)
                  value )
           (update! id (cdr env) value) )
       (wrong "No such binding" id) ) )
@@ -156,8 +166,8 @@
 (defpredicate symbol? symbol? 1)
 (defprimitive eq? eq? 2)           ; cf. exercice \ref{exer-predicate}
 (defpredicate eq? eq? 2)           ; cf. exercice \ref{exer-predicate}
-(defprimitive set-car! set-mcar! 2)
-(defprimitive set-cdr! set-mcdr! 2)
+(defprimitive set-car! set-car! 2)
+(defprimitive set-cdr! set-cdr! 2)
 (defprimitive + + 2)
 (defprimitive - - 2)
 (defpredicate = = 2)
@@ -198,7 +208,6 @@
      (display (evaluate (read) env.global))
      (toplevel) )
   (toplevel) )
-
 
 ;;;oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 ;;;  Tests

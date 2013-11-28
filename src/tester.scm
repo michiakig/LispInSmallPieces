@@ -1,4 +1,3 @@
-#lang racket
 ;;; $Id: tester.scm,v 1.18 1997/12/07 16:22:44 queinnec Exp $
 
 ;;;(((((((((((((((((((((((((((((((( L i S P ))))))))))))))))))))))))))))))))
@@ -50,9 +49,6 @@
 ;;; function to suit particular needs (for instance when generating
 ;;; tests instead of reading them out of a file).
 
-(provide (all-defined-out))
-
-(define tester-error error)
 (define tester-read read)
 
 ;;; This is an internal variable that, in real Scheme, may be true or
@@ -124,8 +120,8 @@
       (lambda ()                        ; read expression
         (display prompt-in)
         (let ((e (tester-read)))
-          (when (eof-object? e)
-                (exit 'end) )
+          (if (eof-object? e)
+              (exit 'end) )
           e ) )
       (lambda () 'nothing)              ; read expected result (useless)
       (lambda (expected obtained)       ; compare expected and obtained results
@@ -178,9 +174,9 @@
         (native-newline newline) )
     ;; Two small utilities to display things
     (define (display exp)
-      (when echo? (native-display exp)) )
+      (if echo? (native-display exp)) )
     (define (newline)
-      (when echo? (native-newline)) )
+      (if echo? (native-newline)) )
     ;; Display the result of the test, return a boolean to indicate
     ;; whether the tests should continue or not.
     (define (display-status status expected v)
@@ -234,8 +230,8 @@
        (engine-tester
         (lambda ()                      ; read test
           (let ((e (tester-read in)))
-            (when (eof-object? e)
-              (begin (close-input-port in) (exit 'done)) )
+            (if (eof-object? e)
+                (begin (close-input-port in) (exit 'done)) )
             (display prompt-in)
             (display e)
             (newline)
